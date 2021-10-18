@@ -9,6 +9,8 @@
 
 # VS
 *.vcxproj
+*.pdb
+*.vs
 
 # Precompiled Headers
 *.gch
