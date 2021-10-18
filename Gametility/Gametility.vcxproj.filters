@@ -13,16 +13,52 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Archivos de encabezado\EdgeCore">
+      <UniqueIdentifier>{0a881e90-2241-47a8-a8ac-f354f9643052}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\EdgeCore\Core">
+      <UniqueIdentifier>{c0f8bb34-1153-4207-8aba-9d0fde7c3098}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\EdgeCore\Core\Entity">
+      <UniqueIdentifier>{42b19ef9-890d-42a5-8b53-c9d1dee46c75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\EdgeCore\Internal">
+      <UniqueIdentifier>{6e66a2a2-ba5a-454c-b67c-764daa9f3dcb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\dll">
+      <UniqueIdentifier>{983e394e-bd38-4aab-8226-592fc96125bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\EdgeCore\Core\Behaviour">
+      <UniqueIdentifier>{05fde521-1868-4b73-9b81-8dcd4bf43194}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
-      <Filter>Archivos de encabezado</Filter>
+    <ClInclude Include="Behaviour.h">
+      <Filter>Archivos de encabezado\EdgeCore\Core\Behaviour</Filter>
     </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>Archivos de encabezado</Filter>
+    <ClInclude Include="Component.h">
+      <Filter>Archivos de encabezado\EdgeCore\Core\Behaviour</Filter>
+    </ClInclude>
+    <ClInclude Include="RunningBehaviour.h">
+      <Filter>Archivos de encabezado\EdgeCore\Core\Behaviour</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Archivos de encabezado\EdgeCore\Core\Behaviour</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Archivos de encabezado\EdgeCore\Core\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Archivos de encabezado\EdgeCore\Core\Entity</Filter>
     </ClInclude>
     <ClInclude Include="Vectors.h">
-      <Filter>Archivos de encabezado</Filter>
+      <Filter>Archivos de encabezado\EdgeCore\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Archivos de encabezado\dll</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>Archivos de encabezado\dll</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -34,6 +70,15 @@
     </ClCompile>
     <ClCompile Include="Vectors.cpp">
       <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.h">
+      <Filter>Archivos de encabezado\EdgeCore\Core\Behaviour</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

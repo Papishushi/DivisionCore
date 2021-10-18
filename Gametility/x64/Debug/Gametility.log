@@ -1,2 +1,29 @@
-﻿  Vector2.cpp
-  Gametility.vcxproj -> S:\StorageFolder\VS\Gametility\x64\Debug\Gametility.dll
+﻿  Component.cpp
+S:\StorageFolder\VS\Gametility\Gametility\Transform.h(7,1): error C2504: 'Component': clase base sin definir
+S:\StorageFolder\VS\Gametility\Gametility\GameObject.h(14,10): error C2065: 'Component': identificador no declarado
+S:\StorageFolder\VS\Gametility\Gametility\GameObject.h(14,5): error C2923: 'std::list': 'Component' no es un argumento de tipo de plantilla válido para el parámetro '_Ty'
+S:\StorageFolder\VS\Gametility\Gametility\GameObject.h(14): message : vea la declaración de 'Component'
+S:\StorageFolder\VS\Gametility\Gametility\GameObject.h(14,5): error C2976: 'std::list': no hay suficientes argumentos de plantilla
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\list(763): message : vea la declaración de 'std::list'
+S:\StorageFolder\VS\Gametility\Gametility\GameObject.h(21,52): error C2065: 'Component': identificador no declarado
+S:\StorageFolder\VS\Gametility\Gametility\GameObject.h(21,47): error C2923: 'std::list': 'Component' no es un argumento de tipo de plantilla válido para el parámetro '_Ty'
+S:\StorageFolder\VS\Gametility\Gametility\GameObject.h(21): message : vea la declaración de 'Component'
+S:\StorageFolder\VS\Gametility\Gametility\GameObject.h(21,47): error C2976: 'std::list': no hay suficientes argumentos de plantilla
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\list(763): message : vea la declaración de 'std::list'
+S:\StorageFolder\VS\Gametility\Gametility\GameObject.h(34,45): error C4430: falta el especificador de tipo; se presupone int. Nota: C++ no admite default-int
+S:\StorageFolder\VS\Gametility\Gametility\GameObject.h(34,45): error C2146: error de sintaxis: falta ')' delante del identificador 'type'
+S:\StorageFolder\VS\Gametility\Gametility\GameObject.h(34,45): error C3646: 'type': especificador de invalidación desconocido
+S:\StorageFolder\VS\Gametility\Gametility\GameObject.h(34,49): error C2059: error de sintaxis: ')'
+S:\StorageFolder\VS\Gametility\Gametility\GameObject.h(42,48): error C4430: falta el especificador de tipo; se presupone int. Nota: C++ no admite default-int
+S:\StorageFolder\VS\Gametility\Gametility\GameObject.h(42,48): error C2146: error de sintaxis: falta ')' delante del identificador 'type'
+S:\StorageFolder\VS\Gametility\Gametility\GameObject.h(42,48): error C3646: 'type': especificador de invalidación desconocido
+S:\StorageFolder\VS\Gametility\Gametility\GameObject.h(42,52): error C2059: error de sintaxis: ')'
+S:\StorageFolder\VS\Gametility\Gametility\GameObject.h(46,29): error C2760: error de sintaxis: token inesperado "identificador", se esperaba ";"
+S:\StorageFolder\VS\Gametility\Gametility\GameObject.h(44,26): message : Diagnóstico en la función 'T GameObject::GetComponent(void)' generada por el compilador
+S:\StorageFolder\VS\Gametility\Gametility\Component.cpp(5): error C2280: 'Transform::Transform(void)': se está intentando hacer referencia a una función eliminada.
+S:\StorageFolder\VS\Gametility\Gametility\Transform.h(12): message : el compilador generó 'Transform::Transform' aquí
+S:\StorageFolder\VS\Gametility\Gametility\Transform.h(12,1): message : "Transform::Transform(void)": la función se eliminó implícitamente porque un objeto "Transform::scale" miembro de datos no tiene ningún elemento constructor predeterminado adecuado o la resolución de sobrecarga era ambigua.
+S:\StorageFolder\VS\Gametility\Gametility\Transform.h(11): message : vea la declaración de 'Transform::scale'
+  Transform.h
+S:\StorageFolder\VS\Gametility\Gametility\Transform.h(13,1): fatal error C1010: final de archivo inesperado al buscar la directiva de encabezado precompilado. Compruebe si olvidó agregar '#include "pch.h"' al código fuente?
+  Generando código...

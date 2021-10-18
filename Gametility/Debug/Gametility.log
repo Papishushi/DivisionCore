@@ -1,2 +1,8 @@
-﻿  dllmain.cpp
-  Gametility.vcxproj -> S:\StorageFolder\VS\Gametility\Debug\Gametility.dll
+﻿  Object.cpp
+S:\StorageFolder\VS\Gametility\Gametility\Object.h(54,27): error C2143: error de sintaxis: falta ';' delante de '<'
+S:\StorageFolder\VS\Gametility\Gametility\Object.h(57): message : Vea la referencia a la creación de una instancia de clase plantilla "Object<T>" que se está compilando
+S:\StorageFolder\VS\Gametility\Gametility\Object.h(54,1): error C2238: símbolos (token) inesperados delante de ';'
+S:\StorageFolder\VS\Gametility\Gametility\Object.h(55,30): error C2143: error de sintaxis: falta ';' delante de '<'
+S:\StorageFolder\VS\Gametility\Gametility\Object.h(55,1): error C2238: símbolos (token) inesperados delante de ';'
+S:\StorageFolder\VS\Gametility\Gametility\Object.cpp(91,2): error C2953: 'Object': ya se ha definido la plantilla de clase
+S:\StorageFolder\VS\Gametility\Gametility\Object.cpp(11): message : vea la declaración de 'Object'
