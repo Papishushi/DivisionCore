@@ -35,3 +35,14 @@
 *.exe
 *.out
 *.app
+
+*.vs
+/Debug
+/x64
+/Gametility.sln
+
+/DivisionCore/Debug
+/DivisionCore/DivisionCore.vcxproj
+/DivisionCore/DivisionCore.vcxproj.filters
+/DivisionCore/DivisionCore.vcxproj.user
+*.sln
