@@ -46,3 +46,4 @@
 /DivisionCore/DivisionCore.vcxproj.filters
 /DivisionCore/DivisionCore.vcxproj.user
 *.sln
+*.ipch
