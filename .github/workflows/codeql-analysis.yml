@@ -59,6 +59,7 @@ jobs:
     #    uses a compiled language
 
     - run: |
+       make -f makefile.txt
        make bootstrap
        make release
 
