@@ -1,22 +1,20 @@
 #pragma once
 
 #include "Behaviour.h"
-#include "GameObject.h"
 
-class RunningBehaviour : Behaviour
+namespace DivisionCore
 {
-protected:
+	class RunningBehaviour : Behaviour
+	{
+	public:
+		RunningBehaviour() = default;
 
-public:
+    protected:
 
-	RunningBehaviour();
-	~RunningBehaviour();
-private:
-
-	void Awake();
-	void Start();
-	void FixedUpdate();
-	void Update();
-	void LateUpdate();
-
-};
+		void Awake();
+		void Start();
+		void FixedUpdate();
+		void Update();
+		void LateUpdate();
+	};
+}

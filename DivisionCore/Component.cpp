@@ -1,9 +1,11 @@
 #include "Component.h"
 
-Component::Component(GameObject parent)
+namespace DivisionCore
 {
-	name = This().ToString();
-	hideFlags = HideFlags::VISIBLE;
-
-	gameObject = parent;
+    Component::Component() {
+        gameObject = new GameObject();
+    }
+    Component::Component(GameObject * parent) {
+        gameObject = parent;
+    }
 }

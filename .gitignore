@@ -36,11 +36,12 @@
 *.out
 *.app
 
-*.vs
 /Debug
 /x64
 /Gametility.sln
-
+/DivisionCore/x64
+/DivisionCore/.idea
+/DivisionCore/cmake-build-debug
 /DivisionCore/Debug
 /DivisionCore/DivisionCore.vcxproj
 /DivisionCore/DivisionCore.vcxproj.filters

@@ -7,174 +7,190 @@
 #include <list>
 #include <iterator>
 #include <tuple>
-#include "Transform.h"
+#include <map>
 
 using namespace std;
-
-enum class HideFlags
+namespace DivisionCore
 {
-	HIDDEN = 0,
-	VISIBLE = 1
-};
-
-typedef uint8_t byte;
-
-template <typename T>
-class Object 
-{
-private:
-	const char QUOTE = '"';
-
-	static list<Object> instancedObjects;
-	static list<byte> updatedInstancesID;
-
-	uint_least8_t instanceID;
-protected:
-	/// <summary>
-/// Return this object as a reference.
-/// </summary>
-/// <returns></returns>
-	inline T This() const
+	enum class HideFlags
 	{
-		return *this;
-	}
-public :
+		HIDDEN = 0,
+		VISIBLE = 1
+	};
 
-	HideFlags hideFlags;
-	string name;
-	
-	Object()
+	typedef uint8_t byte;
+    typedef uint_least8_t dynamic_byte;
+
+	template <typename T> class Object
 	{
-		std::list<byte>::iterator it;
-		uint_least8_t counter = 0;
+        typedef map<dynamic_byte ,Object> ObjectDictionary;
 
-		for (it = updatedInstancesID.begin(); it != updatedInstancesID.end(); ++it)
+        typedef map<HideFlags , string> HideFlagsLookupTable;
+	private:
+        static ObjectDictionary idInstanceDictionary;
+
+        static HideFlagsLookupTable hideFlagsLookupTable;
+
+        dynamic_byte instanceID;
+    public:
+		HideFlags hideFlags;
+		string name;
+
+		Object()
 		{
-			if (*it == 0)
+            if(hideFlagsLookupTable.empty())
+            {
+                hideFlagsLookupTable.insert(pair<HideFlags, string>(HideFlags::VISIBLE, "Visible"));
+            }
+            if(idInstanceDictionary.empty())
+            {
+                instanceID = 0;
+
+                name = "Object" + instanceID;
+                hideFlags = HideFlags::VISIBLE;
+
+                idInstanceDictionary.insert(pair<dynamic_byte ,Object>(instanceID, *this));
+            }
+            else
+            {
+                dynamic_byte counter = 0;
+
+                typename ObjectDictionary::iterator it;
+                for (it = idInstanceDictionary.begin(); it != idInstanceDictionary.end(); ++it)
+                {
+                    if(&(it->first) == nullptr)
+                    {
+                        instanceID = counter;
+
+                        name = "Object" + instanceID;
+                        hideFlags = HideFlags::VISIBLE;
+
+                        idInstanceDictionary.insert(pair<dynamic_byte ,Object>(instanceID, *this));
+                    }
+                    counter++;
+                }
+            }
+		}
+		~Object()
+		{
+            std::remove(idInstanceDictionary.begin(), idInstanceDictionary.end(), instanceID);
+		}
+
+		inline bool operator - () const
+		{
+			return this != nullptr;
+		}
+		inline bool operator ! () const
+		{
+			return this == nullptr;
+		}
+		inline bool operator == (const Object& other) const
+		{
+			return std::tie(instanceID, hideFlags, name) == std::tie(other.instanceID, other.hideFlags, other.name);
+		}
+		inline bool operator != (const Object& other) const
+		{
+			return tie(instanceID, hideFlags, name) != std::tie(other.instanceID, other.hideFlags, other.name);
+		}
+
+		inline int GetInstanceID() const
+		{
+			return instanceID;
+		}
+
+		virtual string ToString() const
+		{
+			return name;
+		}
+		virtual inline string ToJson() const
+		{
+			return R"({"instanceID": ")" + to_string(instanceID) + "\"" +
+                   R"("hideFlags": ")" + hideFlagsLookupTable.find(hideFlags)->second + "\"" +
+                   R"("name": ")" + name + "\"" + "}";
+		}
+
+		static T* Instantiate(const  T& object, string& name)
+		{
+            if(&object != nullptr)
+            {
+                T* tempPtr = new T(object);
+                return tempPtr;
+            }
+            else
+            {
+                return nullptr;
+            }
+		}
+		static void Destroy(const T* obj)
+		{
+            if(obj != nullptr)
+            {
+                delete obj;
+            }
+		}
+		static void Destroy(const T* obj, const bool isArray)
+		{
+            if(obj != nullptr)
+            {
+                if (isArray)
+                {
+                    delete[] obj;
+                }
+                else
+                {
+                    delete obj;
+                }
+            }
+		}
+
+		template <typename Type> static Type FindObjectOfType()
+		{
+            typename ObjectDictionary::iterator it;
+            for (it = idInstanceDictionary.begin(); it != idInstanceDictionary.end(); ++it)
 			{
-				updatedInstancesID.push_back(1);
-				instancedObjects.push_back(This());
-
-				instanceID = counter;
-				name = "Object" + instanceID;
-
-				return;
+				if (dynamic_cast<Type*>(it->second) != nullptr)
+				{
+					return it->second;
+				}
 			}
-
-			counter++;
+			return nullptr;
 		}
-	}
-	~Object()
-	{
-		updatedInstancesID.remove(instanceID, 0);
-		instancedObjects.remove(instanceID, This());
-	}
+        template <typename Type> static void ExpandAddArray(Type * original, const uint_least8_t size, const uint_least8_t newSize, const Type * add)
+        {
+            // Dealloc
+            Type* temp = new Type[newSize];
 
-	inline bool operator - () const
-	{
-		return this != nullptr;
-	}
-	inline bool operator ! () const
-	{
-		return this == nullptr;
-	}
-	inline bool operator == (const Object& other) const
-	{
-		return std::tie(instanceID, hideFlags, name) == std::tie(other.instanceID, other.hideFlags, other.name);
-	}
-	inline bool operator != (const Object& other) const
-	{
-		return tie(instanceID, hideFlags, name) != std::tie(other.instanceID, other.hideFlags, other.name);
-	}
+            if (original != nullptr)
+            {
+                std::copy(original, original + size - 1, temp);
+                delete [] original;
+            }
 
-	inline int GetInstanceID() const
-	{
-		return instanceID;
-	}
-
-	inline string ToString() const
-	{
-		return name;
-	}
-	inline string ToJson() const
-	{
-		return "{" +
-			QUOTE + "instanceID" + QUOTE + ": " + QUOTE + instanceID + QUOTE +
-			QUOTE + "hideFlags" + QUOTE + ": " + QUOTE + instanceID + QUOTE +
-			QUOTE + "name" + QUOTE + ": " + QUOTE + instanceID + QUOTE +
-			"}";
-	}
-
-	static T* Instantiate(const  T& object, Transform parent, string name)
-	{
-		T* tempPtr = new T(object);
-
-		return tempPtr;
-	}
-	static void Destroy(const T* obj)
-	{
-		delete obj;
-	}
-	static void Destroy(const T* obj, const bool isArray)
-	{
-		if (isArray)
+            original = temp;
+            original[size] = add;
+        }
+		template <typename Type> static Type* FindObjectsOfType()
 		{
-			delete[] obj;
-		}
-		else
-		{
-			delete obj;
-		}
-	}
+			Type* tempArr = nullptr;
+            dynamic_byte counter = 0;
 
-	template <typename Type> static void ModifyArray(Type * original, const uint_least8_t size, const uint_least8_t newSize)
-	{
-		// realloc
-		Type* temp = new Type[newSize];
-
-		if (original != nullptr)
-		{
-			std::copy(original, original + size - 1, temp);
-			delete [] original;
-		}
-
-		original = temp;
-	}
-
-	template <typename Type> static Type FindObjectOfType()
-	{
-		for (int i = 0; i < instancedObjects->*instancedObjects.size(); i++)
-		{
-			if (dynamic_cast<Type*>(instancedObjects[i]) != nullptr)
+            typename ObjectDictionary::iterator it;
+            for (it = idInstanceDictionary.begin(); it != idInstanceDictionary.end(); ++it)
 			{
-				return instancedObjects[i];
+                if (dynamic_cast<Type*>(it->second) != nullptr)
+				{
+                    ExpandAddArray(tempArr, counter, counter + 1, it->second);
+                    counter++;
+				}
 			}
-		}
-		return nullptr;
-	}
-	template <typename Type> static Type* FindObjectsOfType()
-	{
-		Type* tempArr = nullptr;
-		uint_least8_t counter = 0;
 
-		for (int i = 0; i < instancedObjects->*instancedObjects.size(); i++)
+			return tempArr;
+		}
+
+		/*static T* DontDestroyOnLoad()
 		{
-			if (dynamic_cast<Type*>(instancedObjects[i]) != nullptr)
-			{			
-				ModifyArray(tempArr, counter, counter + 1);
-				
-				tempArr[counter] = instancedObjects[i];
-
-				counter++;
-			}
-		}
-
-		return tempArr;
-	}
-	
-	static T * DontDestroyOnLoad()
-	{
-		T* instance = new T(This());
-		return instance;
-	}
-};
+			T* instance = new T(This());
+			return instance;
+		}*/
+	};
+}

@@ -1,13 +1,10 @@
-#pragma once
-
 #include "Component.h"
 
-class Behaviour : public Component
+namespace DivisionCore
 {
-public:
-	Behaviour();
-	~Behaviour();
-
-private:
-
-};
+	class Behaviour : public Component
+	{
+	public:
+		Behaviour() = default;
+	};
+}
