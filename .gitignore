@@ -30,6 +30,8 @@
 *.la
 *.a
 *.lib
+/.gitignore
+/.gitattributes
 
 # Executables
 *.exe

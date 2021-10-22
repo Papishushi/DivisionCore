@@ -6,19 +6,15 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(.)
 
 add_executable(DivisionCore
-        Behaviour.cpp
         Behaviour.h
         Component.cpp
         Component.h
-        Entity.cpp
         Entity.h
         GameObject.cpp
         GameObject.h
-        Object.cpp
         Object.h
-        RunningBehaviour.cpp
         RunningBehaviour.h
-        Transform.cpp
         Transform.h
-        Vectors.cpp
-        Vectors.h)
+        Vector2.h
+        Vector3Euler.h
+        Scene.h Behaviour.cpp Entity.cpp Object.cpp RunningBehaviour.cpp Scene.cpp Transform.cpp Vector2.cpp Vector3Euler.cpp)
