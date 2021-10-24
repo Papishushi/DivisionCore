@@ -16,15 +16,16 @@
 #ifndef DIVISIONCORE_COMPONENT_H
 #define DIVISIONCORE_COMPONENT_H
 #include "Object.h"
-
+#include "sigslot.h"
 #include <memory>
 #include <string>
+
 
 namespace DivisionCore
 {
     class Transform;
     class GameObject;
-    class Component : public Object<Component> {
+    class Component : protected Object<Component> {
     public:
         GameObject * gameObject;
         Transform * transform;
@@ -32,15 +33,32 @@ namespace DivisionCore
 
         Component();
         explicit Component(GameObject* parent);
+        ~Component();
+
+        struct MessageArgs
+        {
+        public:
+            string methodName;
+            bool selfApply;
+            void* params[];
+
+            MessageArgs() = delete;
+            MessageArgs(const string& _methodName, const bool _selfApply,void** _params, size_t size)
+            {
+                methodName = _methodName;
+                selfApply = _selfApply;
+
+                for(int i = 0; i < size; i++ )
+                {
+                    params[i] = &_params[i];
+                }
+            }
+        };
 
         inline bool CompareTag(const string& _tag) const
         {
             return tag == _tag;
         }
-
-        void SendMessageLocal(const void* Method);
-        void SendMessageChildren(const void* Method);
-        void SendMessageParent(const void* Method);
 
         template <typename T> bool TryGetComponent(T& outComponent);
 

@@ -14,8 +14,9 @@
   * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   **/
 
-#include "Component.h"
 #include "GameObject.h"
+#include "Component.h"
+
 
 namespace DivisionCore
 {
@@ -62,5 +63,9 @@ namespace DivisionCore
     T* Component::GetComponentsInParent()
     {
         return gameObject->GetComponentsInParent<T>();
+    }
+
+    Component::~Component() {
+        gameObject->DestroyComponent(this);
     }
 }

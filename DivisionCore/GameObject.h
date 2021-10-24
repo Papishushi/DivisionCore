@@ -16,10 +16,12 @@
 #ifndef DIVISIONCORE_GAMEOBJECT_H
 #define DIVISIONCORE_GAMEOBJECT_H
 #include "Transform.h"
-#include "Component.h"
+#include "RunningBehaviour.h"
+#include "sigslot.h"
 
 #include <list>
 #include <iterator>
+#include <utility>
 
 namespace DivisionCore
 {
@@ -35,7 +37,7 @@ namespace DivisionCore
     {
     private:
         static list<GameObject> instancedGameObjects;
-        list<DivisionCore::Component> attachedComponents;
+        list<RunningBehaviour> attachedComponents;
         bool isActive;
     public:
         bool activeInHierarchy;
@@ -50,11 +52,17 @@ namespace DivisionCore
         string tag;
         Transform transform;
 
+
+        signal2<GameObject *, const MessageArgs&> SendMessageLocal;
+        signal2<GameObject *, const MessageArgs&> SendMessageChildren;
+        signal2<GameObject *, const MessageArgs&> SendMessageParent;
+
         GameObject();
         explicit GameObject(string& name);
         explicit GameObject(string& name, Transform& transform);
-        explicit GameObject(string& name, Transform& transform, const list<DivisionCore::Component>& components);
-        GameObject(const GameObject& gameObject);
+        explicit GameObject(string& name, Transform& transform, const list<RunningBehaviour>& components);
+
+        void UpdateMessageLink();
 
         inline void SetActive(const bool _isActive)
         {
@@ -66,15 +74,15 @@ namespace DivisionCore
             attachedComponents.push_back(temp);
             return temp;
         }
+        template <typename T> inline void DestroyComponent(T * _component)
+        {
+            Destroy<T>(_component);
+        }
 
         inline bool CompareTag(const string& _tag) const
         {
             return tag == _tag;
         }
-
-        void SendMessageLocal(const void* method);
-        void SendMessageChildren(const void* method);
-        void SendMessageParent(const void* method);
 
         template <typename T> bool TryGetComponent(T& outComponent)
         {
@@ -111,9 +119,9 @@ namespace DivisionCore
         template <typename T> T* GetComponentsInParent();
 
         static GameObject CreatePrimitive(PrimitiveType primitiveType);
-        static GameObject Find(string name);
-        static GameObject* FindGameObjectsWithTag(string tag);
-        static GameObject FindWithTag(string tag);
+        static GameObject Find(const string& name);
+        static GameObject* FindGameObjectsWithTag(const string& tag);
+        static GameObject FindWithTag(const string& tag);
     };
 }
 #endif //DIVISIONCORE_GAMEOBJECT_H

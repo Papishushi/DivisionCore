@@ -27,12 +27,14 @@ namespace DivisionCore
     class Transform : public Component
     {
     public:
-
-        Transform() = default;
-
         Vectors::Vector2 position;
         Vectors::Vector3Euler rotation;
         Vectors::Vector2 scale;
+
+        Transform * parent;
+        list<Transform> children;
+
+        Transform() = default;
 
         inline bool operator == (const Transform& other) const
         {

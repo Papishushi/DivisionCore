@@ -16,14 +16,26 @@
 #ifndef DIVISIONCORE_RUNNINGBEHAVIOUR_H
 #define DIVISIONCORE_RUNNINGBEHAVIOUR_H
 #include "Behaviour.h"
+#include "GameObject.h"
+
+#if __STDC_VERSION__ < 199901L
+# if __GNUC__ >= 2
+#  define __func__ __FUNCTION__
+# else
+#  define __func__ "<unknown>"
+# endif
+#endif
 
 namespace DivisionCore
 {
-    class RunningBehaviour : Behaviour
+    class RunningBehaviour : public Behaviour, public sigslot::has_slots<>
     {
-    public:
-        RunningBehaviour() = default;
-
+    private:
+        enum class MethodLookUpTable
+        {
+            Destroy,
+            HookMessage
+        };
     protected:
 
         void Awake();
@@ -31,7 +43,15 @@ namespace DivisionCore
         void FixedUpdate();
         void Update();
         void LateUpdate();
+    public:
+
+
+        RunningBehaviour() = default;
+
+        virtual void HookMessage(GameObject * source, const MessageArgs& args) ;
+
+        virtual void ProcessLookUpTable(GameObject *source, const MessageArgs &args, const MethodLookUpTable lookUpTable) ;
+
     };
 }
 #endif //DIVISIONCORE_RUNNINGBEHAVIOUR_H
-

@@ -136,11 +136,11 @@ namespace DivisionCore
                 return nullptr;
             }
         }
-        static void Destroy(const T* obj)
+        static void Destroy(T* obj)
         {
             delete obj;
         }
-        static void Destroy(const T* obj, const bool isArray)
+        static void Destroy(T* obj, const bool isArray)
         {
             if (isArray)
             {

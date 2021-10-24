@@ -15,3 +15,40 @@
   **/
 
 #include "RunningBehaviour.h"
+#include <cassert>
+
+namespace  DivisionCore
+{
+
+    void RunningBehaviour::HookMessage(GameObject *source, const MessageArgs &args) {
+        assert (source == nullptr);
+
+        MethodLookUpTable lookUpValue;
+
+        if(args.methodName == "HookMessage")
+        {
+            lookUpValue = MethodLookUpTable::HookMessage;
+        }
+
+        if(!args.selfApply && this->gameObject != source || args.selfApply)
+        {
+            RunningBehaviour::ProcessLookUpTable(source, args, lookUpValue);
+        }
+        else
+        {
+            return;
+        }
+    }
+
+    void RunningBehaviour::ProcessLookUpTable(GameObject *source, const MessageArgs &args, const MethodLookUpTable lookUpTable) {
+        switch (lookUpTable)
+        {
+            case MethodLookUpTable::Destroy:
+                Destroy(reinterpret_cast<Component *>(args.params[0]));
+            case MethodLookUpTable::HookMessage:
+                HookMessage(source, args);
+                break;
+        }
+    }
+}
+
