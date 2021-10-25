@@ -14,4 +14,24 @@
   * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   **/
 
+#include "GameObject.h"
 #include "Transform.h"
+
+namespace DivisionCore
+{
+    Transform::Transform() {
+        position = Vectors::Vector2::Zero();
+        rotation = Vectors::Vector3Euler::Zero();
+        scale = Vectors::Vector2::Zero();
+
+        parent = nullptr;
+    }
+    Transform::Transform(Transform * _parent) {
+        position = Vectors::Vector2::Zero();
+        rotation = Vectors::Vector3Euler::Zero();
+        scale = Vectors::Vector2::Zero();
+
+        parent = _parent;
+    }
+}
+

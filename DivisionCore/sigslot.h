@@ -11,7 +11,7 @@
 //
 //		#define switches
 //			SIGSLOT_PURE_ISO			- Define this to force ISO C++ compliance. This also disables
-//										  all of the thread safety support on platforms where it is 
+//										  all the thread safety support on platforms where it is
 //										  available.
 //
 //			SIGSLOT_USE_POSIX_THREADS	- Force use of Posix threads when using a C++ compiler other than
@@ -54,7 +54,7 @@
 //										  destroyed concurrently is undefined (i.e. you'll get the occasional
 //										  segmentation fault/memory exception).
 //
-//			multi_threaded_global		- Your program is assumed to be multi threaded. Objects using signals and
+//			multi_threaded_global		- Your program is assumed to be multi-threaded. Objects using signals and
 //										  slots can be safely created and destroyed from any thread, even when
 //										  connections exist. In multi_threaded_global mode, this is achieved by a
 //										  single global mutex (actually a critical section on Windows because they
@@ -109,23 +109,19 @@ namespace sigslot {
 	{
 	public:
 		single_threaded()
-		{
-			;
-		}
+		= default;
 
 		virtual ~single_threaded()
-		{
-			;
-		}
+		= default;
 
 		virtual void lock()
 		{
-			;
+
 		}
 
 		virtual void unlock()
 		{
-			;
+
 		}
 	};
 
@@ -147,12 +143,12 @@ namespace sigslot {
 
 		multi_threaded_global(const multi_threaded_global&)
 		{
-			;
+
 		}
 
 		virtual ~multi_threaded_global()
 		{
-			;
+
 		}
 
 		virtual void lock()
@@ -422,7 +418,7 @@ namespace sigslot {
 	public:
 		has_slots()
 		{
-			;
+
 		}
 
 		has_slots(const has_slots& hs)
@@ -484,7 +480,7 @@ namespace sigslot {
 
 		_signal_base0()
 		{
-			;
+
 		}
 
 		_signal_base0(const _signal_base0& s)
@@ -595,7 +591,7 @@ namespace sigslot {
 
 		_signal_base1()
 		{
-			;
+
 		}
 
 		_signal_base1(const _signal_base1<arg1_type, mt_policy>& s)
@@ -708,7 +704,7 @@ namespace sigslot {
 
 		_signal_base2()
 		{
-			;
+
 		}
 
 		_signal_base2(const _signal_base2<arg1_type, arg2_type, mt_policy>& s)
@@ -820,7 +816,7 @@ namespace sigslot {
 
 		_signal_base3()
 		{
-			;
+
 		}
 
 		_signal_base3(const _signal_base3<arg1_type, arg2_type, arg3_type, mt_policy>& s)
@@ -932,7 +928,7 @@ namespace sigslot {
 
 		_signal_base4()
 		{
-			;
+
 		}
 
 		_signal_base4(const _signal_base4<arg1_type, arg2_type, arg3_type, arg4_type, mt_policy>& s)
@@ -1045,7 +1041,7 @@ namespace sigslot {
 
 		_signal_base5()
 		{
-			;
+
 		}
 
 		_signal_base5(const _signal_base5<arg1_type, arg2_type, arg3_type, arg4_type,
@@ -1159,7 +1155,7 @@ namespace sigslot {
 
 		_signal_base6()
 		{
-			;
+
 		}
 
 		_signal_base6(const _signal_base6<arg1_type, arg2_type, arg3_type, arg4_type,
@@ -1273,7 +1269,7 @@ namespace sigslot {
 
 		_signal_base7()
 		{
-			;
+
 		}
 
 		_signal_base7(const _signal_base7<arg1_type, arg2_type, arg3_type, arg4_type,
@@ -1388,7 +1384,7 @@ namespace sigslot {
 
 		_signal_base8()
 		{
-			;
+
 		}
 
 		_signal_base8(const _signal_base8<arg1_type, arg2_type, arg3_type, arg4_type,
@@ -1913,13 +1909,13 @@ namespace sigslot {
 	public:
 		signal0()
 		{
-			;
+
 		}
 
 		signal0(const signal0<mt_policy>& s)
 			: _signal_base0<mt_policy>(s)
 		{
-			;
+
 		}
 
 		template<class desttype>
@@ -1973,13 +1969,13 @@ namespace sigslot {
 	public:
 		signal1()
 		{
-			;
+
 		}
 
 		signal1(const signal1<arg1_type, mt_policy>& s)
 			: _signal_base1<arg1_type, mt_policy>(s)
 		{
-			;
+
 		}
 
 		template<class desttype>
@@ -2033,13 +2029,13 @@ namespace sigslot {
 	public:
 		signal2()
 		{
-			;
+
 		}
 
 		signal2(const signal2<arg1_type, arg2_type, mt_policy>& s)
 			: _signal_base2<arg1_type, arg2_type, mt_policy>(s)
 		{
-			;
+
 		}
 
 		template<class desttype>
@@ -2094,13 +2090,13 @@ namespace sigslot {
 	public:
 		signal3()
 		{
-			;
+
 		}
 
 		signal3(const signal3<arg1_type, arg2_type, arg3_type, mt_policy>& s)
 			: _signal_base3<arg1_type, arg2_type, arg3_type, mt_policy>(s)
 		{
-			;
+
 		}
 
 		template<class desttype>
@@ -2157,13 +2153,13 @@ namespace sigslot {
 	public:
 		signal4()
 		{
-			;
+
 		}
 
 		signal4(const signal4<arg1_type, arg2_type, arg3_type, arg4_type, mt_policy>& s)
 			: _signal_base4<arg1_type, arg2_type, arg3_type, arg4_type, mt_policy>(s)
 		{
-			;
+
 		}
 
 		template<class desttype>
@@ -2221,7 +2217,7 @@ namespace sigslot {
 	public:
 		signal5()
 		{
-			;
+
 		}
 
 		signal5(const signal5<arg1_type, arg2_type, arg3_type, arg4_type,
@@ -2229,7 +2225,7 @@ namespace sigslot {
 			: _signal_base5<arg1_type, arg2_type, arg3_type, arg4_type,
 			arg5_type, mt_policy>(s)
 		{
-			;
+
 		}
 
 		template<class desttype>
@@ -2290,7 +2286,7 @@ namespace sigslot {
 	public:
 		signal6()
 		{
-			;
+
 		}
 
 		signal6(const signal6<arg1_type, arg2_type, arg3_type, arg4_type,
@@ -2298,7 +2294,7 @@ namespace sigslot {
 			: _signal_base6<arg1_type, arg2_type, arg3_type, arg4_type,
 			arg5_type, arg6_type, mt_policy>(s)
 		{
-			;
+
 		}
 
 		template<class desttype>
@@ -2359,7 +2355,7 @@ namespace sigslot {
 	public:
 		signal7()
 		{
-			;
+
 		}
 
 		signal7(const signal7<arg1_type, arg2_type, arg3_type, arg4_type,
@@ -2367,7 +2363,7 @@ namespace sigslot {
 			: _signal_base7<arg1_type, arg2_type, arg3_type, arg4_type,
 			arg5_type, arg6_type, arg7_type, mt_policy>(s)
 		{
-			;
+
 		}
 
 		template<class desttype>
@@ -2429,7 +2425,7 @@ namespace sigslot {
 	public:
 		signal8()
 		{
-			;
+
 		}
 
 		signal8(const signal8<arg1_type, arg2_type, arg3_type, arg4_type,
@@ -2437,7 +2433,7 @@ namespace sigslot {
 			: _signal_base8<arg1_type, arg2_type, arg3_type, arg4_type,
 			arg5_type, arg6_type, arg7_type, arg8_type, mt_policy>(s)
 		{
-			;
+
 		}
 
 		template<class desttype>
@@ -2492,7 +2488,7 @@ namespace sigslot {
 		}
 	};
 
-}; // namespace sigslot
+} // namespace sigslot
 
 #endif // SIGSLOT_H__
 

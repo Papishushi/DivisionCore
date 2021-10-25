@@ -24,8 +24,6 @@ using namespace std;
 namespace DivisionCore
 {
     GameObject::GameObject() {
-        name = "GameObject" + to_string(GetInstanceID());
-        hideFlags = HideFlags::VISIBLE;
         transform = Transform();
         instancedGameObjects.push_back(*this);
         isActive = true;
@@ -36,11 +34,11 @@ namespace DivisionCore
         sceneCullingMask = 0;
         tag = nullptr;
 
+        UpdateMessageLink();
     }
 
     GameObject::GameObject(string &name) {
         this->name = name;
-        hideFlags = HideFlags::VISIBLE;
         transform = Transform();
         instancedGameObjects.push_back(*this);
         isActive = true;
@@ -50,6 +48,8 @@ namespace DivisionCore
         scene = 0;
         sceneCullingMask = 0;
         tag = nullptr;
+
+        UpdateMessageLink();
     }
 
     GameObject::GameObject(string &name, Transform &transform) {
@@ -64,6 +64,8 @@ namespace DivisionCore
         scene = 0;
         sceneCullingMask = 0;
         tag = nullptr;
+
+        UpdateMessageLink();
     }
 
     GameObject::GameObject(string &name, Transform &transform, const list <RunningBehaviour> &components) {
@@ -79,8 +81,9 @@ namespace DivisionCore
         scene = 0;
         sceneCullingMask = 0;
         tag = nullptr;
-    }
 
+        UpdateMessageLink();
+    }
 
     void GameObject::UpdateMessageLink()
     {
@@ -107,33 +110,24 @@ namespace DivisionCore
         }
     }
 
-    template<typename T>
-    T GameObject::GetComponentInChildren() {
-        return NULL;
-    }
-
-    template<typename T>
-    T GameObject::GetComponentInParent() {
-        return NULL;
-    }
-
-    template<typename T>
-    T *GameObject::GetComponents() {
-        return NULL;
-    }
-
-    template<typename T>
-    T *GameObject::GetComponentsInChildren() {
-        return NULL;
-    }
-
-    template<typename T>
-    T *GameObject::GetComponentsInParent() {
-        return NULL;
-    }
-
-    GameObject GameObject::CreatePrimitive(PrimitiveType primitiveType) {
-        return {};
+    //Incomplete coding must finalize it
+    GameObject GameObject::CreatePrimitive(PrimitiveType primitiveType)
+    {
+        switch (primitiveType)
+        {
+            case PrimitiveType::SQUARE:
+                Instantiate(GameObject(), "Square");
+                break;
+            case PrimitiveType::CIRCLE:
+                Instantiate(GameObject(), "Circle");
+                break;
+            case PrimitiveType::TRIANGLE:
+                Instantiate(GameObject(), "Triangle");
+                break;
+            case PrimitiveType::HEXAGON:
+                Instantiate(GameObject(), "Hexagon");
+                break;
+        }
     }
 
     GameObject GameObject::Find(const string& name) {
@@ -147,5 +141,4 @@ namespace DivisionCore
     GameObject GameObject::FindWithTag(const string& tag) {
         return {};
     }
-
 }

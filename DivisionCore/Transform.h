@@ -34,7 +34,8 @@ namespace DivisionCore
         Transform * parent;
         list<Transform> children;
 
-        Transform() = default;
+        Transform();
+        explicit Transform(Transform * parent);
 
         inline bool operator == (const Transform& other) const
         {

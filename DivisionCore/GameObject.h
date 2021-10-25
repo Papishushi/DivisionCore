@@ -39,6 +39,8 @@ namespace DivisionCore
         static list<GameObject> instancedGameObjects;
         list<RunningBehaviour> attachedComponents;
         bool isActive;
+
+        void UpdateMessageLink();
     public:
         bool activeInHierarchy;
         inline bool activeSelf() const
@@ -52,17 +54,14 @@ namespace DivisionCore
         string tag;
         Transform transform;
 
-
-        signal2<GameObject *, const MessageArgs&> SendMessageLocal;
-        signal2<GameObject *, const MessageArgs&> SendMessageChildren;
-        signal2<GameObject *, const MessageArgs&> SendMessageParent;
+        sigslot::signal2<GameObject *, const MessageArgs&> SendMessageLocal;
+        sigslot::signal2<GameObject *, const MessageArgs&> SendMessageChildren;
+        sigslot::signal2<GameObject *, const MessageArgs&> SendMessageParent;
 
         GameObject();
         explicit GameObject(string& name);
         explicit GameObject(string& name, Transform& transform);
         explicit GameObject(string& name, Transform& transform, const list<RunningBehaviour>& components);
-
-        void UpdateMessageLink();
 
         inline void SetActive(const bool _isActive)
         {
@@ -76,7 +75,11 @@ namespace DivisionCore
         }
         template <typename T> inline void DestroyComponent(T * _component)
         {
-            Destroy<T>(_component);
+            if(_component != nullptr)
+            {
+                attachedComponents.remove(*_component);
+                Destroy<T>(_component);
+            }
         }
 
         inline bool CompareTag(const string& _tag) const
@@ -110,13 +113,95 @@ namespace DivisionCore
                     return it;
                 }
             }
+
             return nullptr;
         }
-        template <typename T> T GetComponentInChildren();
-        template <typename T> T GetComponentInParent();
-        template <typename T> T* GetComponents();
-        template <typename T> T* GetComponentsInChildren();
-        template <typename T> T* GetComponentsInParent();
+        template <typename T> T GetComponentInChildren()
+        {
+            list<RunningBehaviour>::iterator it;
+            list<Transform>::iterator itChildren;
+
+            for (itChildren = transform.children.begin(); itChildren != transform.children.end(); ++itChildren)
+            {
+                for (it = itChildren->gameObject->attachedComponents.begin(); it != itChildren->gameObject->attachedComponents.end(); ++it) {
+                    if (dynamic_cast<T>(it) != nullptr) {
+                        return it;
+                    }
+                }
+            }
+
+            return nullptr;
+        }
+        template <typename T> T GetComponentInParent()
+        {
+            list<RunningBehaviour>::iterator it;
+
+            for (it = transform.parent->gameobject->attachedComponents.begin(); it != transform.parent->gameobject->attachedComponents.end(); ++it)
+            {
+                if (dynamic_cast<T>(it) != nullptr)
+                {
+                    return it;
+                }
+            }
+
+            return nullptr;
+        }
+        template <typename T> T* GetComponents()
+        {
+            T* tempArr = nullptr;
+            dynamic_byte counter = 0;
+
+            list<RunningBehaviour>::iterator it;
+
+            for (it = attachedComponents.begin(); it != attachedComponents.end(); ++it)
+            {
+                if (dynamic_cast<T*>(it->second) != nullptr)
+                {
+                    ExpandAddArray(tempArr, counter, counter + 1, it->second);
+                    counter++;
+                }
+            }
+
+            return tempArr;
+        }
+        template <typename T> T* GetComponentsInChildren()
+        {
+            T* tempArr = nullptr;
+            dynamic_byte counter = 0;
+
+            list<RunningBehaviour>::iterator it;
+
+            for (itChildren = transform.children.begin(); itChildren != transform.children.end(); ++itChildren) {
+                for (it = transform.parent->gameobject->attachedComponents.begin();
+                     it != transform.parent->gameobject->attachedComponents.end(); ++it) {
+                    if (dynamic_cast<T *>(it->second) != nullptr) {
+                        ExpandAddArray(tempArr, counter, counter + 1, it->second);
+                        counter++;
+                    }
+                }
+            }
+
+            return tempArr;
+        }
+        template <typename T> T* GetComponentsInParent()
+        {
+            T* tempArr = nullptr;
+            dynamic_byte counter = 0;
+
+            list<RunningBehaviour>::iterator it;
+            list<Transform>::iterator itChildren;
+
+            for (it = transform.parent->gameobject->attachedComponents.begin(); it != transform.parent->gameobject->attachedComponents.end(); ++it)
+            {
+                if (dynamic_cast<T*>(it->second) != nullptr)
+                {
+                    ExpandAddArray(tempArr, counter, counter + 1, it->second);
+                    counter++;
+                }
+            }
+
+            return tempArr;
+        }
 
         static GameObject CreatePrimitive(PrimitiveType primitiveType);
         static GameObject Find(const string& name);

@@ -16,38 +16,54 @@
 
 #include "RunningBehaviour.h"
 #include <cassert>
+#include <string>
 
 namespace  DivisionCore
 {
+    void RunningBehaviour::SearchLookUpTable(RunningBehaviour::MethodsEnum &out, const string &search)
+    {
+        if (methodsLookUpTable.empty())
+        {
+            InitializeLookUpTable();
+        }
 
-    void RunningBehaviour::HookMessage(GameObject *source, const MessageArgs &args) {
+        out = methodsLookUpTable.find(search)->second;
+    }
+
+    void RunningBehaviour::ProcessLookUpValue(GameObject *source, const MessageArgs &args, const MethodsEnum &value)
+    {
+        switch (value)
+        {
+            case MethodsEnum::Destroy:
+                if(reinterpret_cast<Component * >(args.params[0]) != nullptr)
+                {
+                    Destroy(reinterpret_cast<Component * >(args.params[0]));
+                }
+                else
+                {
+                    Destroy<GameObject>(reinterpret_cast<GameObject * >(args.params[0]));
+                }
+
+            case MethodsEnum::HookMessage:
+                HookMessage(source, args);
+                break;
+        }
+    }
+
+    void RunningBehaviour::HookMessage(GameObject *source, const MessageArgs &args)
+    {
         assert (source == nullptr);
 
-        MethodLookUpTable lookUpValue;
-
-        if(args.methodName == "HookMessage")
-        {
-            lookUpValue = MethodLookUpTable::HookMessage;
-        }
+        MethodsEnum lookUpValue;
+        SearchLookUpTable(lookUpValue, args.methodName);
 
         if(!args.selfApply && this->gameObject != source || args.selfApply)
         {
-            RunningBehaviour::ProcessLookUpTable(source, args, lookUpValue);
+            ProcessLookUpValue(source, args, lookUpValue);
         }
         else
         {
             return;
-        }
-    }
-
-    void RunningBehaviour::ProcessLookUpTable(GameObject *source, const MessageArgs &args, const MethodLookUpTable lookUpTable) {
-        switch (lookUpTable)
-        {
-            case MethodLookUpTable::Destroy:
-                Destroy(reinterpret_cast<Component *>(args.params[0]));
-            case MethodLookUpTable::HookMessage:
-                HookMessage(source, args);
-                break;
         }
     }
 }

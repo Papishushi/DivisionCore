@@ -54,6 +54,7 @@ namespace DivisionCore
         Object() {
             if (hideFlagsLookupTable.empty())
             {
+                hideFlagsLookupTable.insert(std::make_pair(HideFlags::HIDDEN, "Hidden"));
                 hideFlagsLookupTable.insert(std::make_pair(HideFlags::VISIBLE, "Visible"));
             }
 
@@ -124,7 +125,7 @@ namespace DivisionCore
                    R"("name": ")" + name + "\"" + "}";
         }
 
-        static T* Instantiate(const  T& object, string& name)
+        static T* Instantiate(const  T& object,const string& name)
         {
             if(&object != nullptr)
             {
@@ -138,16 +139,20 @@ namespace DivisionCore
         }
         static void Destroy(T* obj)
         {
+            if(obj != nullptr)
             delete obj;
         }
         static void Destroy(T* obj, const bool isArray)
         {
-            if (isArray)
+            if(obj != nullptr)
             {
-                delete[] obj;
-            } else
-            {
-                delete obj;
+                if (isArray)
+                {
+                    delete[] obj;
+                } else
+                {
+                    delete obj;
+                }
             }
         }
 
@@ -163,7 +168,7 @@ namespace DivisionCore
             }
             return nullptr;
         }
-        template <typename Type> static void ExpandAddArray(Type * original, const uint_least8_t size, const uint_least8_t newSize, const Type * add)
+        template <typename Type> static void ExpandAddArray(Type * original, const size_t size, const size_t newSize, const Type * add)
         {
             // Dealloc
             Type* temp = new Type[newSize];

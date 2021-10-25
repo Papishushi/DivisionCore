@@ -17,6 +17,9 @@
 #define DIVISIONCORE_RUNNINGBEHAVIOUR_H
 #include "Behaviour.h"
 #include "GameObject.h"
+#include <map>
+#include <iterator>
+#include <string>
 
 #if __STDC_VERSION__ < 199901L
 # if __GNUC__ >= 2
@@ -31,27 +34,33 @@ namespace DivisionCore
     class RunningBehaviour : public Behaviour, public sigslot::has_slots<>
     {
     private:
-        enum class MethodLookUpTable
+        enum class MethodsEnum
         {
             Destroy,
             HookMessage
         };
     protected:
+        static map<string, MethodsEnum> methodsLookUpTable;
 
-        void Awake();
-        void Start();
-        void FixedUpdate();
-        void Update();
-        void LateUpdate();
+        inline virtual void InitializeLookUpTable() const
+        {
+            methodsLookUpTable.insert(std::make_pair("Destroy", MethodsEnum::Destroy));
+            methodsLookUpTable.insert(std::make_pair("HookMessage", MethodsEnum::HookMessage));
+        }
+
+        virtual void SearchLookUpTable(MethodsEnum &out, const string& search);
+
+        virtual void ProcessLookUpValue(GameObject *source, const MessageArgs &args,const MethodsEnum &value) ;
+
+        virtual void Awake();
+        virtual void Start();
+        virtual void FixedUpdate();
+        virtual void Update();
+        virtual void LateUpdate();
     public:
-
-
         RunningBehaviour() = default;
 
         virtual void HookMessage(GameObject * source, const MessageArgs& args) ;
-
-        virtual void ProcessLookUpTable(GameObject *source, const MessageArgs &args, const MethodLookUpTable lookUpTable) ;
-
     };
 }
 #endif //DIVISIONCORE_RUNNINGBEHAVIOUR_H

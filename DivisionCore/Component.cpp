@@ -23,10 +23,12 @@ namespace DivisionCore
     Component::Component() {
         gameObject = new GameObject();
         transform = &(gameObject->transform);
+        tag = nullptr;
     }
     Component::Component(GameObject * parent) {
         gameObject = parent;
         transform = &(parent->transform);
+        tag = nullptr;
     }
 
     template<typename T>
