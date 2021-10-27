@@ -14,11 +14,13 @@
   * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   **/
 
+#include "GameObject.h"
 #include "RunningBehaviour.h"
-#include <cassert>
 #include <string>
 
-namespace  DivisionCore
+using namespace DivisionCore::Core::EntitySystem;
+
+namespace  DivisionCore { namespace Core { namespace BehaviourSystem
 {
     void RunningBehaviour::SearchLookUpTable(RunningBehaviour::MethodsEnum &out, const string &search)
     {
@@ -41,7 +43,7 @@ namespace  DivisionCore
                 }
                 else
                 {
-                    Destroy<GameObject>(reinterpret_cast<GameObject * >(args.params[0]));
+                    Object<GameObject>::Destroy(reinterpret_cast<GameObject * >(args.params[0]));
                 }
 
             case MethodsEnum::HookMessage:
@@ -52,8 +54,6 @@ namespace  DivisionCore
 
     void RunningBehaviour::HookMessage(GameObject *source, const MessageArgs &args)
     {
-        assert (source == nullptr);
-
         MethodsEnum lookUpValue;
         SearchLookUpTable(lookUpValue, args.methodName);
 
@@ -66,5 +66,5 @@ namespace  DivisionCore
             return;
         }
     }
-}
+} } }
 

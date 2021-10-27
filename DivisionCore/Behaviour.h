@@ -17,13 +17,13 @@
 #define DIVISIONCORE_BEHAVIOUR_H
 #include "Component.h"
 
-namespace DivisionCore
+namespace DivisionCore { namespace Core { namespace BehaviourSystem
 {
     class Behaviour : public Component
     {
     public:
         Behaviour() = default;
     };
-}
+} } }
 #endif //DIVISIONCORE_BEHAVIOUR_H
 

@@ -20,11 +20,23 @@
 #include <memory>
 #include <string>
 
+namespace DivisionCore { namespace Core { namespace EntitySystem
+{
+    class GameObject;
+} } }
 
-namespace DivisionCore
+using DivisionCore::Core::EntitySystem::GameObject;
+
+namespace DivisionCore { namespace Core { namespace BehaviourSystem { namespace Components
 {
     class Transform;
-    class GameObject;
+} } } }
+
+using DivisionCore::Core::BehaviourSystem::Components::Transform;
+
+namespace DivisionCore { namespace Core { namespace BehaviourSystem
+{
+
     class Component : protected Object<Component> {
     public:
         GameObject * gameObject;
@@ -32,28 +44,7 @@ namespace DivisionCore
         string tag;
 
         Component();
-        explicit Component(GameObject* parent);
-        ~Component();
-
-        struct MessageArgs
-        {
-        public:
-            string methodName;
-            bool selfApply;
-            void* params[];
-
-            MessageArgs() = delete;
-            MessageArgs(const string& _methodName, const bool _selfApply,void** _params, size_t size)
-            {
-                methodName = _methodName;
-                selfApply = _selfApply;
-
-                for(int i = 0; i < size; i++ )
-                {
-                    params[i] = &_params[i];
-                }
-            }
-        };
+        explicit Component(EntitySystem::GameObject* parent);
 
         inline bool CompareTag(const string& _tag) const
         {
@@ -69,6 +60,6 @@ namespace DivisionCore
         template <typename T> T* GetComponentsInChildren();
         template <typename T> T* GetComponentsInParent();
     };
-}
+} } }
 #endif //DIVISIONCORE_COMPONENT_H
 

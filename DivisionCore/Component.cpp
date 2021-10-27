@@ -17,8 +17,9 @@
 #include "GameObject.h"
 #include "Component.h"
 
+using DivisionCore::Core::EntitySystem::GameObject;
 
-namespace DivisionCore
+namespace DivisionCore { namespace Core { namespace BehaviourSystem
 {
     Component::Component() {
         gameObject = new GameObject();
@@ -66,8 +67,4 @@ namespace DivisionCore
     {
         return gameObject->GetComponentsInParent<T>();
     }
-
-    Component::~Component() {
-        gameObject->DestroyComponent(this);
-    }
-}
+} } }

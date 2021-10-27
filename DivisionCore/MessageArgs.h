@@ -1,5 +1,5 @@
 /**
-  * @file Transform.cpp
+  * @file MessageArgs.h
   * @author Daniel Molinero Lucas (Papishushi)
   * @section Copyright © <2021+> <Daniel Molinero Lucas (Papishushi)> MIT LICENSE
   * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
@@ -13,28 +13,28 @@
   * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
   * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   **/
-
-#include "GameObject.h"
-#include "Transform.h"
-
-using DivisionCore::Vectors::Vector2;
-using DivisionCore::Vectors::Vector3Euler;
-
-namespace DivisionCore { namespace Core { namespace BehaviourSystem { namespace Components
+#ifndef DIVISIONCORE_MESSAGEARGS_H
+#define DIVISIONCORE_MESSAGEARGS_H
+namespace DivisionCore { namespace Core
 {
-    Transform::Transform() {
-        position = Vector2::Zero();
-        rotation = Vector3Euler::Zero();
-        scale = Vector2::Zero();
+    struct MessageArgs
+    {
+    public:
+        string methodName;
+        bool selfApply;
+        void* params[];
 
-        parent = nullptr;
-    }
-    Transform::Transform(Transform * _parent) {
-        position = Vector2::Zero();
-        rotation = Vector3Euler::Zero();
-        scale = Vector2::Zero();
+        MessageArgs() = delete;
+        MessageArgs(const string& _methodName, const bool _selfApply,void** _params, size_t size)
+        {
+            methodName = _methodName;
+            selfApply = _selfApply;
 
-        parent = _parent;
-    }
-} } } }
-
+            for(int i = 0; i < size; i++ )
+            {
+                params[i] = &_params[i];
+            }
+        }
+    };
+} }
+#endif //DIVISIONCORE_MESSAGEARGS_H

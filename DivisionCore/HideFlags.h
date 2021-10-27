@@ -1,5 +1,5 @@
 /**
-  * @file Transform.cpp
+  * @file HideFlags.h
   * @author Daniel Molinero Lucas (Papishushi)
   * @section Copyright © <2021+> <Daniel Molinero Lucas (Papishushi)> MIT LICENSE
   * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
@@ -13,28 +13,12 @@
   * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
   * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   **/
-
-#include "GameObject.h"
-#include "Transform.h"
-
-using DivisionCore::Vectors::Vector2;
-using DivisionCore::Vectors::Vector3Euler;
-
-namespace DivisionCore { namespace Core { namespace BehaviourSystem { namespace Components
-{
-    Transform::Transform() {
-        position = Vector2::Zero();
-        rotation = Vector3Euler::Zero();
-        scale = Vector2::Zero();
-
-        parent = nullptr;
-    }
-    Transform::Transform(Transform * _parent) {
-        position = Vector2::Zero();
-        rotation = Vector3Euler::Zero();
-        scale = Vector2::Zero();
-
-        parent = _parent;
-    }
-} } } }
-
+#ifndef DIVISIONCORE_HIDEFLAGS_H
+#define DIVISIONCORE_HIDEFLAGS_H
+namespace DivisionCore { namespace Core {
+    enum class HideFlags{
+        HIDDEN = 0,
+        VISIBLE = 1
+    };
+}}
+#endif //DIVISIONCORE_HIDEFLAGS_H

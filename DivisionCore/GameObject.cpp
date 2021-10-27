@@ -14,18 +14,23 @@
   * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   **/
 
-#include "GameObject.h"
 #include "RunningBehaviour.h"
+#include "Transform.h"
+#include "MessageArgs.h"
+#include "PrimitiveType.h"
+#include "GameObject.h"
 
 #include <list>
 
 using namespace std;
+using namespace DivisionCore::Core::BehaviourSystem;
+using namespace DivisionCore::Core::BehaviourSystem::Components;
 
-namespace DivisionCore
+namespace DivisionCore { namespace Core { namespace EntitySystem
 {
     GameObject::GameObject() {
         transform = Transform();
-        instancedGameObjects.push_back(*this);
+        instancedGameObjects.push_back(this);
         isActive = true;
         isStatic = false;
         activeInHierarchy = true;
@@ -40,7 +45,7 @@ namespace DivisionCore
     GameObject::GameObject(string &name) {
         this->name = name;
         transform = Transform();
-        instancedGameObjects.push_back(*this);
+        instancedGameObjects.push_back(this);
         isActive = true;
         isStatic = false;
         activeInHierarchy = true;
@@ -56,7 +61,7 @@ namespace DivisionCore
         this->name = name;
         hideFlags = HideFlags::VISIBLE;
         this->transform = transform;
-        instancedGameObjects.push_back(*this);
+        instancedGameObjects.push_back(this);
         isActive = true;
         isStatic = false;
         activeInHierarchy = true;
@@ -68,12 +73,12 @@ namespace DivisionCore
         UpdateMessageLink();
     }
 
-    GameObject::GameObject(string &name, Transform &transform, const list <RunningBehaviour> &components) {
+    GameObject::GameObject(string &name, Transform &transform, const list <RunningBehaviour *> &components) {
         this->name = name;
         hideFlags = HideFlags::VISIBLE;
         this->transform = transform;
         attachedComponents = components;
-        instancedGameObjects.push_back(*this);
+        instancedGameObjects.push_back(this);
         isActive = true;
         isStatic = false;
         activeInHierarchy = true;
@@ -83,6 +88,10 @@ namespace DivisionCore
         tag = nullptr;
 
         UpdateMessageLink();
+    }
+
+    GameObject::~GameObject() {
+        instancedGameObjects.remove(this);
     }
 
     void GameObject::UpdateMessageLink()
@@ -91,42 +100,40 @@ namespace DivisionCore
         SendMessageChildren.disconnect_all();
         SendMessageParent.disconnect_all();
 
-        list<RunningBehaviour>::iterator it;
+        list<RunningBehaviour*>::iterator it;
         list<Transform>::iterator itChildren;
         for (it = attachedComponents.begin(); it != attachedComponents.end(); ++it)
         {
-            SendMessageLocal.connect(&(*it), &RunningBehaviour::HookMessage);
+            SendMessageLocal.connect(*it, &RunningBehaviour::HookMessage);
         }
         for (itChildren = transform.children.begin(); itChildren != transform.children.begin(); ++itChildren)
         {
             for (it = itChildren->gameObject->attachedComponents.begin(); it != itChildren->gameObject->attachedComponents.end(); ++it)
             {
-                SendMessageChildren.connect(&(*it), &RunningBehaviour::HookMessage);
+                SendMessageChildren.connect(*it, &RunningBehaviour::HookMessage);
             }
         }
         for (it = transform.parent->gameObject->attachedComponents.begin(); it != transform.parent->gameObject->attachedComponents.end(); ++it)
         {
-            SendMessageParent.connect(&(*it), &RunningBehaviour::HookMessage);
+            SendMessageParent.connect(*it, &RunningBehaviour::HookMessage);
         }
     }
 
     //Incomplete coding must finalize it
-    GameObject GameObject::CreatePrimitive(PrimitiveType primitiveType)
+    GameObject * GameObject::CreatePrimitive(PrimitiveType primitiveType)
     {
         switch (primitiveType)
         {
             case PrimitiveType::SQUARE:
-                Instantiate(GameObject(), "Square");
-                break;
+                return Instantiate(GameObject(), "Square");
             case PrimitiveType::CIRCLE:
-                Instantiate(GameObject(), "Circle");
-                break;
+                return Instantiate(GameObject(), "Circle");
             case PrimitiveType::TRIANGLE:
-                Instantiate(GameObject(), "Triangle");
-                break;
+                return Instantiate(GameObject(), "Triangle");
             case PrimitiveType::HEXAGON:
-                Instantiate(GameObject(), "Hexagon");
-                break;
+                return Instantiate(GameObject(), "Hexagon");
+            default:
+                return nullptr;
         }
     }
 
@@ -141,4 +148,4 @@ namespace DivisionCore
     GameObject GameObject::FindWithTag(const string& tag) {
         return {};
     }
-}
+} } }

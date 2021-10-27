@@ -16,28 +16,30 @@
 #ifndef DIVISIONCORE_GAMEOBJECT_H
 #define DIVISIONCORE_GAMEOBJECT_H
 #include "Transform.h"
-#include "RunningBehaviour.h"
+#include "MessageArgs.h"
+#include "PrimitiveType.h"
 #include "sigslot.h"
 
+#include <string>
 #include <list>
 #include <iterator>
 #include <utility>
 
-namespace DivisionCore
-{
-    enum class PrimitiveType
-    {
-        SQUARE = 0,
-        CIRCLE = 1,
-        TRIANGLE = 2,
-        HEXAGON = 3
-    };
+using DivisionCore::Core::BehaviourSystem::Components::Transform;
 
+namespace DivisionCore { namespace Core { namespace  BehaviourSystem {
+    class RunningBehaviour;
+}}}
+
+using DivisionCore::Core::BehaviourSystem::RunningBehaviour;
+
+namespace DivisionCore { namespace Core { namespace EntitySystem
+{
     class GameObject : protected Object<GameObject>
     {
     private:
-        static list<GameObject> instancedGameObjects;
-        list<RunningBehaviour> attachedComponents;
+        static list<GameObject *> instancedGameObjects;
+        list<RunningBehaviour *> attachedComponents;
         bool isActive;
 
         void UpdateMessageLink();
@@ -61,13 +63,14 @@ namespace DivisionCore
         GameObject();
         explicit GameObject(string& name);
         explicit GameObject(string& name, Transform& transform);
-        explicit GameObject(string& name, Transform& transform, const list<RunningBehaviour>& components);
+        explicit GameObject(string& name, Transform& transform, const list<RunningBehaviour *>& components);
+        ~GameObject();
 
         inline void SetActive(const bool _isActive)
         {
             isActive = _isActive;
         }
-        template <typename T> inline T AddComponent()
+        template <typename T> inline T * AddComponent()
         {
             T* temp = new T();
             attachedComponents.push_back(temp);
@@ -77,8 +80,8 @@ namespace DivisionCore
         {
             if(_component != nullptr)
             {
-                attachedComponents.remove(*_component);
-                Destroy<T>(_component);
+                attachedComponents.remove(_component);
+                Destroy(_component);
             }
         }
 
@@ -89,7 +92,7 @@ namespace DivisionCore
 
         template <typename T> bool TryGetComponent(T& outComponent)
         {
-            list<Component>::iterator it;
+            list<RunningBehaviour *>::iterator it;
 
             for (it = attachedComponents.begin(); it != attachedComponents.end(); ++it)
             {
@@ -104,7 +107,7 @@ namespace DivisionCore
 
         template <typename T> T GetComponent()
         {
-            list<Component>::iterator it;
+            list<RunningBehaviour *>::iterator it;
 
             for (it = attachedComponents.begin(); it != attachedComponents.end(); ++it)
             {
@@ -113,12 +116,11 @@ namespace DivisionCore
                     return it;
                 }
             }
-
             return nullptr;
         }
         template <typename T> T GetComponentInChildren()
         {
-            list<RunningBehaviour>::iterator it;
+            list<RunningBehaviour *>::iterator it;
             list<Transform>::iterator itChildren;
 
             for (itChildren = transform.children.begin(); itChildren != transform.children.end(); ++itChildren)
@@ -134,9 +136,8 @@ namespace DivisionCore
         }
         template <typename T> T GetComponentInParent()
         {
-            list<RunningBehaviour>::iterator it;
-
-            for (it = transform.parent->gameobject->attachedComponents.begin(); it != transform.parent->gameobject->attachedComponents.end(); ++it)
+            list<RunningBehaviour *>::iterator it;
+            for (it = transform.parent->gameObject->attachedComponents.begin(); it != transform.parent->gameObject->attachedComponents.end(); ++it)
             {
                 if (dynamic_cast<T>(it) != nullptr)
                 {
@@ -151,13 +152,13 @@ namespace DivisionCore
             T* tempArr = nullptr;
             dynamic_byte counter = 0;
 
-            list<RunningBehaviour>::iterator it;
+            list<RunningBehaviour *>::iterator it;
 
             for (it = attachedComponents.begin(); it != attachedComponents.end(); ++it)
             {
-                if (dynamic_cast<T*>(it->second) != nullptr)
+                if (dynamic_cast<T*>(it) != nullptr)
                 {
-                    ExpandAddArray(tempArr, counter, counter + 1, it->second);
+                    ExpandAddArray(tempArr, counter, counter + 1, it);
                     counter++;
                 }
             }
@@ -169,13 +170,13 @@ namespace DivisionCore
             T* tempArr = nullptr;
             dynamic_byte counter = 0;
 
-            list<RunningBehaviour>::iterator it;
-
+            list<RunningBehaviour *>::iterator it;
+            list<Transform>::iterator itChildren;
             for (itChildren = transform.children.begin(); itChildren != transform.children.end(); ++itChildren) {
-                for (it = transform.parent->gameobject->attachedComponents.begin();
-                     it != transform.parent->gameobject->attachedComponents.end(); ++it) {
-                    if (dynamic_cast<T *>(it->second) != nullptr) {
-                        ExpandAddArray(tempArr, counter, counter + 1, it->second);
+                for (it = transform.parent->gameObject->attachedComponents.begin();
+                     it != transform.parent->gameObject->attachedComponents.end(); ++it) {
+                    if (dynamic_cast<T *>(it) != nullptr) {
+                        ExpandAddArray(tempArr, counter, counter + 1, it);
                         counter++;
                     }
                 }
@@ -188,14 +189,13 @@ namespace DivisionCore
             T* tempArr = nullptr;
             dynamic_byte counter = 0;
 
-            list<RunningBehaviour>::iterator it;
-            list<Transform>::iterator itChildren;
+            list<RunningBehaviour *>::iterator it;
 
-            for (it = transform.parent->gameobject->attachedComponents.begin(); it != transform.parent->gameobject->attachedComponents.end(); ++it)
+            for (it = transform.parent->gameObject->attachedComponents.begin(); it != transform.parent->gameObject->attachedComponents.end(); ++it)
             {
-                if (dynamic_cast<T*>(it->second) != nullptr)
+                if (dynamic_cast<T*>(it) != nullptr)
                 {
-                    ExpandAddArray(tempArr, counter, counter + 1, it->second);
+                    ExpandAddArray(tempArr, counter, counter + 1, it);
                     counter++;
                 }
             }
@@ -203,11 +203,11 @@ namespace DivisionCore
             return tempArr;
         }
 
-        static GameObject CreatePrimitive(PrimitiveType primitiveType);
+        static GameObject * CreatePrimitive(PrimitiveType primitiveType);
         static GameObject Find(const string& name);
         static GameObject* FindGameObjectsWithTag(const string& tag);
         static GameObject FindWithTag(const string& tag);
     };
-}
+}}}
 #endif //DIVISIONCORE_GAMEOBJECT_H
 

@@ -25,4 +25,4 @@ add_executable(DivisionCore
         Vector3Euler.cpp
         Vector3Euler.h
         Scene.cpp
-        Scene.h)
+        Scene.h MessageArgs.h PrimitiveType.h HideFlags.h)

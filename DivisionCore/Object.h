@@ -15,6 +15,7 @@
   **/
 #ifndef DIVISIONCORE_OBJECT_H
 #define DIVISIONCORE_OBJECT_H
+#include "HideFlags.h"
 #include <algorithm>
 #include <iostream>
 #include <cstdint>
@@ -24,14 +25,8 @@
 #include <tuple>
 #include <map>
 
-namespace DivisionCore
+namespace DivisionCore { namespace Core
 {
-    enum class HideFlags
-    {
-        HIDDEN = 0,
-        VISIBLE = 1
-    };
-
     using std::string;
     using std::map;
     using std::pair;
@@ -40,6 +35,7 @@ namespace DivisionCore
     template <typename T> class Object
     {
         typedef uint8_t byte;
+    protected:
         typedef uint_least8_t dynamic_byte;
     private:
         static map<dynamic_byte, Object> idInstanceDictionary;
@@ -206,7 +202,7 @@ namespace DivisionCore
             return instance;
         }*/
     };
-}
+} }
 #endif //DIVISIONCORE_OBJECT_H
 
 

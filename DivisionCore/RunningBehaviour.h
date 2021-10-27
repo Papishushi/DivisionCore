@@ -17,19 +17,15 @@
 #define DIVISIONCORE_RUNNINGBEHAVIOUR_H
 #include "Behaviour.h"
 #include "GameObject.h"
+#include "MessageArgs.h"
+#include "sigslot.h"
 #include <map>
 #include <iterator>
 #include <string>
 
-#if __STDC_VERSION__ < 199901L
-# if __GNUC__ >= 2
-#  define __func__ __FUNCTION__
-# else
-#  define __func__ "<unknown>"
-# endif
-#endif
+using DivisionCore::Core::EntitySystem::GameObject;
 
-namespace DivisionCore
+namespace DivisionCore{ namespace Core { namespace BehaviourSystem
 {
     class RunningBehaviour : public Behaviour, public sigslot::has_slots<>
     {
@@ -62,5 +58,5 @@ namespace DivisionCore
 
         virtual void HookMessage(GameObject * source, const MessageArgs& args) ;
     };
-}
+}}}
 #endif //DIVISIONCORE_RUNNINGBEHAVIOUR_H

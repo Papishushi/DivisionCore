@@ -22,14 +22,17 @@
 
 using std::tie;
 
-namespace DivisionCore
+using DivisionCore::Vectors::Vector2 ;
+using DivisionCore::Vectors::Vector3Euler ;
+
+namespace DivisionCore { namespace Core { namespace BehaviourSystem { namespace Components
 {
     class Transform : public Component
     {
     public:
-        Vectors::Vector2 position;
-        Vectors::Vector3Euler rotation;
-        Vectors::Vector2 scale;
+        Vector2 position;
+        Vector3Euler rotation;
+        Vector2 scale;
 
         Transform * parent;
         list<Transform> children;
@@ -45,7 +48,6 @@ namespace DivisionCore
         {
             return tie(position, rotation, scale) != tie(other.position, other.rotation, other.scale);
         }
-
     };
-}
+} } } }
 #endif //DIVISIONCORE_TRANSFORM_H
