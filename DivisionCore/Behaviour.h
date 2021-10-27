@@ -22,7 +22,13 @@ namespace DivisionCore { namespace Core { namespace BehaviourSystem
     class Behaviour : public Component
     {
     public:
-        Behaviour() = default;
+        bool enabled;
+        bool isActiveAndEnabled;
+
+        Behaviour(){
+            enabled = true;
+            isActiveAndEnabled = true;
+        };
     };
 } } }
 #endif //DIVISIONCORE_BEHAVIOUR_H

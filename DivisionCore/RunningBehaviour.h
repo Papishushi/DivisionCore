@@ -27,7 +27,7 @@ using DivisionCore::Core::EntitySystem::GameObject;
 
 namespace DivisionCore{ namespace Core { namespace BehaviourSystem
 {
-    class RunningBehaviour : public Behaviour, public sigslot::has_slots<>
+    class RunningBehaviour : public Behaviour, public ExternDependencies::sigslot::has_slots<>
     {
     private:
         enum class MethodsEnum

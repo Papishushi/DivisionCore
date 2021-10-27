@@ -20,9 +20,11 @@ add_executable(DivisionCore
         RunningBehaviour.h
         Transform.cpp
         Transform.h
-        Vector2.cpp
         Vector2.h
-        Vector3Euler.cpp
         Vector3Euler.h
         Scene.cpp
-        Scene.h MessageArgs.h PrimitiveType.h HideFlags.h)
+        Scene.h
+        MessageArgs.h
+        PrimitiveType.h
+        HideFlags.h
+        GameController.h)

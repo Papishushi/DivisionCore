@@ -56,9 +56,9 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
         string tag;
         Transform transform;
 
-        sigslot::signal2<GameObject *, const MessageArgs&> SendMessageLocal;
-        sigslot::signal2<GameObject *, const MessageArgs&> SendMessageChildren;
-        sigslot::signal2<GameObject *, const MessageArgs&> SendMessageParent;
+        ExternDependencies::sigslot::signal2<GameObject *, const MessageArgs&> SendMessageLocal;
+        ExternDependencies::sigslot::signal2<GameObject *, const MessageArgs&> SendMessageChildren;
+        ExternDependencies::sigslot::signal2<GameObject *, const MessageArgs&> SendMessageParent;
 
         GameObject();
         explicit GameObject(string& name);
@@ -210,4 +210,3 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
     };
 }}}
 #endif //DIVISIONCORE_GAMEOBJECT_H
-

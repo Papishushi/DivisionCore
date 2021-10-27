@@ -1,5 +1,5 @@
 /**
-  * @file Vector2.cpp
+  * @file GameController.h
   * @author Daniel Molinero Lucas (Papishushi)
   * @section Copyright © <2021+> <Daniel Molinero Lucas (Papishushi)> MIT LICENSE
   * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
@@ -13,5 +13,43 @@
   * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
   * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   **/
+#ifndef DIVISIONCORE_GAMECONTROLLER_H
+#define DIVISIONCORE_GAMECONTROLLER_H
+#include "RunningBehaviour.h"
 
-#include "Vector2.h"
+namespace DivisionCore { namespace Core { namespace BehaviourSystem { namespace Components {
+    {
+    class GameController : protected DivisionCore::Core::BehaviourSystem::RunningBehaviour{
+        public:
+
+            static GameController * singleton;
+
+            GameController()
+            {
+                if(singleton == nullptr)
+                {
+                    singleton = this;
+                }
+                else
+                {
+                    Destroy(this) ;
+                }
+            };
+            explicit GameController(bool rewrite)
+            {
+                if(rewrite || singleton == nullptr)
+                {
+                    singleton = this;
+                }
+                else
+                {
+                    Destroy(this) ;
+                }
+            };
+            ~GameController()
+            {
+                singleton = nullptr;
+            }
+        };
+} } } } }
+#endif //DIVISIONCORE_GAMECONTROLLER_H
