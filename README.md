@@ -7,6 +7,6 @@ Division is inspired by Unity Core tools, but unlike Unity it's source code is c
 ### Useful Links
 
 >If you have experience programming, you might want to dive into the [Scripting API Reference](https://github.com/Papishushi/DivisionCore/wiki/).  
-Looking for a place to discuss with the community, debate future features, or get help when you get some errors? Check the [Forum](https://github.com/Papishushi/DivisionCore/discussions).  
-Is something not working as you expect it to? It might be a Known [Issue](https://github.com/Papishushi/DivisionCore/issues).   
+>Looking for a place to discuss with the community, debate future features, or get help when you get some errors? Check the [Forum](https://github.com/Papishushi/DivisionCore/discussions).  
+>Is something not working as you expect it to? It might be a Known [Issue](https://github.com/Papishushi/DivisionCore/issues).   
 
