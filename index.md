@@ -1,37 +1,11 @@
-## Welcome to GitHub Pages
+# Division Core
+Division is an approach in object based coding, applied to videogames and interactive content. Giving you a growing array of tools in continious development to create your own scripts.
 
-You can use the [editor on GitHub](https://github.com/Papishushi/DivisionCore/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+This set of tools is developed in C++, with a personal aim to make it CLI for .NET/C#.
+Division is inspired by Unity Core tools, but unlike Unity it's source code is completely open source so you can freely modify it and take the most advantage of these tools. I declare I have nothing to do with Unity, as I'm not employed or have any kind of links nor bad intentions with the development of this project. I'm just a guy trying to contribute to the creation of more open source developments.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+### Useful Links
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Papishushi/DivisionCore/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+>If you have experience programming, you might want to dive into the [Scripting API Reference](https://github.com/Papishushi/DivisionCore/wiki/).  
+>Looking for a place to discuss with the community, debate future features, or get help when you get some errors? Check the [Forum](https://github.com/Papishushi/DivisionCore/discussions).  
+>Is something not working as you expect it to? It might be a Known [Issue](https://github.com/Papishushi/DivisionCore/issues).   
