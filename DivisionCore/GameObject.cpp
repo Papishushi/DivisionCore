@@ -20,7 +20,9 @@
 #include "PrimitiveType.h"
 #include "GameObject.h"
 #include "RunningBehaviour.h"
-#include "EventHandling.h"
+#include "EventObserver.h"
+#include "EventEmitter.h"
+#include "EventHandler.h"
 
 #include <iterator>
 #include <list>
@@ -97,30 +99,62 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
         instancedGameObjects.remove(this);
     }
 
-    void GameObject::UpdateMessageLink()
+    list<EventHandling::EventHandler *> GameObject::UpdateMessageLink()
     {
-        void * pFunction;
+        void * pFunction = nullptr;
+
+        list<EventHandling::EventHandler *> handlers;
+
         list<RunningBehaviour *>::iterator it;
         list<Transform>::iterator itChildren;
-
         for (it = attachedComponents.begin(); it != attachedComponents.end(); ++it)
         {
             pFunction = reinterpret_cast<void *>((*it)->HookMessage(this, new MessageArgs("", true, nullptr, 0)));
-            SendMessageLocal.Bind((*it), reinterpret_cast<void (*)(GameObject, MessageArgs)>(pFunction));
+
+            if(pFunction)
+            {
+                EventHandling::EventHandler * handler = SendMessageLocal.Bind((*it), reinterpret_cast<void (*)(GameObject *, MessageArgs *)>(pFunction));
+
+                if(handler)
+                {
+                    handlers.push_back(handler);
+                }
+            }
+
         }
         for (itChildren = transform.children.begin(); itChildren != transform.children.begin(); ++itChildren)
         {
             for (it = itChildren->gameObject->attachedComponents.begin(); it != itChildren->gameObject->attachedComponents.end(); ++it)
             {
                 pFunction = reinterpret_cast<void *>((*it)->HookMessage(this, new MessageArgs("", true, nullptr, 0)));
-                SendMessageChildren.Bind((*it), reinterpret_cast<void (*)(GameObject, MessageArgs)>(pFunction));
+
+                if(pFunction)
+                {
+                    EventHandling::EventHandler * handler = SendMessageChildren.Bind((*it), reinterpret_cast<void (*)(GameObject *, MessageArgs *)>(pFunction));
+
+                    if(handler)
+                    {
+                        handlers.push_back(handler);
+                    }
+                }
             }
         }
         for (it = transform.parent->gameObject->attachedComponents.begin(); it != transform.parent->gameObject->attachedComponents.end(); ++it)
         {
             pFunction = reinterpret_cast<void *>((*it)->HookMessage(this, new MessageArgs("", true, nullptr, 0)));
-            SendMessageParent.Bind((*it), reinterpret_cast<void (*)(GameObject, MessageArgs)>(pFunction));
+
+            if(pFunction)
+            {
+                EventHandling::EventHandler * handler = SendMessageParent.Bind((*it), reinterpret_cast<void (*)(GameObject *, MessageArgs *)>(pFunction));
+
+                if(handler)
+                {
+                    handlers.push_back(handler);
+                }
+            }
         }
+
+        return handlers;
     }
 
     //Incomplete coding must finalize it

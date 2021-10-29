@@ -18,6 +18,7 @@
 #include "Behaviour.h"
 #include "GameObject.h"
 #include "MessageArgs.h"
+#include "EventObserver.h"
 #include <map>
 #include <iterator>
 #include <string>

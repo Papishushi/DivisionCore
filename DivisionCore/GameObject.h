@@ -18,7 +18,7 @@
 #include "Transform.h"
 #include "MessageArgs.h"
 #include "PrimitiveType.h"
-#include "EventHandling.h"
+#include "EventEmitter.h"
 
 #include <string>
 #include <list>
@@ -42,7 +42,7 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
         list<RunningBehaviour *> attachedComponents;
         bool isActive;
     protected:
-        void UpdateMessageLink();
+        list<EventHandling::EventHandler *> UpdateMessageLink();
     public:
         bool activeInHierarchy;
         inline bool activeSelf() const

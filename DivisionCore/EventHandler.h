@@ -1,5 +1,5 @@
 /**
-  * @file EventHandling.h
+  * @file EventHandler.h
   * @author Daniel Molinero Lucas (Papishushi)
   * @section Copyright © <2021+> <Daniel Molinero Lucas (Papishushi)> MIT LICENSE
   * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
@@ -13,8 +13,38 @@
   * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
   * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   **/
-#ifndef DIVISIONCORE_EVENTHANDLING_H
-#define DIVISIONCORE_EVENTHANDLING_H
+#ifndef DIVISIONCORE_EVENTHANDLER_H
+#define DIVISIONCORE_EVENTHANDLER_H
 
+namespace DivisionCore { namespace Core { namespace EntitySystem{
+            class GameObject;
+        }}}
+namespace DivisionCore { namespace Core { namespace BehaviourSystem{
+            class RunningBehaviour;
+        }}}
 
-#endif //DIVISIONCORE_EVENTHANDLING_H
+namespace DivisionCore { namespace Core {
+            struct MessageArgs;
+        }}
+
+namespace DivisionCore { namespace Core { namespace EventHandling {
+
+            template <typename T, typename C>
+            class EventEmitter;
+
+            struct EventHandler {
+            public:
+                BehaviourSystem::RunningBehaviour * associattedBehaviour;
+                bool unbind;
+                bool isObserving;
+
+                void (*pFunction)(EntitySystem::GameObject *, MessageArgs *);
+
+                EventEmitter <EntitySystem::GameObject, MessageArgs> *emitter;
+
+                EventHandler() = delete;
+                EventHandler(void (*_pFunction)(EntitySystem::GameObject *, MessageArgs *), EventEmitter <EntitySystem::GameObject, MessageArgs> * _emitter);
+            };
+        }}}
+#endif //DIVISIONCORE_EVENTHANDLER_H
+

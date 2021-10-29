@@ -1,5 +1,5 @@
 /**
-  * @file EventHandling.h
+  * @file EventHandler.cpp
   * @author Daniel Molinero Lucas (Papishushi)
   * @section Copyright © <2021+> <Daniel Molinero Lucas (Papishushi)> MIT LICENSE
   * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
@@ -13,8 +13,49 @@
   * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
   * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   **/
-#ifndef DIVISIONCORE_EVENTHANDLING_H
-#define DIVISIONCORE_EVENTHANDLING_H
+
+#include "EventHandler.h"
+#include "GameObject.h"
+#include "RunningBehaviour.h"
+
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#include <thread>
+#endif
 
 
-#endif //DIVISIONCORE_EVENTHANDLING_H
+
+namespace DivisionCore { namespace Core { namespace EventHandling {
+
+    EventHandling::EventHandler::EventHandler(void (*_pFunction)(EntitySystem::GameObject *, MessageArgs *),EventEmitter<GameObject, MessageArgs> * _emitter) {
+        pFunction = _pFunction;
+        emitter = _emitter;
+
+        associattedBehaviour = dynamic_cast<BehaviourSystem::RunningBehaviour *>(emitter);
+
+        while (true) {
+            isObserving = true;
+
+#if _WIN32
+            Sleep(5);
+#elif __linux__
+            using namespace std::literals;
+            std::this_thread::sleep_for(5ms);
+#else __APPLE__
+            sleep(0.005f);
+#endif
+
+            if (emitter->IsEmitting()) {
+                pFunction(emitter->GetInput1(), emitter->GetInput2());
+            }
+
+            if (unbind) {
+                isObserving = false;
+                unbind = false;
+                return;
+            }
+        }
+    }
+}}}
