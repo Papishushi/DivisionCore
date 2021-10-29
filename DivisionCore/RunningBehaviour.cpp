@@ -32,38 +32,41 @@ namespace  DivisionCore { namespace Core { namespace BehaviourSystem
         out = methodsLookUpTable.find(search)->second;
     }
 
-    void RunningBehaviour::ProcessLookUpValue(GameObject *source, const MessageArgs &args, const MethodsEnum &value)
+    void RunningBehaviour::ProcessLookUpValue(GameObject *source, const MessageArgs * args, const MethodsEnum &value)
     {
         switch (value)
         {
             case MethodsEnum::Destroy:
-                if(reinterpret_cast<Component * >(args.params[0]) != nullptr)
+                if(reinterpret_cast<Component * >(args->params[0]) != nullptr)
                 {
-                    Destroy(reinterpret_cast<Component * >(args.params[0]));
+                    Destroy(reinterpret_cast<Component * >(args->params[0]));
                 }
                 else
                 {
-                    Object<GameObject>::Destroy(reinterpret_cast<GameObject * >(args.params[0]));
+                    Object<GameObject>::Destroy(reinterpret_cast<GameObject * >(args->params[0]));
                 }
 
             case MethodsEnum::HookMessage:
                 HookMessage(source, args);
                 break;
+            default:
+                break;
         }
     }
 
-    void RunningBehaviour::HookMessage(GameObject *source, const MessageArgs &args)
+    void * RunningBehaviour::HookMessage(GameObject *source, const MessageArgs *args)
     {
         MethodsEnum lookUpValue;
-        SearchLookUpTable(lookUpValue, args.methodName);
+        SearchLookUpTable(lookUpValue, args->methodName);
 
-        if(!args.selfApply && this->gameObject != source || args.selfApply)
+        if(!args->selfApply && this->gameObject != source || args->selfApply)
         {
             ProcessLookUpValue(source, args, lookUpValue);
+            return nullptr;
         }
         else
         {
-            return;
+            return nullptr;
         }
     }
 } } }

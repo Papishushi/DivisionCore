@@ -14,12 +14,15 @@
   * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   **/
 
-#include "RunningBehaviour.h"
+
 #include "Transform.h"
 #include "MessageArgs.h"
 #include "PrimitiveType.h"
 #include "GameObject.h"
+#include "RunningBehaviour.h"
+#include "EventHandling.h"
 
+#include <iterator>
 #include <list>
 
 using namespace std;
@@ -96,26 +99,27 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
 
     void GameObject::UpdateMessageLink()
     {
-        SendMessageLocal.disconnect_all();
-        SendMessageChildren.disconnect_all();
-        SendMessageParent.disconnect_all();
-
-        list<RunningBehaviour*>::iterator it;
+        void * pFunction;
+        list<RunningBehaviour *>::iterator it;
         list<Transform>::iterator itChildren;
+
         for (it = attachedComponents.begin(); it != attachedComponents.end(); ++it)
         {
-            SendMessageLocal.connect(*it, &RunningBehaviour::HookMessage);
+            pFunction = reinterpret_cast<void *>((*it)->HookMessage(this, new MessageArgs("", true, nullptr, 0)));
+            SendMessageLocal.Bind((*it), reinterpret_cast<void (*)(GameObject, MessageArgs)>(pFunction));
         }
         for (itChildren = transform.children.begin(); itChildren != transform.children.begin(); ++itChildren)
         {
             for (it = itChildren->gameObject->attachedComponents.begin(); it != itChildren->gameObject->attachedComponents.end(); ++it)
             {
-                SendMessageChildren.connect(*it, &RunningBehaviour::HookMessage);
+                pFunction = reinterpret_cast<void *>((*it)->HookMessage(this, new MessageArgs("", true, nullptr, 0)));
+                SendMessageChildren.Bind((*it), reinterpret_cast<void (*)(GameObject, MessageArgs)>(pFunction));
             }
         }
         for (it = transform.parent->gameObject->attachedComponents.begin(); it != transform.parent->gameObject->attachedComponents.end(); ++it)
         {
-            SendMessageParent.connect(*it, &RunningBehaviour::HookMessage);
+            pFunction = reinterpret_cast<void *>((*it)->HookMessage(this, new MessageArgs("", true, nullptr, 0)));
+            SendMessageParent.Bind((*it), reinterpret_cast<void (*)(GameObject, MessageArgs)>(pFunction));
         }
     }
 

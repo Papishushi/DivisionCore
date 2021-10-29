@@ -18,7 +18,7 @@
 #include "Transform.h"
 #include "MessageArgs.h"
 #include "PrimitiveType.h"
-#include "sigslot.h"
+#include "EventHandling.h"
 
 #include <string>
 #include <list>
@@ -41,7 +41,7 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
         static list<GameObject *> instancedGameObjects;
         list<RunningBehaviour *> attachedComponents;
         bool isActive;
-
+    protected:
         void UpdateMessageLink();
     public:
         bool activeInHierarchy;
@@ -56,9 +56,9 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
         string tag;
         Transform transform;
 
-        ExternDependencies::sigslot::signal2<GameObject *, const MessageArgs&> SendMessageLocal;
-        ExternDependencies::sigslot::signal2<GameObject *, const MessageArgs&> SendMessageChildren;
-        ExternDependencies::sigslot::signal2<GameObject *, const MessageArgs&> SendMessageParent;
+        EventHandling::EventEmitter<GameObject, MessageArgs > SendMessageLocal;
+        EventHandling::EventEmitter<GameObject, MessageArgs > SendMessageChildren;
+        EventHandling::EventEmitter<GameObject, MessageArgs > SendMessageParent;
 
         GameObject();
         explicit GameObject(string& name);

@@ -15,24 +15,17 @@
   **/
 #ifndef DIVISIONCORE_TRANSFORM_H
 #define DIVISIONCORE_TRANSFORM_H
-#include "Object.h"
+#include "Component.h"
 #include "Vector2.h"
 #include "Vector3Euler.h"
-#include "Component.h"
-
-using std::tie;
-
-using DivisionCore::Vectors::Vector2 ;
-using DivisionCore::Vectors::Vector3Euler ;
 
 namespace DivisionCore { namespace Core { namespace BehaviourSystem { namespace Components
 {
-    class Transform : public Component
-    {
+    class Transform : public Component{
     public:
-        Vector2 position;
-        Vector3Euler rotation;
-        Vector2 scale;
+        DivisionCore::Vectors::Vector2 position;
+        DivisionCore::Vectors::Vector3Euler rotation;
+        DivisionCore::Vectors::Vector2 scale;
 
         Transform * parent;
         list<Transform> children;
@@ -42,11 +35,11 @@ namespace DivisionCore { namespace Core { namespace BehaviourSystem { namespace 
 
         inline bool operator == (const Transform& other) const
         {
-            return tie(position, rotation, scale) == tie(other.position, other.rotation, other.scale);
+            return std::tie(position, rotation, scale) == std::tie(other.position, other.rotation, other.scale);
         }
         inline bool operator != (const Transform& other) const
         {
-            return tie(position, rotation, scale) != tie(other.position, other.rotation, other.scale);
+            return std::tie(position, rotation, scale) != std::tie(other.position, other.rotation, other.scale);
         }
     };
 } } } }

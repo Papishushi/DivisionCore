@@ -27,4 +27,5 @@ add_executable(DivisionCore
         MessageArgs.h
         PrimitiveType.h
         HideFlags.h
-        GameController.h)
+        GameController.h
+        EventHandling.h)

@@ -16,7 +16,6 @@
 #ifndef DIVISIONCORE_COMPONENT_H
 #define DIVISIONCORE_COMPONENT_H
 #include "Object.h"
-#include "sigslot.h"
 #include "MessageArgs.h"
 #include <memory>
 #include <string>
@@ -52,9 +51,9 @@ namespace DivisionCore { namespace Core { namespace BehaviourSystem
             return tag == _tag;
         }
 
-        void SendMessageLocal(GameObject * emisor , const MessageArgs& args) const;
-        void SendMessageChildren(GameObject * emisor, const MessageArgs& args) const;
-        void SendMessageParent(GameObject * emisor, const MessageArgs& args) const;
+        void SendMessageLocal(GameObject * emisor, MessageArgs * args) const;
+        void SendMessageChildren(GameObject * emisor, MessageArgs * args) const;
+        void SendMessageParent(GameObject * emisor, MessageArgs * args) const;
 
         template <typename T> bool TryGetComponent(T& outComponent);
 

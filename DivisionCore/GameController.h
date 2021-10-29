@@ -18,7 +18,7 @@
 #include "RunningBehaviour.h"
 
 namespace DivisionCore { namespace Core { namespace BehaviourSystem { namespace Components {
-    {
+
     class GameController : protected DivisionCore::Core::BehaviourSystem::RunningBehaviour{
         public:
 
@@ -34,7 +34,7 @@ namespace DivisionCore { namespace Core { namespace BehaviourSystem { namespace 
                 {
                     Destroy(this) ;
                 }
-            };
+            }
             explicit GameController(bool rewrite)
             {
                 if(rewrite || singleton == nullptr)
@@ -45,11 +45,11 @@ namespace DivisionCore { namespace Core { namespace BehaviourSystem { namespace 
                 {
                     Destroy(this) ;
                 }
-            };
+            }
             ~GameController()
             {
                 singleton = nullptr;
             }
         };
-} } } } }
+ } } } }
 #endif //DIVISIONCORE_GAMECONTROLLER_H

@@ -15,8 +15,6 @@
   **/
 
 #include "GameObject.h"
-#include "sigslot.h"
-#include "Component.h"
 
 using DivisionCore::Core::EntitySystem::GameObject;
 
@@ -33,16 +31,16 @@ namespace DivisionCore { namespace Core { namespace BehaviourSystem
         tag = nullptr;
     }
 
-    void Component::SendMessageLocal(GameObject * emisor, const MessageArgs & args) const {
-        gameObject->SendMessageLocal.emit(emisor,args);
+    void Component::SendMessageLocal(GameObject * emisor, MessageArgs * args) const {
+        gameObject->SendMessageLocal.Emit(emisor,args);
     }
 
-    void Component::SendMessageChildren(GameObject * emisor, const MessageArgs & args) const {
-        gameObject->SendMessageChildren.emit(emisor,args);
+    void Component::SendMessageChildren(GameObject * emisor, MessageArgs * args) const {
+        gameObject->SendMessageChildren.Emit(emisor,args);
     }
 
-    void Component::SendMessageParent(GameObject * emisor, const MessageArgs & args) const {
-        gameObject->SendMessageParent.emit(emisor,args);
+    void Component::SendMessageParent(GameObject * emisor, MessageArgs * args) const {
+        gameObject->SendMessageParent.Emit(emisor,args);
     }
 
     template<typename T>

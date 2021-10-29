@@ -18,16 +18,16 @@
 #include "Behaviour.h"
 #include "GameObject.h"
 #include "MessageArgs.h"
-#include "sigslot.h"
 #include <map>
 #include <iterator>
 #include <string>
 
 using DivisionCore::Core::EntitySystem::GameObject;
+using DivisionCore::Core::EventHandling::EventObserver;
 
 namespace DivisionCore{ namespace Core { namespace BehaviourSystem
 {
-    class RunningBehaviour : public Behaviour, public ExternDependencies::sigslot::has_slots<>
+class RunningBehaviour : public Behaviour, public EventObserver<GameObject, MessageArgs>
     {
     private:
         enum class MethodsEnum
@@ -46,7 +46,7 @@ namespace DivisionCore{ namespace Core { namespace BehaviourSystem
 
         virtual void SearchLookUpTable(MethodsEnum &out, const string& search);
 
-        virtual void ProcessLookUpValue(GameObject *source, const MessageArgs &args,const MethodsEnum &value) ;
+        virtual void ProcessLookUpValue(GameObject *source, const MessageArgs *args, const MethodsEnum &value) ;
 
         virtual void Awake();
         virtual void Start();
@@ -56,7 +56,7 @@ namespace DivisionCore{ namespace Core { namespace BehaviourSystem
     public:
         RunningBehaviour() = default;
 
-        virtual void HookMessage(GameObject * source, const MessageArgs& args) ;
+        void * HookMessage(GameObject * source, const MessageArgs* args) ;
     };
 }}}
 #endif //DIVISIONCORE_RUNNINGBEHAVIOUR_H
