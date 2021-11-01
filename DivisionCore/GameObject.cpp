@@ -101,7 +101,7 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
 
     list<EventHandling::EventHandler *> GameObject::UpdateMessageLink()
     {
-        void * pFunction = nullptr;
+        void (* pFunction) (GameObject*, MessageArgs*) = nullptr;
 
         list<EventHandling::EventHandler *> handlers;
 
@@ -109,11 +109,11 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
         list<Transform>::iterator itChildren;
         for (it = attachedComponents.begin(); it != attachedComponents.end(); ++it)
         {
-            pFunction = reinterpret_cast<void *>((*it)->HookMessage(this, new MessageArgs("", true, nullptr, 0)));
+            pFunction = (*it)->GetHook();
 
             if(pFunction)
             {
-                EventHandling::EventHandler * handler = SendMessageLocal.Bind((*it), reinterpret_cast<void (*)(GameObject *, MessageArgs *)>(pFunction));
+                EventHandling::EventHandler * handler = SendMessageLocal.Bind(*it, pFunction);
 
                 if(handler)
                 {
@@ -126,11 +126,11 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
         {
             for (it = itChildren->gameObject->attachedComponents.begin(); it != itChildren->gameObject->attachedComponents.end(); ++it)
             {
-                pFunction = reinterpret_cast<void *>((*it)->HookMessage(this, new MessageArgs("", true, nullptr, 0)));
+                pFunction = (*it)->GetHook();
 
                 if(pFunction)
                 {
-                    EventHandling::EventHandler * handler = SendMessageChildren.Bind((*it), reinterpret_cast<void (*)(GameObject *, MessageArgs *)>(pFunction));
+                    EventHandling::EventHandler * handler = SendMessageChildren.Bind(*it, pFunction);
 
                     if(handler)
                     {
@@ -141,11 +141,11 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
         }
         for (it = transform.parent->gameObject->attachedComponents.begin(); it != transform.parent->gameObject->attachedComponents.end(); ++it)
         {
-            pFunction = reinterpret_cast<void *>((*it)->HookMessage(this, new MessageArgs("", true, nullptr, 0)));
+            pFunction = (*it)->GetHook();
 
             if(pFunction)
             {
-                EventHandling::EventHandler * handler = SendMessageParent.Bind((*it), reinterpret_cast<void (*)(GameObject *, MessageArgs *)>(pFunction));
+                EventHandling::EventHandler * handler = SendMessageParent.Bind(*it, pFunction);
 
                 if(handler)
                 {

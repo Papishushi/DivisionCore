@@ -15,12 +15,14 @@
   **/
 #ifndef DIVISIONCORE_MESSAGEARGS_H
 #define DIVISIONCORE_MESSAGEARGS_H
+#include "string"
+
 namespace DivisionCore { namespace Core
 {
     struct MessageArgs
     {
     public:
-        string methodName;
+        string methodName{};
         bool selfApply;
         void* params[];
 

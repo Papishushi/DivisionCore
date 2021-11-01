@@ -32,7 +32,7 @@ namespace  DivisionCore { namespace Core { namespace BehaviourSystem
         out = methodsLookUpTable.find(search)->second;
     }
 
-    void RunningBehaviour::ProcessLookUpValue(GameObject *source, const MessageArgs * args, const MethodsEnum &value)
+    void RunningBehaviour::ProcessLookUpValue(GameObject * source, const MessageArgs * args, const MethodsEnum &value)
     {
         switch (value)
         {
@@ -45,16 +45,12 @@ namespace  DivisionCore { namespace Core { namespace BehaviourSystem
                 {
                     Object<GameObject>::Destroy(reinterpret_cast<GameObject * >(args->params[0]));
                 }
-
-            case MethodsEnum::HookMessage:
-                HookMessage(source, args);
-                break;
             default:
                 break;
         }
     }
 
-    void * RunningBehaviour::HookMessage(GameObject *source, const MessageArgs *args)
+    void RunningBehaviour::HookMessage(GameObject *source, const MessageArgs *args)
     {
         MethodsEnum lookUpValue;
         SearchLookUpTable(lookUpValue, args->methodName);
@@ -62,11 +58,11 @@ namespace  DivisionCore { namespace Core { namespace BehaviourSystem
         if(!args->selfApply && this->gameObject != source || args->selfApply)
         {
             ProcessLookUpValue(source, args, lookUpValue);
-            return nullptr;
+            return;
         }
         else
         {
-            return nullptr;
+            return;
         }
     }
 } } }

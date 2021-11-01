@@ -44,6 +44,7 @@ class RunningBehaviour : public Behaviour, public EventObserver<GameObject, Mess
             methodsLookUpTable.insert(std::make_pair("Destroy", MethodsEnum::Destroy));
             methodsLookUpTable.insert(std::make_pair("HookMessage", MethodsEnum::HookMessage));
         }
+        void HookMessage(GameObject * source, const MessageArgs* args) ;
 
         virtual void SearchLookUpTable(MethodsEnum &out, const string& search);
 
@@ -54,10 +55,14 @@ class RunningBehaviour : public Behaviour, public EventObserver<GameObject, Mess
         virtual void FixedUpdate();
         virtual void Update();
         virtual void LateUpdate();
-    public:
-        RunningBehaviour() = default;
 
-        void * HookMessage(GameObject * source, const MessageArgs* args) ;
+    public:
+    RunningBehaviour() = default;
+    template <typename T = void (*) (GameObject *, MessageArgs *)>
+        inline T GetHook()
+        {
+            return (T)&HookMessage();
+        }
     };
 }}}
 #endif //DIVISIONCORE_RUNNINGBEHAVIOUR_H

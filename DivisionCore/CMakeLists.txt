@@ -28,4 +28,4 @@ add_executable(DivisionCore
         PrimitiveType.h
         HideFlags.h
         GameController.h
-        EventHandling.h EventHandler.h EventObserver.h EventEmitter.h EventHandler.cpp)
+        EventHandler.h EventObserver.h EventEmitter.h EventHandler.cpp)
