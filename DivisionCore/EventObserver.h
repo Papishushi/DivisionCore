@@ -25,6 +25,12 @@
 #include <thread>
 #endif
 
+namespace DivisionCore { namespace Core { namespace BehaviourSystem {
+    class RunningBehaviour;
+}}}
+
+using DivisionCore::Core::BehaviourSystem::RunningBehaviour;
+
 namespace DivisionCore { namespace Core { namespace EventHandling {
 
             template<typename T, typename C>
@@ -33,7 +39,7 @@ namespace DivisionCore { namespace Core { namespace EventHandling {
             template<typename T, typename C>
             class EventObserver {
             public:
-                virtual EventHandler *Bind(void (*pFunction)(EntitySystem::GameObject *, MessageArgs *), EventEmitter <T, C> *emitter) {
+                virtual EventHandler *Bind(void (RunningBehaviour::*pFunction) (GameObject *,const MessageArgs *), EventEmitter <T, C> *emitter) {
                     auto *handler = new EventHandler(pFunction, emitter);
                     return handler;
                 }

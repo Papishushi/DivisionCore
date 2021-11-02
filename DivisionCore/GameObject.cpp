@@ -101,7 +101,7 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
 
     list<EventHandling::EventHandler *> GameObject::UpdateMessageLink()
     {
-        void (* pFunction) (GameObject*, MessageArgs*) = nullptr;
+        void (RunningBehaviour::*pFunction) (GameObject *,const MessageArgs *) = nullptr;
 
         list<EventHandling::EventHandler *> handlers;
 

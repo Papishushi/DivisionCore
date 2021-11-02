@@ -38,12 +38,12 @@ namespace DivisionCore { namespace Core { namespace EventHandling {
                 bool unbind;
                 bool isObserving;
 
-                void (*pFunction)(EntitySystem::GameObject *, MessageArgs *);
+                void (BehaviourSystem::RunningBehaviour::* pFunction) (GameObject *,const MessageArgs *);
 
                 EventEmitter <EntitySystem::GameObject, MessageArgs> *emitter;
 
                 EventHandler() = delete;
-                EventHandler(void (*_pFunction)(EntitySystem::GameObject *, MessageArgs *), EventEmitter <EntitySystem::GameObject, MessageArgs> * _emitter);
+                EventHandler(void (BehaviourSystem::RunningBehaviour::*_pFunction) (GameObject *,const MessageArgs *), EventEmitter <EntitySystem::GameObject, MessageArgs> * _emitter);
             };
         }}}
 #endif //DIVISIONCORE_EVENTHANDLER_H

@@ -51,7 +51,7 @@ namespace DivisionCore { namespace Core { namespace EventHandling {
                     input1 = _input1;
                     input2 = _input2;
                 }
-                virtual EventHandler * Bind(EventObserver<T,C> * eventObserver, void (*pFunction)(EntitySystem::GameObject *, MessageArgs *))
+                virtual EventHandler * Bind(EventObserver<T,C> * eventObserver, void (RunningBehaviour::*pFunction) (GameObject *,const MessageArgs *))
                 {
                     return eventObserver->Bind(pFunction, this);
                 }

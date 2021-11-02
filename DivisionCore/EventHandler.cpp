@@ -25,37 +25,35 @@
 #include <thread>
 #endif
 
-
-
 namespace DivisionCore { namespace Core { namespace EventHandling {
 
-    EventHandling::EventHandler::EventHandler(void (*_pFunction)(EntitySystem::GameObject *, MessageArgs *),EventEmitter<GameObject, MessageArgs> * _emitter) {
-        pFunction = _pFunction;
-        emitter = _emitter;
+            EventHandler::EventHandler(void (BehaviourSystem::RunningBehaviour::*_pFunction) (GameObject *,const MessageArgs *), EventEmitter<EntitySystem::GameObject, MessageArgs> *_emitter) {
+                pFunction = _pFunction;
+                emitter = _emitter;
 
-        associattedBehaviour = dynamic_cast<BehaviourSystem::RunningBehaviour *>(emitter);
-
-        while (true) {
-            isObserving = true;
+                associattedBehaviour = dynamic_cast<BehaviourSystem::RunningBehaviour *>(emitter);
+                pFunction = _pFunction;
+                while (true) {
+                    isObserving = true;
 
 #if _WIN32
-            Sleep(5);
+                    Sleep(5);
 #elif __linux__
-            using namespace std::literals;
+                    using namespace std::literals;
             std::this_thread::sleep_for(5ms);
 #else __APPLE__
             sleep(0.005f);
 #endif
+                    if (emitter->IsEmitting()) {
+                        //Member hook pointer call
+                        (associattedBehaviour->*pFunction)(emitter->GetInput1(), emitter->GetInput2());
+                    }
 
-            if (emitter->IsEmitting()) {
-                pFunction(emitter->GetInput1(), emitter->GetInput2());
+                    if (unbind) {
+                        isObserving = false;
+                        unbind = false;
+                        return;
+                    }
+                }
             }
-
-            if (unbind) {
-                isObserving = false;
-                unbind = false;
-                return;
-            }
-        }
-    }
-}}}
+        }}}
