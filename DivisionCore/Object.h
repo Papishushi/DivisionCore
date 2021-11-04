@@ -40,12 +40,10 @@ namespace DivisionCore { namespace Core
     {
     protected:
         typedef uint_least8_t dynamic_byte;
-    private:
-        //PROBLEM WITH STATIC TEMPLATE CLASS PROPERTY WITH TEMPLATE CLASS AS TYPENAME, DOESN'T LINK FILES CLAIMING UNRESOLVED EXTERNAL
-        static TemplateDictionary<dynamic_byte, Object, T> idInstanceDictionary;
-
         static Dictionary<dynamic_byte, string> hideFlagsLookupTable;
 
+        static TemplateDictionary<dynamic_byte, Object, T> idInstanceDictionary;
+    private:
         dynamic_byte instanceID;
     public:
         HideFlags hideFlags;
@@ -53,6 +51,9 @@ namespace DivisionCore { namespace Core
 
         Object()
         {
+            (void)&hideFlagsLookupTable;
+            (void)&idInstanceDictionary;
+
             if (hideFlagsLookupTable.Empty())
             {
                 hideFlagsLookupTable.Add(KeyValuePair<dynamic_byte, string>::MakePair((dynamic_byte)HideFlags::HIDDEN, "Hidden"));

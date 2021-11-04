@@ -58,7 +58,7 @@ class RunningBehaviour : public Behaviour, public EventObserver<GameObject, Mess
 
         void (RunningBehaviour::*pHook) (GameObject *,const MessageArgs *) = &RunningBehaviour::HookMessage;
     public:
-    RunningBehaviour() = default;
+    RunningBehaviour();
     template <typename T = void (RunningBehaviour::*) (GameObject *,const MessageArgs *)>
         inline T GetHook()
         {

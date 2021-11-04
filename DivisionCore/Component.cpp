@@ -21,11 +21,17 @@ using DivisionCore::Core::EntitySystem::GameObject;
 namespace DivisionCore { namespace Core { namespace BehaviourSystem
 {
     Component::Component() {
+        (void)&hideFlagsLookupTable;
+        (void)&idInstanceDictionary;
+
         gameObject = new GameObject();
         transform = &(gameObject->transform);
         tag = nullptr;
     }
     Component::Component(GameObject * parent) {
+        (void)&hideFlagsLookupTable;
+        (void)&idInstanceDictionary;
+
         gameObject = parent;
         transform = &(parent->transform);
         tag = nullptr;

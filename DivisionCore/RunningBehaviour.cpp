@@ -18,10 +18,27 @@
 #include "RunningBehaviour.h"
 #include <string>
 
+using namespace DivisionCore::Core;
 using namespace DivisionCore::Core::EntitySystem;
+using namespace DivisionCore::Core::BehaviourSystem;
+
+using DivisionCore::Containers::TemplateDictionary;
+using DivisionCore::Containers::Dictionary;
+
+template <typename T> TemplateDictionary<typename Object<T>::dynamic_byte,Object, T > Object<T>::idInstanceDictionary;
+template <typename T> Dictionary<typename Object<T>::dynamic_byte, string> Object<T>::hideFlagsLookupTable;
+
+Dictionary<string, uint_least8_t > RunningBehaviour::methodsLookUpTable;
 
 namespace  DivisionCore { namespace Core { namespace BehaviourSystem
 {
+
+    RunningBehaviour::RunningBehaviour()
+    {
+        (void) &Object<Component>::idInstanceDictionary;
+        (void) &hideFlagsLookupTable;
+    }
+
     void RunningBehaviour::SearchLookUpTable(RunningBehaviour::MethodsEnum &out, const string &search)
     {
         if (methodsLookUpTable.Empty())
@@ -65,5 +82,25 @@ namespace  DivisionCore { namespace Core { namespace BehaviourSystem
             return;
         }
     }
-} } }
 
+    void RunningBehaviour::Awake() {
+
+    }
+
+    void RunningBehaviour::Start() {
+
+    }
+
+    void RunningBehaviour::FixedUpdate() {
+
+    }
+
+    void RunningBehaviour::Update() {
+
+    }
+
+    void RunningBehaviour::LateUpdate() {
+
+    }
+
+} } }

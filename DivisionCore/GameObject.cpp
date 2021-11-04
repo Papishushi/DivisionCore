@@ -22,12 +22,23 @@
 #include <list>
 
 using namespace std;
+using namespace DivisionCore::Core;
 using namespace DivisionCore::Core::BehaviourSystem;
 using namespace DivisionCore::Core::BehaviourSystem::Components;
+
+using DivisionCore::Containers::TemplateDictionary;
+using DivisionCore::Containers::Dictionary;
+
+template <typename T> TemplateDictionary<typename Object<T>::dynamic_byte,Object, T > Object<T>::idInstanceDictionary;
+template <typename T> Dictionary<typename Object<T>::dynamic_byte, string> Object<T>::hideFlagsLookupTable;
+list<GameObject *> EntitySystem::GameObject::instancedGameObjects;
 
 namespace DivisionCore { namespace Core { namespace EntitySystem
 {
     GameObject::GameObject() {
+        (void)&hideFlagsLookupTable;
+        (void)&idInstanceDictionary;
+
         transform = Transform();
         instancedGameObjects.push_back(this);
         isActive = true;
@@ -42,6 +53,9 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
     }
 
     GameObject::GameObject(string &name) {
+        (void)&hideFlagsLookupTable;
+        (void)&idInstanceDictionary;
+
         this->name = name;
         transform = Transform();
         instancedGameObjects.push_back(this);
@@ -57,6 +71,9 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
     }
 
     GameObject::GameObject(string &name, Transform &transform) {
+        (void)&hideFlagsLookupTable;
+        (void)&idInstanceDictionary;
+
         this->name = name;
         hideFlags = HideFlags::VISIBLE;
         this->transform = transform;
@@ -73,6 +90,9 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
     }
 
     GameObject::GameObject(string &name, Transform &transform, const list <RunningBehaviour *> &components) {
+        (void)&hideFlagsLookupTable;
+        (void)&idInstanceDictionary;
+
         this->name = name;
         hideFlags = HideFlags::VISIBLE;
         this->transform = transform;
