@@ -16,15 +16,9 @@
 
 
 #include "Transform.h"
-#include "MessageArgs.h"
 #include "PrimitiveType.h"
 #include "GameObject.h"
 #include "RunningBehaviour.h"
-#include "EventObserver.h"
-#include "EventEmitter.h"
-#include "EventHandler.h"
-
-#include <iterator>
 #include <list>
 
 using namespace std;
@@ -101,7 +95,7 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
 
     list<EventHandling::EventHandler *> GameObject::UpdateMessageLink()
     {
-        void (RunningBehaviour::*pFunction) (GameObject *,const MessageArgs *) = nullptr;
+        void (RunningBehaviour::*pFunction) (GameObject *,const MessageArgs *);
 
         list<EventHandling::EventHandler *> handlers;
 

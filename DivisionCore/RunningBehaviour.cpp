@@ -24,12 +24,12 @@ namespace  DivisionCore { namespace Core { namespace BehaviourSystem
 {
     void RunningBehaviour::SearchLookUpTable(RunningBehaviour::MethodsEnum &out, const string &search)
     {
-        if (methodsLookUpTable.empty())
+        if (methodsLookUpTable.Empty())
         {
             InitializeLookUpTable();
         }
 
-        out = methodsLookUpTable.find(search)->second;
+        out = (RunningBehaviour::MethodsEnum)*methodsLookUpTable.FindValue(search);
     }
 
     void RunningBehaviour::ProcessLookUpValue(GameObject * source, const MessageArgs * args, const MethodsEnum &value)

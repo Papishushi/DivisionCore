@@ -33,16 +33,16 @@ class RunningBehaviour : public Behaviour, public EventObserver<GameObject, Mess
     private:
         enum class MethodsEnum
         {
-            Destroy,
-            HookMessage
+            Destroy = 0,
+            HookMessage = 1
         };
     protected:
-        static map<string, MethodsEnum> methodsLookUpTable;
+        static Dictionary<string, uint_least8_t > methodsLookUpTable;
 
         inline virtual void InitializeLookUpTable() const
         {
-            methodsLookUpTable.insert(std::make_pair("Destroy", MethodsEnum::Destroy));
-            methodsLookUpTable.insert(std::make_pair("HookMessage", MethodsEnum::HookMessage));
+            methodsLookUpTable.Add(Dictionary<string, uint_least8_t>::MakePair("Destroy", (uint_least8_t)MethodsEnum::Destroy));
+            methodsLookUpTable.Add(Dictionary<string, uint_least8_t>::MakePair("HookMessage", (uint_least8_t)MethodsEnum::HookMessage));
         }
         void HookMessage(GameObject * source, const MessageArgs* args);
 

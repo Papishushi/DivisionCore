@@ -31,4 +31,4 @@ add_executable(DivisionCore
         EventHandler.h
         EventObserver.h
         EventEmitter.h
-        EventHandler.cpp)
+        EventHandler.cpp Dictionary.h)

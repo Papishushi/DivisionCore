@@ -16,6 +16,10 @@
 #ifndef DIVISIONCORE_OBJECT_H
 #define DIVISIONCORE_OBJECT_H
 #include "HideFlags.h"
+#include "Dictionary.h"
+
+using DivisionCore::Containers::Dictionary;
+
 #include <algorithm>
 #include <iostream>
 #include <cstdint>
@@ -23,69 +27,56 @@
 #include <list>
 #include <iterator>
 #include <tuple>
-#include <map>
 
 namespace DivisionCore { namespace Core
 {
     using std::string;
-    using std::map;
-    using std::pair;
     using std::tie;
 
     template <typename T> class Object
     {
-        typedef uint8_t byte;
     protected:
         typedef uint_least8_t dynamic_byte;
     private:
-        static map<dynamic_byte, Object> idInstanceDictionary;
+        static Dictionary<dynamic_byte, Object<T>> idInstanceDictionary;
 
-        static map<HideFlags, string> hideFlagsLookupTable;
+        static Dictionary<dynamic_byte, string> hideFlagsLookupTable;
 
         dynamic_byte instanceID;
     public:
         HideFlags hideFlags;
         string name;
 
-        Object() {
-            if (hideFlagsLookupTable.empty())
+        Object()
+        {
+            if (hideFlagsLookupTable.Empty())
             {
-                hideFlagsLookupTable.insert(std::make_pair(HideFlags::HIDDEN, "Hidden"));
-                hideFlagsLookupTable.insert(std::make_pair(HideFlags::VISIBLE, "Visible"));
+                hideFlagsLookupTable.Add(Dictionary<dynamic_byte, string>::MakePair((dynamic_byte)HideFlags::HIDDEN, "Hidden"));
+                hideFlagsLookupTable.Add(Dictionary<dynamic_byte, string>::MakePair((dynamic_byte)HideFlags::VISIBLE, "Visible"));
             }
 
-            if (idInstanceDictionary.empty())
+            if (idInstanceDictionary.Empty())
             {
                 instanceID = 0;
 
                 name = "Object" + instanceID;
                 hideFlags = HideFlags::VISIBLE;
 
-                idInstanceDictionary.insert(std::make_pair(instanceID, *this));
+                idInstanceDictionary.Add(Dictionary<dynamic_byte, Object<T>>::MakePair(instanceID, *this));
             }
             else
             {
-                dynamic_byte counter = 0;
+                instanceID = idInstanceDictionary.Size();;
 
-                typename map<dynamic_byte ,Object>::iterator it;
-                for (it = idInstanceDictionary.begin(); it != idInstanceDictionary.end(); ++it)
-                {
-                    if (&(it->first) == nullptr)
-                    {
-                        instanceID = counter;
+                name = "Object" + instanceID;
+                hideFlags = HideFlags::VISIBLE;
 
-                        name = "Object" + instanceID;
-                        hideFlags = HideFlags::VISIBLE;
-
-                        idInstanceDictionary.insert(std::make_pair(instanceID, *this));
-                    }
-                    counter++;
-                }
+                idInstanceDictionary.Add(Dictionary<dynamic_byte, Object<T>>::MakePair(instanceID, *this));
             }
         }
         ~Object()
         {
-            idInstanceDictionary.erase(instanceID);
+            idInstanceDictionary.Remove(instanceID);
         }
 
         inline bool operator - () const
@@ -117,7 +108,7 @@ namespace DivisionCore { namespace Core
         virtual inline string ToJson() const
         {
             return R"({"instanceID": ")" + std::to_string(instanceID) + "\"" +
-                   R"("hideFlags": ")" + hideFlagsLookupTable.find(hideFlags)->second + "\"" +
+                   R"("hideFlags": ")" + *hideFlagsLookupTable.FindValue((dynamic_byte)hideFlags) + "\"" +
                    R"("name": ")" + name + "\"" + "}";
         }
 
@@ -154,12 +145,12 @@ namespace DivisionCore { namespace Core
 
         template <typename Type> static Type FindObjectOfType()
         {
-            typename map<dynamic_byte ,Object>::iterator it;
-            for (it = idInstanceDictionary.begin(); it != idInstanceDictionary.end(); ++it)
+            typename Dictionary<dynamic_byte ,Object>::Iterator it;
+            for (it = idInstanceDictionary.Begin(); it != idInstanceDictionary.End(); ++it)
             {
-                if (dynamic_cast<Type*>(it->second) != nullptr)
+                if (dynamic_cast<Type*>(it.operator*()->value) != nullptr)
                 {
-                    return it->second;
+                    return it.operator*()->value;
                 }
             }
             return nullptr;
@@ -183,12 +174,12 @@ namespace DivisionCore { namespace Core
             Type* tempArr = nullptr;
             dynamic_byte counter = 0;
 
-            typename map<dynamic_byte ,Object>::iterator it;
-            for (it = idInstanceDictionary.begin(); it != idInstanceDictionary.end(); ++it)
+            typename Dictionary<dynamic_byte ,Object>::Iterator it;
+            for (it = idInstanceDictionary.Begin(); it != idInstanceDictionary.End(); ++it)
             {
-                if (dynamic_cast<Type*>(it->second) != nullptr)
+                if (dynamic_cast<Type*>(it.operator*()->value) != nullptr)
                 {
-                    ExpandAddArray(tempArr, counter, counter + 1, it->second);
+                    ExpandAddArray(tempArr, counter, counter + 1, it.operator*()->value);
                     counter++;
                 }
             }
