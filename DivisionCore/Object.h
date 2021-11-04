@@ -51,9 +51,6 @@ namespace DivisionCore { namespace Core
 
         Object()
         {
-            (void)&hideFlagsLookupTable;
-            (void)&idInstanceDictionary;
-
             if (hideFlagsLookupTable.Empty())
             {
                 hideFlagsLookupTable.Add(KeyValuePair<dynamic_byte, string>::MakePair((dynamic_byte)HideFlags::HIDDEN, "Hidden"));

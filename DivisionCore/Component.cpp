@@ -16,7 +16,15 @@
 
 #include "GameObject.h"
 
-using DivisionCore::Core::EntitySystem::GameObject;
+using namespace DivisionCore::Core;
+using namespace DivisionCore::Core::EntitySystem;
+using namespace DivisionCore::Core::BehaviourSystem;
+
+using DivisionCore::Containers::TemplateDictionary;
+using DivisionCore::Containers::Dictionary;
+
+template <typename T> TemplateDictionary<typename Object<T>::dynamic_byte,Object, T > Object<T>::idInstanceDictionary;
+template <typename T> Dictionary<typename Object<T>::dynamic_byte, string> Object<T>::hideFlagsLookupTable;
 
 namespace DivisionCore { namespace Core { namespace BehaviourSystem
 {

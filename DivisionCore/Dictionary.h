@@ -47,7 +47,7 @@ namespace DivisionCore { namespace Containers {
                 delete value;
             }
 
-            inline KeyValuePair& operator = (const KeyValuePair<A,B>& pair)
+            inline KeyValuePair<A,B>& operator = (const KeyValuePair<A,B>& pair)
             {
                 //Self Assignment Check
                 if(this != &pair)
@@ -169,7 +169,7 @@ namespace DivisionCore { namespace Containers {
                 delete value;
             }
 
-            inline TemplateKeyValuePair& operator = (const TemplateKeyValuePair<A,B,T>& pair)
+            inline TemplateKeyValuePair<A,B,T>& operator = (const TemplateKeyValuePair<A,B,T>& pair)
             {
                 //Self Assignment Check
                 if(this != &pair)
