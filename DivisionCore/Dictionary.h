@@ -1,5 +1,5 @@
 /**
-  * @file Map.h
+  * @file Dictionary.h
   * @author Daniel Molinero Lucas (Papishushi)
   * @section Copyright © <2021+> <Daniel Molinero Lucas (Papishushi)> MIT LICENSE
   * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
@@ -33,7 +33,7 @@ namespace DivisionCore { namespace Containers {
 
             KeyValuePair() = delete;
             KeyValuePair(const KeyValuePair<A,B>&) = default;
-            KeyValuePair(A* _key, B* _value){
+            KeyValuePair(const A* _key, const B* _value){
                 key = _key;
                 value = _value;
             };
@@ -47,10 +47,21 @@ namespace DivisionCore { namespace Containers {
                 delete value;
             }
 
-            inline void operator = (const KeyValuePair<A,B>& pair)
+            inline KeyValuePair& operator = (const KeyValuePair<A,B>& pair)
             {
-                *key = *pair.key;
-                *value = *pair.value;
+                //Self Assignment Check
+                if(this != &pair)
+                {
+                    // Deallocate old memory
+                    delete key;
+                    delete value;
+
+                    // allocate new space, and copy values
+                    key = new A(*(pair.key));
+                    value = new B(*(pair.value));
+                }
+
+                return *this;
             }
 
             inline bool operator == (const KeyValuePair<A,B>& pair) const
@@ -59,7 +70,7 @@ namespace DivisionCore { namespace Containers {
             }
             inline bool operator == (std::nullptr_t aNullptr) const
             {
-                return *key == aNullptr && *value == aNullptr;
+                return key == aNullptr && value == aNullptr;
             }
             inline bool operator != (const KeyValuePair<A,B>& pair) const
             {
@@ -67,7 +78,7 @@ namespace DivisionCore { namespace Containers {
             }
             inline bool operator != (std::nullptr_t aNullptr) const
             {
-                return *key != aNullptr && *value != aNullptr;
+                return key != aNullptr && value != aNullptr;
             }
 
             inline KeyValuePair<A,B> operator ++ () noexcept
@@ -77,23 +88,23 @@ namespace DivisionCore { namespace Containers {
                 return *this;
             }
 
-            inline KeyValuePair<A,B> MakePair(const A& _key,const B& _value)
+            static inline KeyValuePair<A,B> MakePair(const A& _key,const B& _value)
             {
                 return KeyValuePair(_key, _value);
             }
         };
 
         template <typename A , typename B>
-        class Dictionary : vector<KeyValuePair<A,B>>
+        class Dictionary : public vector<KeyValuePair<A,B>>
         {
         public:
             Dictionary() = default;
             Dictionary(const Dictionary<A,B>&) = default;
 
-            typename vector<KeyValuePair<A,B>>::iterator FindIterator(const A& key) const
+            typename vector<KeyValuePair<A,B>>::const_iterator FindIterator(const A& key) const
             {
-                typename vector<KeyValuePair<A, B>>::iterator it;
-                for (it = this->begin(); it != this->end(); ++it)
+                typename vector<KeyValuePair<A, B>>::const_iterator it;
+                for (it.operator=(this->begin()); it != this->end(); ++it)
                 {
                     if (*(it->key) == key)
                     {
@@ -102,43 +113,158 @@ namespace DivisionCore { namespace Containers {
                 }
                 return it;
             }
-
             B * FindValue(const A& key) const
             {
-                if(std::is_arithmetic<A>())
+                typename vector<KeyValuePair<A, B>>::const_iterator it;
+                for (it.operator=(this->begin()); it != this->end(); ++it)
                 {
-                    if(this->at(key) != nullptr)
+                    if (*(it->key) == key)
                     {
-                        KeyValuePair<A,B> tempPair = this->at(key);
-                        return tempPair.value;
-                    }
-                    else
-                    {
-                        return nullptr;
+                        return it->value;
                     }
                 }
-                else
-                {
-                    typename vector<KeyValuePair<A,B>>::iterator it;
-                    for(it = this->begin(); it != this->end(); ++it)
-                    {
-                        if(*(it->key) == key)
-                        {
-                            return it->value;
-                        }
-                    }
-                    return nullptr;
-                }
+                return nullptr;
             }
 
             inline void Add(const KeyValuePair<A,B>& pair)
             {
                 this->push_back(pair);
             }
-
             inline void Remove(const A& key)
             {
                 this->erase(FindIterator(key));
+            }
+
+            inline bool Empty()
+            {
+                return this->empty();
+            }
+
+            inline size_t Size()
+            {
+                return this->size();
+            }
+        };
+
+        template <typename A , template <typename> class B, typename T>
+        class TemplateKeyValuePair
+        {
+        public:
+            A * key;
+            B<T> * value;
+
+            TemplateKeyValuePair() = delete;
+            TemplateKeyValuePair(const TemplateKeyValuePair<A,B,T>&) = default;
+            TemplateKeyValuePair(const A* _key, const B<T>* _value){
+                key = _key;
+                value = _value;
+            };
+            TemplateKeyValuePair(const A& _key, const B<T>& _value){
+                key = new A(_key);
+                value = new B<T>(_value);
+            };
+            ~TemplateKeyValuePair()
+            {
+                delete key;
+                delete value;
+            }
+
+            inline TemplateKeyValuePair& operator = (const TemplateKeyValuePair<A,B,T>& pair)
+            {
+                //Self Assignment Check
+                if(this != &pair)
+                {
+                    // Deallocate old memory
+                    delete key;
+                    delete value;
+
+                    // allocate new space, and copy values
+                    key = new A(*(pair.key));
+                    value = new B<T>(*(pair.value));
+                }
+
+                return *this;
+            }
+
+            inline bool operator == (const TemplateKeyValuePair<A,B,T>& pair) const
+            {
+                return *key == *(pair.key) && *value == *(pair.value);
+            }
+            inline bool operator == (std::nullptr_t aNullptr) const
+            {
+                return key == aNullptr && value == aNullptr;
+            }
+            inline bool operator != (const TemplateKeyValuePair<A,B,T>& pair) const
+            {
+                return *key != *(pair.key) && *value != *(pair.value);
+            }
+            inline bool operator != (std::nullptr_t aNullptr) const
+            {
+                return key != aNullptr && value != aNullptr;
+            }
+
+            inline TemplateKeyValuePair<A,B,T> operator ++ () noexcept
+            {
+                key ++;
+                value ++;
+                return *this;
+            }
+
+            static inline TemplateKeyValuePair<A,B,T> MakePair(const A& _key,const B<T>& _value)
+            {
+                return TemplateKeyValuePair(_key, _value);
+            }
+        };
+
+        template <typename A , template <typename> class B, typename T>
+        class TemplateDictionary : public vector<TemplateKeyValuePair<A,B,T>>
+        {
+        public:
+            TemplateDictionary() = default;
+            TemplateDictionary(const TemplateDictionary<A,B,T>&) = default;
+
+            typename vector<TemplateKeyValuePair<A,B,T>>::const_iterator FindIterator(const A& key) const
+            {
+                typename vector<TemplateKeyValuePair<A,B,T>>::const_iterator it;
+                for (it.operator=(this->begin()); it != this->end(); ++it)
+                {
+                    if (*(it->key) == key)
+                    {
+                        return it;
+                    }
+                }
+                return it;
+            }
+            B<T> * FindValue(const A& key) const
+            {
+                typename vector<TemplateKeyValuePair<A,B,T>>::const_iterator it;
+                for (it.operator=(this->begin()); it != this->end(); ++it)
+                {
+                    if (*(it->key) == key)
+                    {
+                        return it->value;
+                    }
+                }
+                return nullptr;
+            }
+
+            inline void Add(const TemplateKeyValuePair<A,B,T>& pair)
+            {
+                this->push_back(pair);
+            }
+            inline void Remove(const A& key)
+            {
+                this->erase(FindIterator(key));
+            }
+
+            inline bool Empty()
+            {
+                return this->empty();
+            }
+
+            inline size_t Size()
+            {
+                return this->size();
             }
         };
 }}

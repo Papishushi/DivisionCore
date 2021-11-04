@@ -41,8 +41,8 @@ class RunningBehaviour : public Behaviour, public EventObserver<GameObject, Mess
 
         inline virtual void InitializeLookUpTable() const
         {
-            methodsLookUpTable.Add(Dictionary<string, uint_least8_t>::MakePair("Destroy", (uint_least8_t)MethodsEnum::Destroy));
-            methodsLookUpTable.Add(Dictionary<string, uint_least8_t>::MakePair("HookMessage", (uint_least8_t)MethodsEnum::HookMessage));
+            methodsLookUpTable.Add(KeyValuePair<string, uint_least8_t>::MakePair("Destroy", (uint_least8_t)MethodsEnum::Destroy));
+            methodsLookUpTable.Add(KeyValuePair<string, uint_least8_t>::MakePair("HookMessage", (uint_least8_t)MethodsEnum::HookMessage));
         }
         void HookMessage(GameObject * source, const MessageArgs* args);
 

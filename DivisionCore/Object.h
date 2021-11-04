@@ -19,13 +19,15 @@
 #include "Dictionary.h"
 
 using DivisionCore::Containers::Dictionary;
+using DivisionCore::Containers::TemplateDictionary;
+using DivisionCore::Containers::KeyValuePair;
+using DivisionCore::Containers::TemplateKeyValuePair;
 
 #include <algorithm>
 #include <iostream>
 #include <cstdint>
 #include <string>
 #include <list>
-#include <iterator>
 #include <tuple>
 
 namespace DivisionCore { namespace Core
@@ -33,12 +35,14 @@ namespace DivisionCore { namespace Core
     using std::string;
     using std::tie;
 
+
     template <typename T> class Object
     {
     protected:
         typedef uint_least8_t dynamic_byte;
     private:
-        static Dictionary<dynamic_byte, Object<T>> idInstanceDictionary;
+        //PROBLEM WITH STATIC TEMPLATE CLASS PROPERTY WITH TEMPLATE CLASS AS TYPENAME, DOESN'T LINK FILES CLAIMING UNRESOLVED EXTERNAL
+        static TemplateDictionary<dynamic_byte, Object, T> idInstanceDictionary;
 
         static Dictionary<dynamic_byte, string> hideFlagsLookupTable;
 
@@ -51,8 +55,8 @@ namespace DivisionCore { namespace Core
         {
             if (hideFlagsLookupTable.Empty())
             {
-                hideFlagsLookupTable.Add(Dictionary<dynamic_byte, string>::MakePair((dynamic_byte)HideFlags::HIDDEN, "Hidden"));
-                hideFlagsLookupTable.Add(Dictionary<dynamic_byte, string>::MakePair((dynamic_byte)HideFlags::VISIBLE, "Visible"));
+                hideFlagsLookupTable.Add(KeyValuePair<dynamic_byte, string>::MakePair((dynamic_byte)HideFlags::HIDDEN, "Hidden"));
+                hideFlagsLookupTable.Add(KeyValuePair<dynamic_byte, string>::MakePair((dynamic_byte)HideFlags::VISIBLE, "Visible"));
             }
 
             if (idInstanceDictionary.Empty())
@@ -62,16 +66,16 @@ namespace DivisionCore { namespace Core
                 name = "Object" + instanceID;
                 hideFlags = HideFlags::VISIBLE;
 
-                idInstanceDictionary.Add(Dictionary<dynamic_byte, Object<T>>::MakePair(instanceID, *this));
+                idInstanceDictionary.Add(TemplateKeyValuePair<dynamic_byte, Object, T>::MakePair(instanceID, *this));
             }
             else
             {
-                instanceID = idInstanceDictionary.Size();;
+                instanceID = idInstanceDictionary.Size();
 
                 name = "Object" + instanceID;
                 hideFlags = HideFlags::VISIBLE;
 
-                idInstanceDictionary.Add(Dictionary<dynamic_byte, Object<T>>::MakePair(instanceID, *this));
+                idInstanceDictionary.Add(TemplateKeyValuePair<dynamic_byte, Object, T>::MakePair(instanceID, *this));
             }
         }
         ~Object()
@@ -126,7 +130,6 @@ namespace DivisionCore { namespace Core
         }
         static void Destroy(T* obj)
         {
-            if(obj != nullptr)
             delete obj;
         }
         static void Destroy(T* obj, const bool isArray)
@@ -145,8 +148,8 @@ namespace DivisionCore { namespace Core
 
         template <typename Type> static Type FindObjectOfType()
         {
-            typename Dictionary<dynamic_byte ,Object>::Iterator it;
-            for (it = idInstanceDictionary.Begin(); it != idInstanceDictionary.End(); ++it)
+            typename TemplateDictionary<dynamic_byte ,Object, T>::iterator it;
+            for (it = idInstanceDictionary.begin(); it != idInstanceDictionary.end(); ++it)
             {
                 if (dynamic_cast<Type*>(it.operator*()->value) != nullptr)
                 {
@@ -174,8 +177,8 @@ namespace DivisionCore { namespace Core
             Type* tempArr = nullptr;
             dynamic_byte counter = 0;
 
-            typename Dictionary<dynamic_byte ,Object>::Iterator it;
-            for (it = idInstanceDictionary.Begin(); it != idInstanceDictionary.End(); ++it)
+            typename TemplateKeyValuePair<dynamic_byte, Object, T>::iterator it;
+            for (it = idInstanceDictionary.begin(); it != idInstanceDictionary.end(); ++it)
             {
                 if (dynamic_cast<Type*>(it.operator*()->value) != nullptr)
                 {
