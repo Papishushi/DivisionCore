@@ -66,7 +66,7 @@ namespace DivisionCore { namespace Vectors {
                      }
                  }
             }
-            Vector<N,T>(const T& unique, bool )
+            Vector<N,T>(const T& unique, void* )
             {
                 for(int i = 0; i < N; i++)
                 {
@@ -94,11 +94,11 @@ namespace DivisionCore { namespace Vectors {
 
             static inline Vector<N,T> Zero()
             {
-                return Vector<N,T>(0, true);
+                return Vector<N,T>(0, nullptr);
             }
             static inline Vector<N,T> One()
             {
-                return Vector<N,T>(1, true);
+                return Vector<N,T>(1, nullptr);
             }
             static inline Vector<N,T> Up()
             {
@@ -145,7 +145,7 @@ namespace DivisionCore { namespace Vectors {
 
                 return temp;
             }
-            inline Vector<N,T> operator * (const float& other) const
+            inline Vector<N,T> operator * (const T& other) const
             {
                 Vector<N,T> temp = Vector<N,T>::Zero();
 
@@ -175,7 +175,7 @@ namespace DivisionCore { namespace Vectors {
 
                 return *this;
             }
-            inline Vector<N,T> operator *= (const float& other)
+            inline Vector<N,T> operator *= (const T& other)
             {
                 for(int i = 0; i < N; i++)
                 {
@@ -221,13 +221,54 @@ namespace DivisionCore { namespace Vectors {
                 return *this;
             }
 
-            inline float Magnitude() const
+            inline T SquaredMagnitude() const
             {
                 T temp = 0;
 
                 for(int i = 0; i < N; i++)
                 {
                     temp += coords[i] * coords[i];
+                }
+
+                return temp;
+            }
+            inline T Magnitude() const
+            {
+                T temp = 0;
+
+                for(int i = 0; i < N; i++)
+                {
+                    temp += coords[i] * coords[i];
+                }
+
+                return sqrt(temp);
+            }
+            inline T Angle(const Vector<N,T>& other) const
+            {
+                T dotMagnitudes = 0;
+
+                dotMagnitudes = Magnitude() * other.Magnitude() ;
+
+                return acos(DotProduct(other)/dotMagnitudes);
+            }
+            inline Vector<N,T> CrossProduct(const Vector<N,T>& other) const
+            {
+                T dotMagnitudes = 0;
+                T dotVectors = 0;
+                T angle = 0;
+
+                dotMagnitudes = Magnitude() * other.Magnitude() ;
+                angle = acos(DotProduct(other)/dotMagnitudes);
+
+                return dotMagnitudes * cos(angle) * Vector<N,T>::One();
+            }
+            inline T DotProduct(const Vector<N,T>& other) const
+            {
+                T temp = 0;
+
+                for(int i = 0; i < N; i++)
+                {
+                    temp += coords[i] * other[i];
                 }
 
                 return temp;
