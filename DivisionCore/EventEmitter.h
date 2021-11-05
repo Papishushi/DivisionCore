@@ -22,12 +22,12 @@
 
 namespace DivisionCore { namespace Core { namespace EventHandling {
 
-            template <typename T, typename C>
+            template <typename EmisorType,typename ObserverType, typename Args>
             class EventEmitter{
             private:
                 bool emits;
-                T * input1;
-                C * input2;
+                EmisorType * input1;
+                Args * input2;
             public:
 
                 EventEmitter() {
@@ -38,24 +38,25 @@ namespace DivisionCore { namespace Core { namespace EventHandling {
 
                 inline bool IsEmitting() const {return emits;}
 
-                inline T * GetInput1() const {
+                inline EmisorType * GetInput1() const {
                     return input1;
                 }
-                inline C * GetInput2() const {
+                inline Args * GetInput2() const {
                     return input2;
                 }
 
-                virtual void Emit(T * _input1,C * _input2)
+                virtual void Emit(EmisorType * _input1, Args * _input2)
                 {
                     emits = true;
                     input1 = _input1;
                     input2 = _input2;
                 }
-                virtual EventHandler * Bind(EventObserver<T,C> * eventObserver, void (RunningBehaviour::*pFunction) (GameObject *,const MessageArgs *))
+                virtual EventHandler<EmisorType,ObserverType,Args> * Bind(ObserverType * eventObserver, void (ObserverType::*pFunction) (EmisorType *, const Args *))
                 {
-                    return eventObserver->Bind(pFunction, this);
+                    auto * temp = reinterpret_cast<EventObserver<EmisorType,ObserverType,Args> *>(eventObserver);
+                    return temp->Bind(pFunction, this);
                 }
-                virtual void Unbind(EventObserver<T,C> * eventObserver, EventHandler& handler)
+                virtual void Unbind(EventObserver<EmisorType,ObserverType,Args> * eventObserver, EventHandler<EmisorType,ObserverType,Args>& handler)
                 {
                     eventObserver->Unbind(handler);
                 }

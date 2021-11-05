@@ -25,27 +25,20 @@
 #include <thread>
 #endif
 
-namespace DivisionCore { namespace Core { namespace BehaviourSystem {
-    class RunningBehaviour;
-}}}
-
-using DivisionCore::Core::BehaviourSystem::RunningBehaviour;
-using DivisionCore::Core::EntitySystem::GameObject;
-
 namespace DivisionCore { namespace Core { namespace EventHandling {
 
-            template<typename T, typename C>
+            template <typename EmisorType,typename ObserverType, typename Args>
             class EventEmitter;
 
-            template<typename T, typename C>
+            template <typename EmisorType,typename ObserverType, typename Args>
             class EventObserver {
             public:
-                virtual EventHandler *Bind(void (RunningBehaviour::*pFunction) (GameObject *,const MessageArgs *), EventEmitter <T, C> *emitter) {
-                    auto *handler = new EventHandler(pFunction, emitter);
+                virtual EventHandler<EmisorType,ObserverType,Args> *Bind(void (ObserverType::*pFunction) (EmisorType *,const Args *), EventEmitter <EmisorType,ObserverType,Args> *emitter) {
+                    auto *handler = new EventHandler<EmisorType,ObserverType,Args>(pFunction, emitter, this);
                     return handler;
                 }
 
-                virtual void Unbind(EventHandler &handler) {
+                virtual void Unbind(EventHandler<EmisorType,ObserverType,Args> &handler) {
                     if (handler.isObserving) {
                         handler.unbind = true;
                     }

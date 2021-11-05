@@ -28,7 +28,7 @@ using DivisionCore::Core::EventHandling::EventObserver;
 
 namespace DivisionCore{ namespace Core { namespace BehaviourSystem
 {
-class RunningBehaviour : public Behaviour, public EventObserver<GameObject, MessageArgs>
+class RunningBehaviour : public Behaviour, public EventObserver<GameObject,RunningBehaviour, MessageArgs>
     {
     private:
         enum class MethodsEnum

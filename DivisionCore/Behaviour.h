@@ -16,6 +16,9 @@
 #ifndef DIVISIONCORE_BEHAVIOUR_H
 #define DIVISIONCORE_BEHAVIOUR_H
 #include "Component.h"
+#include "EventEmitter.h"
+
+using DivisionCore::Core::EventHandling::EventEmitter;
 
 #ifdef _WIN32
 #include <windows.h>
@@ -28,8 +31,11 @@
 
 namespace DivisionCore { namespace Core { namespace BehaviourSystem
 {
+    class RunningBehaviour;
     class Behaviour : public Component
     {
+    private:
+        static EventEmitter<Behaviour,RunningBehaviour, MessageArgs> UpdateTrigger;
     public:
         bool enabled;
         bool isActiveAndEnabled;

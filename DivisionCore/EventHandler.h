@@ -16,34 +16,64 @@
 #ifndef DIVISIONCORE_EVENTHANDLER_H
 #define DIVISIONCORE_EVENTHANDLER_H
 
-namespace DivisionCore { namespace Core { namespace EntitySystem{
-            class GameObject;
-        }}}
-namespace DivisionCore { namespace Core { namespace BehaviourSystem{
-            class RunningBehaviour;
-        }}}
-
-namespace DivisionCore { namespace Core {
-            struct MessageArgs;
-        }}
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#include <thread>
+#endif
 
 namespace DivisionCore { namespace Core { namespace EventHandling {
 
-            template <typename T, typename C>
+            template <typename EmisorType,typename ObserverType, typename Args>
             class EventEmitter;
+            template <typename EmisorType,typename ObserverType, typename Args>
+            class EventObserver;
 
+            template <typename EmisorType, typename ObserverType, typename Args>
             struct EventHandler {
             public:
-                BehaviourSystem::RunningBehaviour * associattedBehaviour;
+                ObserverType * associattedBehaviour;
                 bool unbind;
                 bool isObserving;
 
-                void (BehaviourSystem::RunningBehaviour::* pFunction) (EntitySystem::GameObject *,const MessageArgs *);
+                void (ObserverType::* pFunction) (EmisorType *,const Args *);
 
-                EventEmitter <EntitySystem::GameObject, MessageArgs> *emitter;
+                EventEmitter <EmisorType,ObserverType,Args> *emitter;
+                EventObserver <EmisorType,ObserverType,Args> *observer;
 
                 EventHandler() = delete;
-                EventHandler(void (BehaviourSystem::RunningBehaviour::*_pFunction) (EntitySystem::GameObject *,const MessageArgs *), EventEmitter <EntitySystem::GameObject, MessageArgs> * _emitter);
+                EventHandler(void (ObserverType::*_pFunction) (EmisorType *,const Args *), EventEmitter <EmisorType,ObserverType,Args> * _emitter, EventObserver <EmisorType,ObserverType,Args> * _observer)
+                {
+                    pFunction = _pFunction;
+                    emitter = _emitter;
+                    observer = _observer;
+
+                    associattedBehaviour = reinterpret_cast<ObserverType *>(observer);
+
+                    while (true) {
+                        isObserving = true;
+
+#if _WIN32
+                        Sleep(5);
+#elif __linux__
+                        using namespace std::literals;
+                        std::this_thread::sleep_for(5ms);
+#else __APPLE__
+                        sleep(0.005f);
+#endif
+                        if (emitter->IsEmitting()) {
+                            //Member hook pointer call
+                            (associattedBehaviour->*pFunction)(emitter->GetInput1(), emitter->GetInput2());
+                        }
+
+                        if (unbind) {
+                            isObserving = false;
+                            unbind = false;
+                            return;
+                        }
+                    }
+                }
             };
         }}}
 #endif //DIVISIONCORE_EVENTHANDLER_H

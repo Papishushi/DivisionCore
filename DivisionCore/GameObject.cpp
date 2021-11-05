@@ -113,11 +113,11 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
         instancedGameObjects.remove(this);
     }
 
-    list<EventHandling::EventHandler *> GameObject::UpdateMessageLink()
+    list<EventHandling::EventHandler<GameObject,RunningBehaviour,MessageArgs>  *> GameObject::UpdateMessageLink()
     {
         void (RunningBehaviour::*pFunction) (GameObject *,const MessageArgs *);
 
-        list<EventHandling::EventHandler *> handlers;
+        list<EventHandling::EventHandler<GameObject,RunningBehaviour,MessageArgs>  *> handlers;
 
         list<RunningBehaviour *>::iterator it;
         list<Transform>::iterator itChildren;
@@ -127,7 +127,7 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
 
             if(pFunction)
             {
-                EventHandling::EventHandler * handler = SendMessageLocal.Bind(*it, pFunction);
+                EventHandling::EventHandler<GameObject,RunningBehaviour,MessageArgs> * handler = SendMessageLocal.Bind(*it, pFunction);
 
                 if(handler)
                 {
@@ -144,7 +144,7 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
 
                 if(pFunction)
                 {
-                    EventHandling::EventHandler * handler = SendMessageChildren.Bind(*it, pFunction);
+                    EventHandling::EventHandler<GameObject,RunningBehaviour,MessageArgs> * handler = SendMessageChildren.Bind(*it, pFunction);
 
                     if(handler)
                     {
@@ -159,7 +159,7 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
 
             if(pFunction)
             {
-                EventHandling::EventHandler * handler = SendMessageParent.Bind(*it, pFunction);
+                EventHandling::EventHandler<GameObject,RunningBehaviour,MessageArgs> * handler = SendMessageParent.Bind(*it, pFunction);
 
                 if(handler)
                 {

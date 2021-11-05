@@ -188,9 +188,9 @@ namespace DivisionCore { namespace Core
             return tempArr;
         }
 
-        /*static T* DontDestroyOnLoad()
+        /*static EmisorType* DontDestroyOnLoad()
         {
-            T* instance = new T(This());
+            EmisorType* instance = new EmisorType(This());
             return instance;
         }*/
     };

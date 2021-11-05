@@ -19,6 +19,7 @@
 #include "MessageArgs.h"
 #include "PrimitiveType.h"
 #include "EventEmitter.h"
+#include "EventHandler.h"
 
 #include <string>
 #include <list>
@@ -44,7 +45,7 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
         std::list<RunningBehaviour *> attachedComponents;
         bool isActive;
     protected:
-        std::list<EventHandling::EventHandler *> UpdateMessageLink();
+        std::list<EventHandling::EventHandler<GameObject,RunningBehaviour,MessageArgs> *> UpdateMessageLink();
     public:
         bool activeInHierarchy;
         inline bool activeSelf() const
@@ -58,9 +59,9 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
         string tag;
         Transform transform;
 
-        EventHandling::EventEmitter<GameObject, MessageArgs > SendMessageLocal;
-        EventHandling::EventEmitter<GameObject, MessageArgs > SendMessageChildren;
-        EventHandling::EventEmitter<GameObject, MessageArgs > SendMessageParent;
+        EventHandling::EventEmitter<GameObject,RunningBehaviour,MessageArgs>  SendMessageLocal;
+        EventHandling::EventEmitter<GameObject,RunningBehaviour,MessageArgs>  SendMessageChildren;
+        EventHandling::EventEmitter<GameObject,RunningBehaviour,MessageArgs>  SendMessageParent;
 
         GameObject();
         explicit GameObject(string& name);
