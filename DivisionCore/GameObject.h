@@ -33,16 +33,18 @@ namespace DivisionCore { namespace Core { namespace  BehaviourSystem {
 
 using DivisionCore::Core::BehaviourSystem::RunningBehaviour;
 
+using std::list;
+
 namespace DivisionCore { namespace Core { namespace EntitySystem
 {
     class GameObject : protected Object<GameObject>
     {
     private:
-        static list<GameObject *> instancedGameObjects;
-        list<RunningBehaviour *> attachedComponents;
+        static std::list<GameObject *> instancedGameObjects;
+        std::list<RunningBehaviour *> attachedComponents;
         bool isActive;
     protected:
-        list<EventHandling::EventHandler *> UpdateMessageLink();
+        std::list<EventHandling::EventHandler *> UpdateMessageLink();
     public:
         bool activeInHierarchy;
         inline bool activeSelf() const
@@ -63,7 +65,7 @@ namespace DivisionCore { namespace Core { namespace EntitySystem
         GameObject();
         explicit GameObject(string& name);
         explicit GameObject(string& name, Transform& transform);
-        explicit GameObject(string& name, Transform& transform, const list<RunningBehaviour *>& components);
+        explicit GameObject(string& name, Transform& transform, const std::list<RunningBehaviour *>& components);
         ~GameObject();
 
         inline void SetActive(const bool _isActive)

@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(.)
 
 add_executable(DivisionCore
+        main.cpp
         Behaviour.cpp
         Behaviour.h
         Component.cpp
@@ -20,16 +21,23 @@ add_executable(DivisionCore
         RunningBehaviour.h
         Transform.cpp
         Transform.h
-        Vector2.h
-        Vector3Euler.h
         Scene.cpp
         Scene.h
+        MessageArgs.cpp
         MessageArgs.h
+        PrimitiveType.cpp
         PrimitiveType.h
+        HideFlags.cpp
         HideFlags.h
+        GameController.cpp
         GameController.h
         EventHandler.cpp
         EventHandler.h
+        EventObserver.cpp
         EventObserver.h
+        EventEmitter.cpp
         EventEmitter.h
-        Dictionary.h main.cpp)
+        Dictionary.cpp
+        Dictionary.h
+        Vector.cpp
+        Vector.h)

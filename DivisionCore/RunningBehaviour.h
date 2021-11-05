@@ -19,7 +19,7 @@
 #include "GameObject.h"
 #include "MessageArgs.h"
 #include "EventObserver.h"
-#include <map>
+#include "Dictionary.h"
 #include <iterator>
 #include <string>
 
@@ -50,11 +50,11 @@ class RunningBehaviour : public Behaviour, public EventObserver<GameObject, Mess
 
         virtual void ProcessLookUpValue(GameObject *source, const MessageArgs *args, const MethodsEnum &value) ;
 
-        virtual void Awake();
-        virtual void Start();
-        virtual void FixedUpdate();
-        virtual void Update();
-        virtual void LateUpdate();
+        virtual void Awake() = 0;
+        virtual void Start()  = 0;
+        virtual void FixedUpdate()  = 0;
+        virtual void Update()  = 0;
+        virtual void LateUpdate()  = 0;
 
         void (RunningBehaviour::*pHook) (GameObject *,const MessageArgs *) = &RunningBehaviour::HookMessage;
     public:

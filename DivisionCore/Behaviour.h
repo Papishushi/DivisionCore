@@ -17,6 +17,15 @@
 #define DIVISIONCORE_BEHAVIOUR_H
 #include "Component.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#include <thread>
+#endif
+
+#include <chrono>
+
 namespace DivisionCore { namespace Core { namespace BehaviourSystem
 {
     class Behaviour : public Component
@@ -29,6 +38,44 @@ namespace DivisionCore { namespace Core { namespace BehaviourSystem
             enabled = true;
             isActiveAndEnabled = true;
         };
+
+        static std::chrono::duration<double> GetUpdateRate()
+        {
+            // Using time point and system_clock
+            std::chrono::time_point<std::chrono::system_clock> start, end;
+
+            start = std::chrono::system_clock::now();
+#if _WIN32
+                Sleep(1000/60);
+#elif __linux__
+                using namespace std::literals;
+            std::this_thread::sleep_for(1000ms/60);
+#else __APPLE__
+            sleep(1000/60);
+#endif
+            end = std::chrono::system_clock::now();
+
+            return end - start;
+        }
+        static std::chrono::duration<double> GetAverageUpdateRate()
+        {
+            std::chrono::duration<double> temp[60];
+
+            for(auto & i : temp)
+            {
+                i = GetUpdateRate();
+            }
+
+            std::chrono::duration<double> averageRate{};
+
+            for(auto & i : temp)
+            {
+                averageRate += i;
+            }
+
+            return averageRate /= 60;
+
+        }
     };
 } } }
 #endif //DIVISIONCORE_BEHAVIOUR_H

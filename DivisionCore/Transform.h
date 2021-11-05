@@ -16,19 +16,18 @@
 #ifndef DIVISIONCORE_TRANSFORM_H
 #define DIVISIONCORE_TRANSFORM_H
 #include "Component.h"
-#include "Vector2.h"
-#include "Vector3Euler.h"
+#include "Vector.h"
 
 namespace DivisionCore { namespace Core { namespace BehaviourSystem { namespace Components
 {
     class Transform : public Component{
     public:
         DivisionCore::Vectors::Vector2 position;
-        DivisionCore::Vectors::Vector3Euler rotation;
+        DivisionCore::Vectors::Vector3 rotation;
         DivisionCore::Vectors::Vector2 scale;
 
         Transform * parent;
-        list<Transform> children;
+        std::list<Transform> children;
 
         Transform();
         explicit Transform(Transform * parent);

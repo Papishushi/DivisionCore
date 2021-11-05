@@ -83,24 +83,4 @@ namespace  DivisionCore { namespace Core { namespace BehaviourSystem
         }
     }
 
-    void RunningBehaviour::Awake() {
-
-    }
-
-    void RunningBehaviour::Start() {
-
-    }
-
-    void RunningBehaviour::FixedUpdate() {
-
-    }
-
-    void RunningBehaviour::Update() {
-
-    }
-
-    void RunningBehaviour::LateUpdate() {
-
-    }
-
 } } }

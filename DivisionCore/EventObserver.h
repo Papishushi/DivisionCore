@@ -30,6 +30,7 @@ namespace DivisionCore { namespace Core { namespace BehaviourSystem {
 }}}
 
 using DivisionCore::Core::BehaviourSystem::RunningBehaviour;
+using DivisionCore::Core::EntitySystem::GameObject;
 
 namespace DivisionCore { namespace Core { namespace EventHandling {
 

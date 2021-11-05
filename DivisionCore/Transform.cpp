@@ -16,21 +16,20 @@
 
 #include "Transform.h"
 
-using DivisionCore::Vectors::Vector2;
-using DivisionCore::Vectors::Vector3Euler;
+using namespace DivisionCore::Vectors;
 
 namespace DivisionCore { namespace Core { namespace BehaviourSystem { namespace Components
 {
     Transform::Transform() {
         position = Vector2::Zero();
-        rotation = Vector3Euler::Zero();
+        rotation = Vector3::Zero();
         scale = Vector2::Zero();
 
         parent = nullptr;
     }
     Transform::Transform(Transform * _parent) {
         position = Vector2::Zero();
-        rotation = Vector3Euler::Zero();
+        rotation = Vector3::Zero();
         scale = Vector2::Zero();
 
         parent = _parent;
