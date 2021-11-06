@@ -37,7 +37,7 @@ namespace DivisionCore { namespace Vectors {
         /// @brief Constructor for a Vector with the same value on all of his axys.
         /// @param unique Unique value for all axys of the Vector.
         template<size_t N, typename T>
-        Vector<N, T>::Vector(const T &unique);
+        Vector<N, T>::Vector(const T &unique, HackSFINAE);
 
         /// @brief Constructor of a direction Vector not normalized.
         /// @param from  Vector from position.
