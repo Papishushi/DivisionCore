@@ -21,13 +21,6 @@
 
 namespace DivisionCore { namespace Vectors {
 
-        template<size_t N, typename T>struct Vector;
-        typedef Vector<1,float> Vector1;
-        typedef Vector<2,float> Vector2;
-        typedef Vector<3,float> Vector3;
-        typedef Vector<4,float> Vector4;
-        typedef Vector<5,float> Vector5;
-
     template<size_t N = 2, typename T = float >
         struct Vector{
         public:
@@ -40,40 +33,38 @@ namespace DivisionCore { namespace Vectors {
             T * v = &coords[4];
             T * w = &coords[5];
 
-            Vector<N,T>()
+            Vector()
             {
                 for(int i = 0; i < N; i++)
                 {
                     coords[i] = 0;
                 }
             };
-
-            explicit Vector<N,T>(const T& coord, ...)
-            {
-                va_list list;
-
-                va_start(list, coord);
-
-                 for(int i = 0; i < N; i++)
-                 {
-                     if(&va_arg(list, T) != nullptr)
-                     {
-                         coords[i] = va_arg(list, T);
-                     }
-                     else
-                     {
-                         coords[i] = 0;
-                     }
-                 }
-            }
-            Vector<N,T>(const T& unique, void* )
+            explicit Vector(const T& unique)
             {
                 for(int i = 0; i < N; i++)
                 {
                     coords[i] = unique;
                 }
             }
-            Vector<N,T>(const Vector<N,T>& from, const Vector<N,T>& to)
+            explicit Vector(const T& coord, ...) {
+                va_list list;
+
+                va_start(list, coord);
+
+                for (int i = 0; i < N; i++)
+                {
+                    if (&va_arg(list, T) != nullptr)
+                    {
+                        coords[i] = va_arg(list, T);
+                    }
+                    else
+                    {
+                        coords[i] = 0;
+                    }
+                }
+            }
+            Vector(const Vector<N,T>& from, const Vector<N,T>& to)
             {
                 Vector<N,T> temp = from - to;
 
@@ -94,11 +85,11 @@ namespace DivisionCore { namespace Vectors {
 
             static inline Vector<N,T> Zero()
             {
-                return Vector<N,T>(0, nullptr);
+                return Vector<N,T>(0);
             }
             static inline Vector<N,T> One()
             {
-                return Vector<N,T>(1, nullptr);
+                return Vector<N,T>(1);
             }
             static inline Vector<N,T> Up()
             {
@@ -129,7 +120,7 @@ namespace DivisionCore { namespace Vectors {
 
                 for(int i = 0; i < N; i++)
                 {
-                   temp[i] = other.coords[i] + coords[i];
+                   temp[i] = coords[i] + other.coords[i];
                 }
 
                 return temp;
@@ -140,7 +131,7 @@ namespace DivisionCore { namespace Vectors {
 
                 for(int i = 0; i < N; i++)
                 {
-                    temp[i] = other.coords[i] - coords[i];
+                    temp[i] = coords[i] - other.coords[i];
                 }
 
                 return temp;
@@ -151,7 +142,7 @@ namespace DivisionCore { namespace Vectors {
 
                 for(int i = 0; i < N; i++)
                 {
-                    temp[i] = other * coords[i];
+                    temp[i] =  coords[i] * other;
                 }
 
                 return temp;
@@ -161,7 +152,7 @@ namespace DivisionCore { namespace Vectors {
             {
                 for(int i = 0; i < N; i++)
                 {
-                    coords[i] = other.coords[i] + coords[i];
+                    coords[i] = coords[i] + other.coords[i];
                 }
 
                 return *this;
@@ -170,7 +161,7 @@ namespace DivisionCore { namespace Vectors {
             {
                 for(int i = 0; i < N; i++)
                 {
-                    coords[i] = other.coords[i] - coords[i];
+                    coords[i] = coords[i] - other.coords[i];
                 }
 
                 return *this;
@@ -179,7 +170,7 @@ namespace DivisionCore { namespace Vectors {
             {
                 for(int i = 0; i < N; i++)
                 {
-                    coords[i] = other * coords[i];
+                    coords[i] = coords[i] * other;
                 }
 
                 return *this;
@@ -260,7 +251,7 @@ namespace DivisionCore { namespace Vectors {
                 dotMagnitudes = Magnitude() * other.Magnitude() ;
                 angle = acos(DotProduct(other)/dotMagnitudes);
 
-                return dotMagnitudes * cos(angle) * Vector<N,T>::One();
+                return dotMagnitudes * cos(angle) * Vector<N,T>::Front();
             }
             inline T DotProduct(const Vector<N,T>& other) const
             {
@@ -294,5 +285,11 @@ namespace DivisionCore { namespace Vectors {
                 return *this;
             }
         };
+
+        typedef Vector<1,float> Vector1;
+        typedef Vector<2,float> Vector2;
+        typedef Vector<3,float> Vector3;
+        typedef Vector<4,float> Vector4;
+        typedef Vector<5,float> Vector5;
     }}
 #endif //DIVISIONCORE_VECTOR_H

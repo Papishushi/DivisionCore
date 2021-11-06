@@ -1,0 +1,182 @@
+/**
+  * @file Vector.codeinfo
+  * @author Daniel Molinero Lucas (Papishushi)
+  * @section Copyright © <2021+> <Daniel Molinero Lucas (Papishushi)> MIT LICENSE
+  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+  * to deal in the Software without restriction, including without limitation the rights to use, copy,
+  * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+  * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+  *
+  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+  *
+  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  **/
+
+#include "Vector.h"
+
+namespace DivisionCore { namespace Vectors {
+
+        /// @brief This is a Vector of N dimensions and type T.
+        /// @tparam N This is the number of dimensions, the default value is 2.
+        /// @tparam T This is an arithmetic type, the default type is float.
+        template<size_t N, typename T>
+        struct Vector;
+
+        /// @brief Default constructor, initializes all axys to 0.
+        template<size_t N, typename T>
+        Vector<N,T>::Vector();
+
+        /// @brief Constructor for any kind of Vector, you can pass any number of parameters of type T.
+        /// @param coord coordinate for the desired axys.
+        /// @param ... any number of coordinates for each axys.
+        template<size_t N, typename T>
+        Vector<N, T>::Vector(const T &coord, ...);
+
+        /// @brief Constructor for a Vector with the same value on all of his axys.
+        /// @param unique Unique value for all axys of the Vector.
+        template<size_t N, typename T>
+        Vector<N, T>::Vector(const T &unique);
+
+        /// @brief Constructor of a direction Vector not normalized.
+        /// @param from  Vector from position.
+        /// @param to Vector to position.
+        template<size_t N, typename T>
+        Vector<N, T>::Vector( const Vector<N,T> &from, const Vector<N, T> &to);
+
+        /// @brief Delete all the temporary memory of direct access to axys pointers.
+        Vector::~Vector();
+
+        /// @brief Returns a unit Vector with all the axys set to 0.
+        /// @return {0,...}
+        template<size_t N, typename T>
+        Vector<N, T> Vector<N, T>::Zero();
+
+        /// @brief Returns a unit Vector with all the axys set to 1.
+        /// @return {1,...}
+        template<size_t N, typename T>
+        Vector<N, T> Vector<N, T>::One();
+
+        /// @brief Returns a unit Vector pointing upwards globally.
+        /// @return {0,1}
+        template<size_t N, typename T>
+        Vector<N, T> Vector<N, T>::Up();
+
+        /// @brief Returns a unit Vector pointing downwards globally.
+        /// @return {0,-1}
+        template<size_t N, typename T>
+        Vector<N, T> Vector<N, T>::Down();
+
+        /// @brief Returns a unit Vector pointing left globally.
+        /// @return {-1,0}
+        template<size_t N, typename T>
+        Vector<N, T> Vector<N, T>::Left();
+
+        /// @brief Returns a unit Vector pointing right globally.
+        /// @return {1,0}
+        template<size_t N, typename T>
+        Vector<N, T> Vector<N, T>::Right();
+
+        /// @brief Returns a unit Vector pointing front globally.
+        /// @return {0,0,1}
+        template<size_t N, typename T>
+        Vector<N, T> Vector<N, T>::Front();
+
+        /// @brief Returns a unit Vector pointing back globally.
+        /// @return {0,0,-1}
+        template<size_t N, typename T>
+        Vector<N, T> Vector<N, T>::Back();
+
+        /// @brief Add two Vectors.
+        /// @param other This is the Vector to add.
+        /// @return The sum result.
+        template<size_t N, typename T>
+        Vector<N, T> Vector<N, T>::operator+(const Vector<N, T> &other) const;
+
+        /// @brief Subtract two Vectors.
+        /// @param other This is the Vector to subtract.
+        /// @return The subtraction result.
+        template<size_t N, typename T>
+        Vector<N, T> Vector<N, T>::operator-(const Vector<N, T> &other) const;
+
+        /// @brief Scale this vector.
+        /// @param other This is the value to scale the vector.
+        /// @return The scale result.
+        template<size_t N, typename T>
+        Vector<N, T> Vector<N, T>::operator*(const T &other) const;
+
+        /// @brief Add two Vectors and assign result.
+        /// @param other This is the Vector to add.
+        /// @return The sum result.
+        template<size_t N, typename T>
+        Vector<N, T> Vector<N, T>::operator+=(const Vector<N, T> &other);
+
+        /// @brief Subtract two Vectors and assign result.
+        /// @param other This is the Vector to subtract.
+        /// @return The subtraction result.
+        template<size_t N, typename T>
+        Vector<N, T> Vector<N, T>::operator-=(const Vector<N, T> &other);
+
+        /// @brief Scale this vector and assign result.
+        /// @param other This is the value to scale the vector.
+        /// @return The scale result.
+        template<size_t N, typename T>
+        Vector<N, T> Vector<N, T>::operator*=(const T &other);
+
+        /// @brief Is this vector equal to other?
+        /// @param other This is the Vector to compare with.
+        /// @return True if equal. \n False if different.
+        template<size_t N, typename T>
+        bool Vector<N, T>::operator==(const Vector<N, T> &other) const;
+
+        /// @brief Is this vector different to other?
+        /// @param other This is the Vector to compare with.
+        /// @return True if different. \n False if equal.
+        template<size_t N, typename T>
+        bool Vector<N, T>::operator!=(const Vector<N, T> &other) const;
+
+        /// @brief Assign a new value to this vector.
+        /// @param other This is the new value to assign.
+        /// @return A reference to this vector.
+        template<size_t N, typename T>
+        Vector<N, T> & Vector<N, T>::operator=(const Vector<N, T> &other);
+
+        /// @brief This is the squared length of this vector.
+        /// @return The sum of the squared product of each vector component.
+        template<size_t N, typename T>
+        T Vector<N, T>::SquaredMagnitude() const;
+
+        /// @brief This is the length of this vector. Use SquaredMagnitude() when possible.
+        /// @return The square root of the sum of the squared product of each vector component.
+        template<size_t N, typename T>
+        T Vector<N, T>::Magnitude() const;
+
+        /// @brief This is the global angle between this vector and other.
+        /// @param other This is the other vector.
+        /// @return The global angle between this and other.
+        template<size_t N, typename T>
+        T Vector<N, T>::Angle(const Vector<N, T> &other) const;
+
+        /// @brief Get the cross product of two vectors. The only true cross product is the 3 dimensions one, the use of more or less dimensions are generalized versions of the later.
+        /// @param other The other vector to cross.
+        /// @return The product of the Magnitudes of both vectors, times the cosine of the angle between the two, times Front() unit vector.
+        template<size_t N, typename T>
+        Vector<N, T> Vector<N, T>::CrossProduct(const Vector<N, T> &other) const;
+
+        /// @brief This is the scalar or dot product between two vectors.
+        /// @param other The other vector.
+        /// @return The sum of the vectors components products.
+        template<size_t N, typename T>
+        T Vector<N, T>::DotProduct(const Vector<N, T> &other) const;
+
+        /// @brief Returns the current vector normalized.
+        /// @return This vector as a unit vector.
+        template<size_t N, typename T>
+        Vector<N, T> Vector<N, T>::Normalized() const;
+
+        /// @brief Normalize this vector and then return this vector.
+        /// @return This vector as a unit vector.
+        template<size_t N, typename T>
+        Vector<N, T> Vector<N, T>::OverrideNormalized();
+    }}
