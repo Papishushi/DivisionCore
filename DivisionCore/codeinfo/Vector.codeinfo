@@ -51,7 +51,7 @@ namespace DivisionCore { namespace Vectors {
         /// @brief Returns a unit Vector with all the axys set to 0.
         /// @return {0,...}
         template<size_t N, typename T>
-        Vector<N, T> Vector<N, T>::Zero();
+        constexpr Vector<N, T> Vector<N,T>::Zero = Vector<N,T>{0, HackSFINAE()};
 
         /// @brief Returns a unit Vector with all the axys set to 1.
         /// @return {1,...}

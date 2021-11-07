@@ -1,5 +1,5 @@
 /**
-  * @file MessageArgs.h
+  * @file Random.h
   * @author Daniel Molinero Lucas (Papishushi)
   * @section Copyright © <2021+> <Daniel Molinero Lucas (Papishushi)> MIT LICENSE
   * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
@@ -13,51 +13,9 @@
   * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
   * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   **/
-#ifndef DIVISIONCORE_MESSAGEARGS_H
-#define DIVISIONCORE_MESSAGEARGS_H
+#ifndef DIVISIONCORE_RANDOM_H
+#define DIVISIONCORE_RANDOM_H
+static class Random{
 
-#include <string>
-#include <cstdarg>
-#include <vector>
-
-namespace DivisionCore { namespace Core
-{
-    struct MessageArgs
-    {
-    private:
-        std::string methodName;
-        bool selfApply;
-        std::vector<void*> params = {};
-    public:
-        MessageArgs() = delete;
-        MessageArgs(const std::string& _methodName, const bool _selfApply,const unsigned numberOfParams, const void* _params = nullptr, ... )
-        {
-            va_list list;
-
-            va_start(list, _params);
-
-            methodName = {_methodName};
-            selfApply = _selfApply;
-
-            for(int i = 0; i < numberOfParams; i++ )
-            {
-                params.insert(params.end(),va_arg(list, void*));
-            }
-
-            va_end(list);
-        }
-
-        inline const string &getMethodName() const {
-            return methodName;
-        }
-
-        inline bool isSelfApply() const {
-            return selfApply;
-        }
-
-        inline const vector<void *> &getParams() const {
-            return params;
-        }
-    };
-} }
-#endif //DIVISIONCORE_MESSAGEARGS_H
+};
+#endif //DIVISIONCORE_RANDOM_H

@@ -25,6 +25,13 @@ namespace DivisionCore { namespace Vectors {
         struct Vector{
         private:
             class HackSFINAE{public: HackSFINAE() = default;};
+            explicit Vector(const T& unique, HackSFINAE)
+            {
+                for(int i = 0; i < N; i++)
+                {
+                    coords[i] = unique;
+                }
+            }
         public:
             std::array<T,N> coords;
 
@@ -37,19 +44,9 @@ namespace DivisionCore { namespace Vectors {
 
             Vector()
             {
-                for(int i = 0; i < N; i++)
-                {
-                    coords[i] = 0;
-                }
-            };
-            explicit Vector(const T& unique, HackSFINAE)
-            {
-                for(int i = 0; i < N; i++)
-                {
-                    coords[i] = unique;
-                }
+                *this = Vector<N,T>::Zero();
             }
-            explicit Vector(const T& coord, ...) {
+            explicit Vector(const T& coord ...) {
                 va_list list;
 
                 va_start(list, coord);
@@ -65,6 +62,8 @@ namespace DivisionCore { namespace Vectors {
                         coords[i] = 0;
                     }
                 }
+
+                va_end(list);
             }
             Vector(const Vector<N,T>& from, const Vector<N,T>& to)
             {
@@ -238,20 +237,14 @@ namespace DivisionCore { namespace Vectors {
             }
             inline T Angle(const Vector<N,T>& other) const
             {
-                T dotMagnitudes = 0;
-
-                dotMagnitudes = Magnitude() * other.Magnitude() ;
+                T dotMagnitudes = Magnitude() * other.Magnitude();
 
                 return acos(DotProduct(other)/dotMagnitudes);
             }
             inline Vector<N,T> CrossProduct(const Vector<N,T>& other) const
             {
-                T dotMagnitudes = 0;
-                T dotVectors = 0;
-                T angle = 0;
-
-                dotMagnitudes = Magnitude() * other.Magnitude() ;
-                angle = acos(DotProduct(other)/dotMagnitudes);
+                T dotMagnitudes = Magnitude() * other.Magnitude() ;
+                T angle = acos(DotProduct(other)/dotMagnitudes);
 
                 return dotMagnitudes * cos(angle) * Vector<N,T>::Front();
             }

@@ -37,6 +37,7 @@ namespace  DivisionCore { namespace Core { namespace BehaviourSystem
     {
         (void) &Object<Component>::idInstanceDictionary;
         (void) &hideFlagsLookupTable;
+        (void) &methodsLookUpTable;
     }
 
     void RunningBehaviour::SearchLookUpTable(RunningBehaviour::MethodsEnum &out, const string &search)
@@ -54,13 +55,13 @@ namespace  DivisionCore { namespace Core { namespace BehaviourSystem
         switch (value)
         {
             case MethodsEnum::Destroy:
-                if(reinterpret_cast<Component * >(args->params[0]) != nullptr)
+                if(reinterpret_cast<Component * >(args->getParams()[0]) != nullptr)
                 {
-                    Destroy(reinterpret_cast<Component * >(args->params[0]));
+                    Destroy(reinterpret_cast<Component * >(args->getParams()[0]));
                 }
                 else
                 {
-                    Object<GameObject>::Destroy(reinterpret_cast<GameObject * >(args->params[0]));
+                    Object<GameObject>::Destroy(reinterpret_cast<GameObject * >(args->getParams()[0]));
                 }
             default:
                 break;
@@ -70,9 +71,9 @@ namespace  DivisionCore { namespace Core { namespace BehaviourSystem
     void RunningBehaviour::HookMessage(GameObject *source, const MessageArgs *args)
     {
         MethodsEnum lookUpValue;
-        SearchLookUpTable(lookUpValue, args->methodName);
+        SearchLookUpTable(lookUpValue, args->getMethodName());
 
-        if(!args->selfApply && this->gameObject != source || args->selfApply)
+        if(!args->isSelfApply() && this->gameObject != source || args->isSelfApply())
         {
             ProcessLookUpValue(source, args, lookUpValue);
             return;
