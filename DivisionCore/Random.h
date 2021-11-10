@@ -22,7 +22,6 @@
 #include <cstdint>
 #include <array>
 
-
 using std::chrono::duration_cast;
 using std::chrono::nanoseconds;
 using std::chrono::system_clock;
@@ -30,9 +29,7 @@ using std::chrono::system_clock;
 namespace DivisionCore { namespace Core {
         class Random final {
         public:
-
             Random() = delete;
-
             ~Random() = delete;
 
             static unsigned GetStdChronoNanoUnits() {
@@ -233,10 +230,9 @@ namespace DivisionCore { namespace Core {
                         }
                     }
                 }
-
             };
 
-            float static Interpolate(float a0, float a1, float w) {
+            float static Interpolate(const float a0, const float a1, const float w) {
 
                 if (0.0 > w) return a0;
                 if (1.0 < w) return a1;
@@ -244,21 +240,22 @@ namespace DivisionCore { namespace Core {
                 return (a1 - a0) * ((w * (w * 6.0 - 15.0) + 10.0) * w * w * w) + a0;
             }
 
-            static float DotGradientGrid(Vectors::Vector2 position, float x, float y)
+            static float DotGradientGrid(const Vectors::Vector2& position ,float xDelta,float yDelta)
             {
                 GradientGrid gradientGrid = GradientGrid(position.x,position.y);
-                Vectors::Vector2 temp = gradientGrid.grid[0][0];
+                Vectors::Vector2 temp = gradientGrid.grid[539][539];
 
                 // Compute the distance vector
-                Vectors::Vector2 distance = Vectors::Vector2(position,Vectors::Vector2(x,y));
+                Vectors::Vector2 distance = Vectors::Vector2(position,Vectors::Vector2(xDelta,yDelta));
 
                 return distance.DotProduct(temp);
             }
 
-            static float PerlinNoise(Vectors::Vector2 position)
+            static float PerlinNoise(const Vectors::Vector2& position)
             {
                 int x0 = (int)*(position.x);
                 int x1 = x0 + 1;
+
                 int y0 = (int)*(position.y);
                 int y1 = y0 + 1;
 
@@ -266,12 +263,12 @@ namespace DivisionCore { namespace Core {
 
                 float n0, n1, ix0, ix1, value;
 
-                n0 = DotGradientGrid(position, x0, y0);
-                n1 = DotGradientGrid(position, x1, y0);
+                n0 = DotGradientGrid(position,x0, y0);
+                n1 = DotGradientGrid(position,x1, y0);
                 ix0 = Interpolate(n0, n1, *(interpolationWeights.x));
 
-                n0 = DotGradientGrid(position, x0, y1);
-                n1 =  DotGradientGrid(position, x1, y1);
+                n0 = DotGradientGrid(position,x0,y1);
+                n1 =  DotGradientGrid(position,x1,y1);
                 ix1 = Interpolate(n0, n1, *(interpolationWeights.x));
 
                 value = Interpolate(ix0, ix1, *(interpolationWeights.y));

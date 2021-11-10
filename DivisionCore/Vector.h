@@ -46,7 +46,7 @@ namespace DivisionCore { namespace Vectors {
             {
                 *this = Vector<N,T>::Zero();
             }
-            explicit Vector(const T& coord ...) {
+            explicit Vector(const T coord ...) {
                 va_list list;
 
                 va_start(list, coord);
@@ -121,7 +121,7 @@ namespace DivisionCore { namespace Vectors {
 
                 for(int i = 0; i < N; i++)
                 {
-                   temp[i] = coords[i] + other.coords[i];
+                    temp.coords[i] = coords[i] + other.coords[i];
                 }
 
                 return temp;
@@ -132,7 +132,7 @@ namespace DivisionCore { namespace Vectors {
 
                 for(int i = 0; i < N; i++)
                 {
-                    temp[i] = coords[i] - other.coords[i];
+                    temp.coords[i] = coords[i] - other.coords[i];
                 }
 
                 return temp;
@@ -143,7 +143,7 @@ namespace DivisionCore { namespace Vectors {
 
                 for(int i = 0; i < N; i++)
                 {
-                    temp[i] =  coords[i] * other;
+                    temp.coords[i] = coords[i] * other;
                 }
 
                 return temp;
@@ -254,7 +254,7 @@ namespace DivisionCore { namespace Vectors {
 
                 for(int i = 0; i < N; i++)
                 {
-                    temp += coords[i] * other[i];
+                    temp += coords[i] * other.coords[i];
                 }
 
                 return temp;
@@ -265,7 +265,7 @@ namespace DivisionCore { namespace Vectors {
 
                 for(int i = 0; i < N; i++)
                 {
-                    temp[i] = temp[i] > 0 ? temp[i] / Magnitude() : 0;
+                    temp.coords[i] = coords[i] > 0 ? coords[i] / Magnitude() : 0;
                 }
 
                 return temp;
