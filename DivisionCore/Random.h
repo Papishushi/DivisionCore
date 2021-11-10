@@ -156,6 +156,46 @@ namespace DivisionCore { namespace Core {
 
                 return units;
             }
+
+            struct RandomLayer
+            {
+            private:
+                unsigned units;
+                double random;
+            public:
+
+                inline const double& getRandom()
+                {
+                    return random;
+                }
+
+                RandomLayer() = delete;
+
+                explicit RandomLayer(double _random)
+                {
+                    units = GetStdChronoNanoUnits();
+
+                    if(units == 0)
+                    {
+                        units = 1;
+                    }
+
+                    random = _random * units * 0.5 * (1 - _random);
+                }
+                RandomLayer(unsigned _units, double _random)
+                {
+                    units = _units;
+
+                    if(units == 0)
+                    {
+                        units = 1;
+                    }
+
+                    random = _random * units * 0.5 * (1 - _random);
+                }
+
+            };
+
             static double Value() {
                 const static float seed = 0.2;
                 const static unsigned delta = 4;
@@ -167,44 +207,75 @@ namespace DivisionCore { namespace Core {
                     random = random * delta * (1 - random);
                 }
 
-                units = GetStdChronoNanoUnits();
+                RandomLayer layerAlpha = RandomLayer(units, random);
+                RandomLayer layerBeta = RandomLayer(layerAlpha.getRandom());
 
-                if (units == 0) {
-                    units = 1;
+                return layerBeta.getRandom();
+            }
+
+            struct GradientGrid
+            {
+            public:
+                Vectors::Vector2 grid [1080][1080];
+                GradientGrid(float * x, float * y)
+                {
+                    for(int u = 0; u < 1080; u++)
+                    {
+                        for(int v = 0; v < 1080 * 0.5; v++)
+                        {
+                            float randomX = Value();
+                            float randomY = Value();
+
+                            randomX *= *x;
+                            randomY *= *y;
+
+                            grid[u][v] = Vectors::Vector<2,float>(randomX, randomY) ;
+                        }
+                    }
                 }
 
-                return random * units * (0.5 - (random * 0.5)) * (1 - random);
+            };
+
+            float static Interpolate(float a0, float a1, float w) {
+
+                if (0.0 > w) return a0;
+                if (1.0 < w) return a1;
+
+                return (a1 - a0) * ((w * (w * 6.0 - 15.0) + 10.0) * w * w * w) + a0;
             }
+
+            static float DotGradientGrid(Vectors::Vector2 position, float x, float y)
+            {
+                GradientGrid gradientGrid = GradientGrid(position.x,position.y);
+                Vectors::Vector2 temp = gradientGrid.grid[0][0];
+
+                // Compute the distance vector
+                Vectors::Vector2 distance = Vectors::Vector2(position,Vectors::Vector2(x,y));
+
+                return distance.DotProduct(temp);
+            }
+
             static float PerlinNoise(Vectors::Vector2 position)
             {
-                struct GradientGrid
-                {
-                   Vectors::Vector2 grid [340282346638528859811704183484516925440 * 2][340282346638528859811704183484516925440 * 2];
-                   long float gridSize = 340282346638528859811704183484516925440 * 4;
+                int x0 = (int)*(position.x);
+                int x1 = x0 + 1;
+                int y0 = (int)*(position.y);
+                int y1 = y0 + 1;
 
-                   GradientGrid()
-                   {
-                       for(int x = 0; x < gridSize * 0.5; x++)
-                       {
-                           for(int y = 0; x < gridSize * 0.5; x++)
-                           {
-                                grid[x][y] = Vectors::Vector2::One() * Value();
-                           }
-                       }
-                   }
-                   
-                };
+                Vectors::Vector2 interpolationWeights = Vectors::Vector2(position, Vectors::Vector2(x0,y0));
 
-                GradientGrid gradientGrid = GradientGrid();
+                float n0, n1, ix0, ix1, value;
 
-                if(position.x)
-                {
+                n0 = DotGradientGrid(position, x0, y0);
+                n1 = DotGradientGrid(position, x1, y0);
+                ix0 = Interpolate(n0, n1, *(interpolationWeights.x));
 
-                }
-                if(position.y)
-                {
+                n0 = DotGradientGrid(position, x0, y1);
+                n1 =  DotGradientGrid(position, x1, y1);
+                ix1 = Interpolate(n0, n1, *(interpolationWeights.x));
 
-                }
+                value = Interpolate(ix0, ix1, *(interpolationWeights.y));
+                return value;
             }
         };
     }}
