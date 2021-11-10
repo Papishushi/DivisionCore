@@ -47,7 +47,7 @@ namespace DivisionCore { namespace Core
             va_end(list);
         }
 
-        inline const string &getMethodName() const {
+        inline const std::string& getMethodName() const {
             return methodName;
         }
 
@@ -55,7 +55,7 @@ namespace DivisionCore { namespace Core
             return selfApply;
         }
 
-        inline const vector<void *> &getParams() const {
+        inline const std::vector<void *>& getParams() const {
             return params;
         }
     };
