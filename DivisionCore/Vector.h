@@ -44,9 +44,11 @@ namespace DivisionCore { namespace Vectors {
 
                 for (int i = 0; i < N; i++)
                 {
-                    if (&va_arg(list, T) != nullptr)
+                    auto temp = va_arg(list, T);
+
+                    if (&temp != nullptr)
                     {
-                        coords[i] = va_arg(list, T);
+                        coords[i] = temp;
                     }
                     else
                     {
@@ -81,7 +83,7 @@ namespace DivisionCore { namespace Vectors {
 
             static inline Vector<N,T> Zero()
             {
-                return Vector<N,T>{0, 0};
+                return Vector<N,T>{0};
             }
             static inline Vector<N,T> One()
             {

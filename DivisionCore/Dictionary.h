@@ -32,15 +32,14 @@ namespace DivisionCore { namespace Containers {
             B * value;
 
             KeyValuePair() = delete;
-            KeyValuePair(const KeyValuePair<A,B>&) = default;
-            KeyValuePair(const A* _key, const B* _value){
+            KeyValuePair(A* _key, B* _value){
                 key = _key;
                 value = _value;
-            };
-            KeyValuePair(const A& _key, const B& _value){
+            }
+            KeyValuePair(A& _key, B& _value){
                 key = new A(_key);
                 value = new B(_value);
-            };
+            }
             ~KeyValuePair()
             {
                 delete key;
