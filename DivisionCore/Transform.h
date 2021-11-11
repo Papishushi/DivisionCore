@@ -31,6 +31,7 @@ namespace DivisionCore { namespace Core { namespace BehaviourSystem { namespace 
 
         Transform();
         explicit Transform(Transform * parent);
+        ~Transform();
 
         inline bool operator == (const Transform& other) const
         {

@@ -15,6 +15,7 @@
   **/
 
 #include "Transform.h"
+#include "Vector.h"
 
 using namespace DivisionCore::Vectors;
 
@@ -33,6 +34,10 @@ namespace DivisionCore { namespace Core { namespace BehaviourSystem { namespace 
         scale = Vector2::Zero();
 
         parent = _parent;
+    }
+
+    Transform::~Transform() {
+        delete parent;
     }
 } } } }
 

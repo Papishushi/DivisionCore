@@ -16,17 +16,28 @@
 #ifndef DIVISIONCORE_RANDOM_H
 #define DIVISIONCORE_RANDOM_H
 #include "Vector.h"
+
 #include <ctime>
 #include <chrono>
 #include <cmath>
 #include <cstdint>
-#include <array>
 
 using std::chrono::duration_cast;
 using std::chrono::nanoseconds;
 using std::chrono::system_clock;
 
+using DivisionCore::Vectors::Vector2;
+
 namespace DivisionCore { namespace Core {
+
+        static float Interpolate(const float from, const float to, const float weight) {
+
+            if (0.0 > weight) return from;
+            if (1.0 < weight) return to;
+
+            return (to - from) * ((weight * (weight * 6.0 - 15.0) + 10.0) * weight * weight * weight) + from;
+        }
+
         class Random final {
         public:
             Random() = delete;
@@ -194,7 +205,7 @@ namespace DivisionCore { namespace Core {
             };
 
             static double Value() {
-                const static float seed = 0.2;
+                const static float seed = 0.25740375;
                 const static unsigned delta = 4;
 
                 double random = seed;
@@ -212,66 +223,57 @@ namespace DivisionCore { namespace Core {
 
             struct GradientGrid
             {
+            private:
+                Vector2 gridValue;
             public:
-                Vectors::Vector2 grid [1080][1080];
+                inline const Vector2& getGridValue() const
+                {
+                  return gridValue;
+                }
+
+                GradientGrid() = delete;
                 GradientGrid(float * x, float * y)
                 {
-                    for(int u = 0; u < 1080; u++)
-                    {
-                        for(int v = 0; v < 1080 * 0.5; v++)
-                        {
-                            float randomX = Value();
-                            float randomY = Value();
+                    float randomX = Value();
+                    float randomY = Value();
 
-                            randomX *= *x;
-                            randomY *= *y;
+                    randomX *= *x;
+                    randomY *= *y;
 
-                            grid[u][v] = Vectors::Vector<2,float>(randomX, randomY) ;
-                        }
-                    }
+                    gridValue = Vector2(randomX, randomY).Normalized();
                 }
             };
 
-            float static Interpolate(const float a0, const float a1, const float w) {
-
-                if (0.0 > w) return a0;
-                if (1.0 < w) return a1;
-
-                return (a1 - a0) * ((w * (w * 6.0 - 15.0) + 10.0) * w * w * w) + a0;
-            }
-
-            static float DotGradientGrid(const Vectors::Vector2& position ,float xDelta,float yDelta)
+            static float DotProductGradient(const Vector2& position, float xDelta, float yDelta)
             {
-                GradientGrid gradientGrid = GradientGrid(position.x,position.y);
-                Vectors::Vector2 temp = gradientGrid.grid[539][539];
+                Vector2 temp = GradientGrid(position.x,position.y).getGridValue();
 
-                // Compute the distance vector
-                Vectors::Vector2 distance = Vectors::Vector2(position,Vectors::Vector2(xDelta,yDelta));
+                Vector2 distance = Vector2(Vector2(position),Vector2(xDelta,yDelta));
 
                 return distance.DotProduct(temp);
             }
 
-            static float PerlinNoise(const Vectors::Vector2& position)
+            static float PerlinNoise(const Vector2& position)
             {
-                int x0 = (int)*(position.x);
+                int x0 = (int)position.coords[0];
                 int x1 = x0 + 1;
 
-                int y0 = (int)*(position.y);
+                int y0 = (int)position.coords[1];
                 int y1 = y0 + 1;
 
-                Vectors::Vector2 interpolationWeights = Vectors::Vector2(position, Vectors::Vector2(x0,y0));
+                Vector2 interpolationWeights = Vector2(Vector2(position), Vector2(x0,y0));
 
                 float n0, n1, ix0, ix1, value;
 
-                n0 = DotGradientGrid(position,x0, y0);
-                n1 = DotGradientGrid(position,x1, y0);
-                ix0 = Interpolate(n0, n1, *(interpolationWeights.x));
+                n0 = DotProductGradient(position,x0, y0);
+                n1 = DotProductGradient(position,x1, y0);
+                ix0 = Interpolate(n0, n1, interpolationWeights.coords[0]);
 
-                n0 = DotGradientGrid(position,x0,y1);
-                n1 =  DotGradientGrid(position,x1,y1);
-                ix1 = Interpolate(n0, n1, *(interpolationWeights.x));
+                n0 = DotProductGradient(position,x0,y1);
+                n1 =  DotProductGradient(position,x1,y1);
+                ix1 = Interpolate(n0, n1, interpolationWeights.coords[0]);
 
-                value = Interpolate(ix0, ix1, *(interpolationWeights.y));
+                value = Interpolate(ix0, ix1, interpolationWeights.coords[1]);
                 return value;
             }
         };

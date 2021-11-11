@@ -23,15 +23,6 @@ namespace DivisionCore { namespace Vectors {
 
     template<size_t N = 2, typename T = float >
         struct Vector{
-        private:
-            class HackSFINAE{public: HackSFINAE() = default;};
-            explicit Vector(const T& unique, HackSFINAE)
-            {
-                for(int i = 0; i < N; i++)
-                {
-                    coords[i] = unique;
-                }
-            }
         public:
             std::array<T,N> coords;
 
@@ -44,7 +35,7 @@ namespace DivisionCore { namespace Vectors {
 
             Vector()
             {
-                *this = Vector<N,T>::Zero();
+                *this = Vector<N>::Zero();
             }
             explicit Vector(const T coord ...) {
                 va_list list;
@@ -64,6 +55,10 @@ namespace DivisionCore { namespace Vectors {
                 }
 
                 va_end(list);
+            }
+            Vector(const Vector<N,T> &clone){
+                delete this;
+                *this = clone;
             }
             Vector(const Vector<N,T>& from, const Vector<N,T>& to)
             {
@@ -86,11 +81,11 @@ namespace DivisionCore { namespace Vectors {
 
             static inline Vector<N,T> Zero()
             {
-                return Vector<N,T>{0, HackSFINAE()};
+                return Vector<N,T>{0, 0};
             }
             static inline Vector<N,T> One()
             {
-                return Vector<N,T>{1, HackSFINAE()};
+                return Vector<N,T>{1};
             }
             static inline Vector<N,T> Up()
             {

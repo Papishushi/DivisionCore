@@ -40,4 +40,6 @@ add_executable(DivisionCore
         Dictionary.cpp
         Dictionary.h
         Vector.cpp
-        Vector.h Random.h Random.cpp)
+        Vector.h
+        Random.cpp
+        Random.h )
