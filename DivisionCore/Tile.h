@@ -74,7 +74,7 @@ namespace DivisionCore {
 
                 virtual void UpdateCycle() = 0;
 
-                virtual inline const unsigned &getState(const MessageArgs &args) const {
+                virtual inline const unsigned &getState() const {
                     return state;
                 }
 
@@ -82,49 +82,202 @@ namespace DivisionCore {
                     //Alloc
                     Tile *neighbours[3][3];
 
+                    //Up-Midle
                     neighbours[1][2] = *tileGrid.FindValue(position + Vector<2, int>::Up());
+                    //Down-Midle
                     neighbours[1][0] = *tileGrid.FindValue(position + Vector<2, int>::Down());
+                    //Left-Midle
                     neighbours[0][1] = *tileGrid.FindValue(position + Vector<2, int>::Left());
+                    //Right-Midle
                     neighbours[2][1] = *tileGrid.FindValue(position + Vector<2, int>::Right());
 
+                    //Right-up
                     neighbours[2][2] = *tileGrid.FindValue(position + Vector<2, int>::Up() + Vector<2, int>::Right());
+                    //Left-Up
                     neighbours[0][2] = *tileGrid.FindValue(position + Vector<2, int>::Up() + Vector<2, int>::Left());
+                    //Right-Down
                     neighbours[2][0] = *tileGrid.FindValue(position + Vector<2, int>::Down() + Vector<2, int>::Right());
+                    //Left-Down
                     neighbours[0][0] = *tileGrid.FindValue(position + Vector<2, int>::Left());
 
+                    //Center
                     neighbours[1][1] = this;
 
-                    //Compare
-                    for (int x = 0; x < 3; x++) {
-                        for (int y = 0; y < 3; y++) {
-                            switch (neighbours[x][y]->state) {
-                                case 0:
-                                    break;
-                                case 1:
-                                    break;
-                                case 2:
-                                    break;
-                                case 3:
-                                    break;
-                                case 4:
-                                    break;
-                                case 5:
-                                    break;
-                                case 6:
-                                    break;
-                                case 7:
-                                    break;
-                                case 8:
-                                    break;
-                                default:
-                                    break;
+
+                    /*1 2 3
+                      4 0 5
+                      6 7 8*/
+                    //If 5 or more of this states match update State
+                    unsigned proposedStates[9] = {0,0,0,0,0,0,0,0,0};
+                    unsigned index = 0;
+
+                    if(neighbours[1][1] == nullptr){
+
+                    } else {
+                        //Compare & vote 9 iterations
+                        for (unsigned x = 0; x < 3; x++) {
+                            for (unsigned y = 0; y < 3; y++) {
+                                if(neighbours[x][y] != nullptr)
+                                {
+                                    switch (neighbours[x][y]->getState()) {
+                                        //State
+                                        case 0:
+
+                                            break;
+                                            //State
+                                        case 1:
+
+                                            break;
+                                            //State
+                                        case 2:
+
+                                            break;
+                                            //State
+                                        case 3:
+
+                                            break;
+                                            //State
+                                        case 4:
+
+                                            break;
+                                            //State
+                                        case 5:
+
+                                            break;
+                                            //State
+                                        case 6:
+
+                                            break;
+                                            //State
+                                        case 7:
+
+                                            break;
+                                            //State
+                                        case 8:
+
+                                            break;
+                                            //State
+                                        default:
+                                            //Relative position (Not done)
+                                            switch (x) {
+                                                case 0:
+                                                    switch (y) {
+                                                        case 0:
+                                                            proposedStates[index] = 0;
+                                                            break;
+                                                        case 1:
+                                                            proposedStates[index] = 0;
+                                                            break;
+                                                        case 2:
+                                                            proposedStates[index] = 0;
+                                                            break;
+                                                        default:
+                                                            proposedStates[index] = 0;
+                                                            break;
+                                                    }
+                                                    break;
+                                                case 1:
+                                                    switch (y) {
+                                                        case 0:
+                                                            proposedStates[index] = 0;
+                                                            break;
+                                                        case 2:
+                                                            proposedStates[index] = 0;
+                                                            break;
+                                                        default:
+                                                            proposedStates[index] = 0;
+                                                            break;
+                                                    }
+                                                    break;
+                                                case 2:
+                                                    switch (y) {
+                                                        case 0:
+                                                            proposedStates[index] = 0;
+                                                            break;
+                                                        case 1:
+                                                            proposedStates[index] = 0;
+                                                            break;
+                                                        case 2:
+                                                            proposedStates[index] = 0;
+                                                            break;
+                                                        default:
+                                                            proposedStates[index] = 0;
+                                                            break;
+                                                    }
+                                                    break;
+                                                default:
+                                                    proposedStates[index] = 0;
+                                                    break;
+                                            }
+                                            break;
+                                    }
+                                }
+                                else
+                                {
+                                    switch (x) {
+                                        case 0:
+                                            switch (y) {
+                                                case 0:
+                                                    proposedStates[index] = 6;
+                                                    break;
+                                                case 1:
+                                                    proposedStates[index] = 4;
+                                                    break;
+                                                case 2:
+                                                    proposedStates[index] = 1;
+                                                    break;
+                                                default:
+                                                    proposedStates[index] = 0;
+                                                    break;
+                                            }
+                                            break;
+                                        case 1:
+                                            switch (y) {
+                                                case 0:
+                                                    proposedStates[index] = 7;
+                                                    break;
+                                                case 2:
+                                                    proposedStates[index] = 2;
+                                                    break;
+                                                default:
+                                                    proposedStates[index] = 0;
+                                                    break;
+                                            }
+                                            break;
+                                        case 2:
+                                            switch (y) {
+                                                case 0:
+                                                    proposedStates[index] = 8;
+                                                    break;
+                                                case 1:
+                                                    proposedStates[index] = 5;
+                                                    break;
+                                                case 2:
+                                                    proposedStates[index] = 3;
+                                                    break;
+                                                default:
+                                                    proposedStates[index] = 0;
+                                                    break;
+                                            }
+                                            break;
+                                        default:
+                                            proposedStates[index] = 0;
+                                            break;
+                                    }
+                                }
+                                index++;
                             }
                         }
+                        /*1 2 3
+                          4 0 5
+                          6 7 8*/
                     }
 
+
+
                     //Dealloc
-                    for (int x = 0; x < 3; x++) {
-                        for (int y = 0; y < 3; y++) {
+                    for (unsigned x = 0; x < 3; x++) {
+                        for (unsigned y = 0; y < 3; y++) {
                             delete neighbours[x][y];
                         }
                     }
