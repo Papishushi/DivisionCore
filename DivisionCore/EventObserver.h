@@ -19,26 +19,32 @@
 #include "EventHandler.h"
 
 #ifdef _WIN32
+
 #include <windows.h>
+
 #else
 #include <unistd.h>
 #include <thread>
 #endif
 
-namespace DivisionCore { namespace Core { namespace EventHandling {
+namespace DivisionCore {
+    namespace Core {
+        namespace EventHandling {
 
-            template <typename EmisorType,typename ObserverType, typename Args>
+            template<typename EmisorType, typename ObserverType, typename Args>
             class EventEmitter;
 
-            template <typename EmisorType,typename ObserverType, typename Args>
+            template<typename EmisorType, typename ObserverType, typename Args>
             class EventObserver {
             public:
-                virtual EventHandler<EmisorType,ObserverType,Args> *Bind(void (ObserverType::*pFunction) (EmisorType *,const Args *), EventEmitter <EmisorType,ObserverType,Args> *emitter) {
-                    auto *handler = new EventHandler<EmisorType,ObserverType,Args>(pFunction, emitter, this);
+                virtual EventHandler <EmisorType, ObserverType, Args> *
+                Bind(void (ObserverType::*pFunction)(EmisorType *, const Args *),
+                     EventEmitter<EmisorType, ObserverType, Args> *emitter) {
+                    auto *handler = new EventHandler<EmisorType, ObserverType, Args>(pFunction, emitter, this);
                     return handler;
                 }
 
-                virtual void Unbind(EventHandler<EmisorType,ObserverType,Args> &handler) {
+                virtual void Unbind(EventHandler <EmisorType, ObserverType, Args> &handler) {
                     if (handler.isObserving) {
                         handler.unbind = true;
                     }
@@ -56,5 +62,7 @@ namespace DivisionCore { namespace Core { namespace EventHandling {
                     }
                 }
             };
-        }}}
+        }
+    }
+}
 #endif //DIVISIONCORE_EVENTOBSERVER_H

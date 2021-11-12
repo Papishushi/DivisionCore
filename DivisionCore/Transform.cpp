@@ -19,25 +19,31 @@
 
 using namespace DivisionCore::Vectors;
 
-namespace DivisionCore { namespace Core { namespace BehaviourSystem { namespace Components
-{
-    Transform::Transform() {
-        position = Vector2::Zero();
-        rotation = Vector3::Zero();
-        scale = Vector2::Zero();
+namespace DivisionCore {
+    namespace Core {
+        namespace BehaviourSystem {
+            namespace Components {
+                Transform::Transform() {
+                    position = Vector2::Zero();
+                    rotation = Vector3::Zero();
+                    scale = Vector2::Zero();
 
-        parent = nullptr;
-    }
-    Transform::Transform(Transform * _parent) {
-        position = Vector2::Zero();
-        rotation = Vector3::Zero();
-        scale = Vector2::Zero();
+                    parent = nullptr;
+                }
 
-        parent = _parent;
-    }
+                Transform::Transform(Transform *_parent) {
+                    position = Vector2::Zero();
+                    rotation = Vector3::Zero();
+                    scale = Vector2::Zero();
 
-    Transform::~Transform() {
-        delete parent;
+                    parent = _parent;
+                }
+
+                Transform::~Transform() {
+                    delete parent;
+                }
+            }
+        }
     }
-} } } }
+}
 

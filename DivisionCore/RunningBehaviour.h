@@ -15,6 +15,7 @@
   **/
 #ifndef DIVISIONCORE_RUNNINGBEHAVIOUR_H
 #define DIVISIONCORE_RUNNINGBEHAVIOUR_H
+
 #include "Behaviour.h"
 #include "GameObject.h"
 #include "MessageArgs.h"
@@ -26,44 +27,52 @@
 using DivisionCore::Core::EntitySystem::GameObject;
 using DivisionCore::Core::EventHandling::EventObserver;
 
-namespace DivisionCore{ namespace Core { namespace BehaviourSystem
-{
-class RunningBehaviour : public Behaviour, public EventObserver<GameObject,RunningBehaviour, MessageArgs>
-    {
-    private:
-        enum class MethodsEnum
-        {
-            Destroy = 0,
-            HookMessage = 1
-        };
-    protected:
-        static Dictionary<string, uint_least8_t > methodsLookUpTable;
+namespace DivisionCore {
+    namespace Core {
+        namespace BehaviourSystem {
+            class RunningBehaviour : public Behaviour, public EventObserver<GameObject, RunningBehaviour, MessageArgs> {
+            private:
+                enum class MethodsEnum {
+                    Destroy = 0,
+                    HookMessage = 1
+                };
+            protected:
+                static Dictionary<string, uint_least8_t> methodsLookUpTable;
 
-        inline virtual void InitializeLookUpTable() const
-        {
-            methodsLookUpTable.Add(KeyValuePair<string, uint_least8_t>::MakePair("Destroy", (uint_least8_t)MethodsEnum::Destroy));
-            methodsLookUpTable.Add(KeyValuePair<string, uint_least8_t>::MakePair("HookMessage", (uint_least8_t)MethodsEnum::HookMessage));
+                inline virtual void InitializeLookUpTable() const {
+                    methodsLookUpTable.Add(KeyValuePair<string, uint_least8_t>::MakePair("Destroy",
+                                                                                         (uint_least8_t) MethodsEnum::Destroy));
+                    methodsLookUpTable.Add(KeyValuePair<string, uint_least8_t>::MakePair("HookMessage",
+                                                                                         (uint_least8_t) MethodsEnum::HookMessage));
+                }
+
+                void HookMessage(GameObject *source, const MessageArgs *args);
+
+                virtual void SearchLookUpTable(MethodsEnum &out, const string &search);
+
+                virtual void ProcessLookUpValue(GameObject *source, const MessageArgs *args, const MethodsEnum &value);
+
+                virtual void Awake() = 0;
+
+                virtual void Start() = 0;
+
+                virtual void FixedUpdate() = 0;
+
+                virtual void Update() = 0;
+
+                virtual void LateUpdate() = 0;
+
+                void (RunningBehaviour::*pHook)(GameObject *, const MessageArgs *) = &RunningBehaviour::HookMessage;
+
+            public:
+                RunningBehaviour();
+
+                template<typename T = void (RunningBehaviour::*)(GameObject *, const MessageArgs *)>
+                inline T GetHook() {
+                    return pHook;
+                }
+            };
         }
-        void HookMessage(GameObject * source, const MessageArgs* args);
-
-        virtual void SearchLookUpTable(MethodsEnum &out, const string& search);
-
-        virtual void ProcessLookUpValue(GameObject *source, const MessageArgs *args, const MethodsEnum &value) ;
-
-        virtual void Awake() = 0;
-        virtual void Start()  = 0;
-        virtual void FixedUpdate()  = 0;
-        virtual void Update()  = 0;
-        virtual void LateUpdate()  = 0;
-
-        void (RunningBehaviour::*pHook) (GameObject *,const MessageArgs *) = &RunningBehaviour::HookMessage;
-    public:
-    RunningBehaviour();
-    template <typename T = void (RunningBehaviour::*) (GameObject *,const MessageArgs *)>
-        inline T GetHook()
-        {
-            return pHook;
-        }
-    };
-}}}
+    }
+}
 #endif //DIVISIONCORE_RUNNINGBEHAVIOUR_H

@@ -15,5 +15,7 @@
   **/
 
 #if DIVISIONCORE_HIDEFLAGS_H == TRUE
+
 #include "HideFlags.h"
+
 #endif

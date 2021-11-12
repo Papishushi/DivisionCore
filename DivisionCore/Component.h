@@ -15,55 +15,81 @@
   **/
 #ifndef DIVISIONCORE_COMPONENT_H
 #define DIVISIONCORE_COMPONENT_H
+
 #include "Object.h"
 #include "MessageArgs.h"
 #include <memory>
 #include <string>
 
-namespace DivisionCore { namespace Core { namespace EntitySystem
-{
-    class GameObject;
-} } }
+namespace DivisionCore {
+    namespace Core {
+        namespace EntitySystem {
+            class GameObject;
+        }
+    }
+}
 
 using DivisionCore::Core::EntitySystem::GameObject;
 
-namespace DivisionCore { namespace Core { namespace BehaviourSystem { namespace Components
-{
-    class Transform;
-} } } }
+namespace DivisionCore {
+    namespace Core {
+        namespace BehaviourSystem {
+            namespace Components {
+                class Transform;
+            }
+        }
+    }
+}
 
 using DivisionCore::Core::BehaviourSystem::Components::Transform;
 
-namespace DivisionCore { namespace Core { namespace BehaviourSystem
-{
+namespace DivisionCore {
+    namespace Core {
+        namespace BehaviourSystem {
 
-    class Component : protected Object<Component> {
-    public:
-        GameObject * gameObject;
-        Transform * transform;
-        string tag;
+            class Component : protected Object<Component> {
+            public:
+                GameObject *gameObject;
+                Transform *transform;
+                string tag;
 
-        Component();
-        explicit Component(EntitySystem::GameObject* parent);
+                Component();
 
-        inline bool CompareTag(const string& _tag) const
-        {
-            return tag == _tag;
+                explicit Component(EntitySystem::GameObject *parent);
+
+                inline bool CompareTag(const string &_tag) const {
+                    return tag == _tag;
+                }
+
+                void SendMessageLocal(GameObject *emisor, MessageArgs *args) const;
+
+                void SendMessageChildren(GameObject *emisor, MessageArgs *args) const;
+
+                void SendMessageParent(GameObject *emisor, MessageArgs *args) const;
+
+                template<typename T>
+                bool TryGetComponent(T &outComponent);
+
+                template<typename T>
+                T GetComponent();
+
+                template<typename T>
+                T GetComponentInChildren();
+
+                template<typename T>
+                T GetComponentInParent();
+
+                template<typename T>
+                T *GetComponents();
+
+                template<typename T>
+                T *GetComponentsInChildren();
+
+                template<typename T>
+                T *GetComponentsInParent();
+            };
         }
-
-        void SendMessageLocal(GameObject * emisor, MessageArgs * args) const;
-        void SendMessageChildren(GameObject * emisor, MessageArgs * args) const;
-        void SendMessageParent(GameObject * emisor, MessageArgs * args) const;
-
-        template <typename T> bool TryGetComponent(T& outComponent);
-
-        template <typename T> T GetComponent();
-        template <typename T> T GetComponentInChildren();
-        template <typename T> T GetComponentInParent();
-        template <typename T> T* GetComponents();
-        template <typename T> T* GetComponentsInChildren();
-        template <typename T> T* GetComponentsInParent();
-    };
-} } }
+    }
+}
 #endif //DIVISIONCORE_COMPONENT_H
 

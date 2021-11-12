@@ -20,44 +20,44 @@
 #include <cstdarg>
 #include <vector>
 
-namespace DivisionCore { namespace Core
-{
-    struct MessageArgs
-    {
-    private:
-        std::string methodName;
-        bool selfApply;
-        std::vector<void*> params = {};
-    public:
-        MessageArgs() = delete;
-        MessageArgs(const std::string& _methodName, const bool _selfApply,const unsigned numberOfParams, const void* _params = nullptr, ... )
-        {
-            va_list list;
+namespace DivisionCore {
+    namespace Core {
+        struct MessageArgs {
+        private:
+            std::string methodName;
+            bool selfApply;
+            std::vector<void *> params = {};
+        public:
+            MessageArgs() = delete;
 
-            va_start(list, _params);
+            MessageArgs(const std::string &_methodName, const bool _selfApply, const unsigned numberOfParams,
+                        const void *_params = nullptr, ...) {
+                va_list list;
 
-            methodName = {_methodName};
-            selfApply = _selfApply;
+                        va_start(list, _params);
 
-            for(int i = 0; i < numberOfParams; i++ )
-            {
-                params.insert(params.end(),va_arg(list, void*));
+                methodName = {_methodName};
+                selfApply = _selfApply;
+
+                for (int i = 0; i < numberOfParams; i++) {
+                    params.insert(params.end(), va_arg(list, void*));
+                }
+
+                        va_end(list);
             }
 
-            va_end(list);
-        }
+            inline const std::string &getMethodName() const {
+                return methodName;
+            }
 
-        inline const std::string& getMethodName() const {
-            return methodName;
-        }
+            inline bool isSelfApply() const {
+                return selfApply;
+            }
 
-        inline bool isSelfApply() const {
-            return selfApply;
-        }
-
-        inline const std::vector<void *>& getParams() const {
-            return params;
-        }
-    };
-} }
+            inline const std::vector<void *> &getParams() const {
+                return params;
+            }
+        };
+    }
+}
 #endif //DIVISIONCORE_MESSAGEARGS_H

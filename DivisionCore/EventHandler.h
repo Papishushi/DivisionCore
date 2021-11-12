@@ -17,34 +17,41 @@
 #define DIVISIONCORE_EVENTHANDLER_H
 
 #ifdef _WIN32
+
 #include <windows.h>
+
 #else
 #include <unistd.h>
 #include <thread>
 #endif
 
-namespace DivisionCore { namespace Core { namespace EventHandling {
+namespace DivisionCore {
+    namespace Core {
+        namespace EventHandling {
 
-            template <typename EmisorType,typename ObserverType, typename Args>
+            template<typename EmisorType, typename ObserverType, typename Args>
             class EventEmitter;
-            template <typename EmisorType,typename ObserverType, typename Args>
+
+            template<typename EmisorType, typename ObserverType, typename Args>
             class EventObserver;
 
-            template <typename EmisorType, typename ObserverType, typename Args>
+            template<typename EmisorType, typename ObserverType, typename Args>
             struct EventHandler {
             public:
-                ObserverType * associattedBehaviour;
+                ObserverType *associattedBehaviour;
                 bool unbind;
                 bool isObserving;
 
-                void (ObserverType::* pFunction) (EmisorType *,const Args *);
+                void (ObserverType::* pFunction)(EmisorType *, const Args *);
 
-                EventEmitter <EmisorType,ObserverType,Args> *emitter;
-                EventObserver <EmisorType,ObserverType,Args> *observer;
+                EventEmitter<EmisorType, ObserverType, Args> *emitter;
+                EventObserver<EmisorType, ObserverType, Args> *observer;
 
                 EventHandler() = delete;
-                EventHandler(void (ObserverType::*_pFunction) (EmisorType *,const Args *), EventEmitter <EmisorType,ObserverType,Args> * _emitter, EventObserver <EmisorType,ObserverType,Args> * _observer)
-                {
+
+                EventHandler(void (ObserverType::*_pFunction)(EmisorType *, const Args *),
+                             EventEmitter<EmisorType, ObserverType, Args> *_emitter,
+                             EventObserver<EmisorType, ObserverType, Args> *_observer) {
                     pFunction = _pFunction;
                     emitter = _emitter;
                     observer = _observer;
@@ -75,6 +82,8 @@ namespace DivisionCore { namespace Core { namespace EventHandling {
                     }
                 }
             };
-        }}}
+        }
+    }
+}
 #endif //DIVISIONCORE_EVENTHANDLER_H
 

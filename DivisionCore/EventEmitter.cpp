@@ -15,5 +15,7 @@
   **/
 
 #if DIVISIONCORE_EVENTEMITTER_H == TRUE
+
 #include "EventEmitter.h"
+
 #endif

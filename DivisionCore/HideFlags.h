@@ -15,10 +15,12 @@
   **/
 #ifndef DIVISIONCORE_HIDEFLAGS_H
 #define DIVISIONCORE_HIDEFLAGS_H
-namespace DivisionCore { namespace Core {
-    enum class HideFlags{
-        HIDDEN = 0,
-        VISIBLE = 1
-    };
-}}
+namespace DivisionCore {
+    namespace Core {
+        enum class HideFlags {
+            HIDDEN = 0,
+            VISIBLE = 1
+        };
+    }
+}
 #endif //DIVISIONCORE_HIDEFLAGS_H

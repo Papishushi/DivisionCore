@@ -15,6 +15,7 @@
   **/
 #ifndef DIVISIONCORE_RANDOM_H
 #define DIVISIONCORE_RANDOM_H
+
 #include "Vector.h"
 
 #include <ctime>
@@ -28,7 +29,8 @@ using std::chrono::system_clock;
 
 using DivisionCore::Vectors::Vector2;
 
-namespace DivisionCore { namespace Core {
+namespace DivisionCore {
+    namespace Core {
 
         static float Interpolate(const float from, const float to, const float weight) {
 
@@ -41,6 +43,7 @@ namespace DivisionCore { namespace Core {
         class Random final {
         public:
             Random() = delete;
+
             ~Random() = delete;
 
             static unsigned GetStdChronoNanoUnits() {
@@ -165,37 +168,32 @@ namespace DivisionCore { namespace Core {
                 return units;
             }
 
-            struct RandomLayer
-            {
+            struct RandomLayer {
             private:
                 unsigned units;
                 double random;
             public:
 
-                inline const double& getRandom()
-                {
+                inline const double &getRandom() {
                     return random;
                 }
 
                 RandomLayer() = delete;
 
-                explicit RandomLayer(double _random)
-                {
+                explicit RandomLayer(double _random) {
                     units = GetStdChronoNanoUnits();
 
-                    if(units == 0)
-                    {
+                    if (units == 0) {
                         units = 1;
                     }
 
                     random = _random * units * 0.5 * (1 - _random);
                 }
-                RandomLayer(unsigned _units, double _random)
-                {
+
+                RandomLayer(unsigned _units, double _random) {
                     units = _units;
 
-                    if(units == 0)
-                    {
+                    if (units == 0) {
                         units = 1;
                     }
 
@@ -221,19 +219,17 @@ namespace DivisionCore { namespace Core {
                 return layerBeta.getRandom();
             }
 
-            struct GradientGrid
-            {
+            struct GradientGrid {
             private:
                 Vector2 gridValue;
             public:
-                inline const Vector2& getGridValue() const
-                {
-                  return gridValue;
+                inline const Vector2 &getGridValue() const {
+                    return gridValue;
                 }
 
                 GradientGrid() = delete;
-                GradientGrid(float * x, float * y)
-                {
+
+                GradientGrid(float *x, float *y) {
                     float randomX = Value();
                     float randomY = Value();
 
@@ -244,38 +240,37 @@ namespace DivisionCore { namespace Core {
                 }
             };
 
-            static float DotProductGradient(const Vector2& position, float xDelta, float yDelta)
-            {
-                Vector2 temp = GradientGrid(position.x,position.y).getGridValue();
+            static float DotProductGradient(const Vector2 &position, float xDelta, float yDelta) {
+                Vector2 temp = GradientGrid(position.x, position.y).getGridValue();
 
-                Vector2 distance = Vector2(Vector2(position),Vector2(xDelta,yDelta));
+                Vector2 distance = Vector2(Vector2(position), Vector2(xDelta, yDelta));
 
                 return distance.DotProduct(temp);
             }
 
-            static float PerlinNoise(const Vector2& position)
-            {
-                int x0 = (int)position.coords[0];
+            static float PerlinNoise(const Vector2 &position) {
+                int x0 = (int) position.coords[0];
                 int x1 = x0 + 1;
 
-                int y0 = (int)position.coords[1];
+                int y0 = (int) position.coords[1];
                 int y1 = y0 + 1;
 
-                Vector2 interpolationWeights = Vector2(Vector2(position), Vector2(x0,y0));
+                Vector2 interpolationWeights = Vector2(Vector2(position), Vector2(x0, y0));
 
                 float n0, n1, ix0, ix1, value;
 
-                n0 = DotProductGradient(position,x0, y0);
-                n1 = DotProductGradient(position,x1, y0);
+                n0 = DotProductGradient(position, x0, y0);
+                n1 = DotProductGradient(position, x1, y0);
                 ix0 = Interpolate(n0, n1, interpolationWeights.coords[0]);
 
-                n0 = DotProductGradient(position,x0,y1);
-                n1 =  DotProductGradient(position,x1,y1);
+                n0 = DotProductGradient(position, x0, y1);
+                n1 = DotProductGradient(position, x1, y1);
                 ix1 = Interpolate(n0, n1, interpolationWeights.coords[0]);
 
                 value = Interpolate(ix0, ix1, interpolationWeights.coords[1]);
                 return value;
             }
         };
-    }}
+    }
+}
 #endif //DIVISIONCORE_RANDOM_H

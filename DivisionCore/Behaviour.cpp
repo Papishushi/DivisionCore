@@ -15,5 +15,7 @@
   **/
 
 #if DIVISIONCORE_BEHAVIOUR_H == TRUE
+
 #include "Behaviour.h"
+
 #endif

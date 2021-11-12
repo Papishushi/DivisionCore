@@ -26,178 +26,174 @@ using namespace DivisionCore::Core;
 using namespace DivisionCore::Core::BehaviourSystem;
 using namespace DivisionCore::Core::BehaviourSystem::Components;
 
-using DivisionCore::Containers::TemplateDictionary;
+using DivisionCore::Containers::TemplateValueDictionary;
 using DivisionCore::Containers::Dictionary;
 
-template <typename T> TemplateDictionary<typename Object<T>::dynamic_byte,Object, T > Object<T>::idInstanceDictionary;
-template <typename T> Dictionary<typename Object<T>::dynamic_byte, string> Object<T>::hideFlagsLookupTable;
+template<typename T> TemplateValueDictionary<typename Object<T>::dynamic_byte, Object, T> Object<T>::idInstanceDictionary;
+template<typename T> Dictionary<typename Object<T>::dynamic_byte, string> Object<T>::hideFlagsLookupTable;
 list<GameObject *> EntitySystem::GameObject::instancedGameObjects; // NOLINT(cert-err58-cpp)
 
-namespace DivisionCore { namespace Core { namespace EntitySystem
-{
-    GameObject::GameObject() {
-        (void)&hideFlagsLookupTable;
-        (void)&idInstanceDictionary;
+namespace DivisionCore {
+    namespace Core {
+        namespace EntitySystem {
+            GameObject::GameObject() {
+                (void) &hideFlagsLookupTable;
+                (void) &idInstanceDictionary;
 
-        transform = Transform();
-        instancedGameObjects.push_back(this);
-        isActive = true;
-        isStatic = false;
-        activeInHierarchy = true;
-        layer = 0;
-        scene = 0;
-        sceneCullingMask = 0;
-        tag = nullptr;
+                transform = Transform();
+                instancedGameObjects.push_back(this);
+                isActive = true;
+                isStatic = false;
+                activeInHierarchy = true;
+                layer = 0;
+                scene = 0;
+                sceneCullingMask = 0;
+                tag = nullptr;
 
-        UpdateMessageLink();
-    }
-
-    GameObject::GameObject(string &name) {
-        (void)&hideFlagsLookupTable;
-        (void)&idInstanceDictionary;
-
-        this->name = name;
-        transform = Transform();
-        instancedGameObjects.push_back(this);
-        isActive = true;
-        isStatic = false;
-        activeInHierarchy = true;
-        layer = 0;
-        scene = 0;
-        sceneCullingMask = 0;
-        tag = nullptr;
-
-        UpdateMessageLink();
-    }
-
-    GameObject::GameObject(string &name, Transform &transform) {
-        (void)&hideFlagsLookupTable;
-        (void)&idInstanceDictionary;
-
-        this->name = name;
-        hideFlags = HideFlags::VISIBLE;
-        this->transform = transform;
-        instancedGameObjects.push_back(this);
-        isActive = true;
-        isStatic = false;
-        activeInHierarchy = true;
-        layer = 0;
-        scene = 0;
-        sceneCullingMask = 0;
-        tag = nullptr;
-
-        UpdateMessageLink();
-    }
-
-    GameObject::GameObject(string &name, Transform &transform, const list <RunningBehaviour *> &components) {
-        (void)&hideFlagsLookupTable;
-        (void)&idInstanceDictionary;
-
-        this->name = name;
-        hideFlags = HideFlags::VISIBLE;
-        this->transform = transform;
-        attachedComponents = components;
-        instancedGameObjects.push_back(this);
-        isActive = true;
-        isStatic = false;
-        activeInHierarchy = true;
-        layer = 0;
-        scene = 0;
-        sceneCullingMask = 0;
-        tag = nullptr;
-
-        UpdateMessageLink();
-    }
-
-    GameObject::~GameObject() {
-        instancedGameObjects.remove(this);
-    }
-
-    list<EventHandling::EventHandler<GameObject,RunningBehaviour,MessageArgs>  *> GameObject::UpdateMessageLink()
-    {
-        void (RunningBehaviour::*pFunction) (GameObject *,const MessageArgs *);
-
-        list<EventHandling::EventHandler<GameObject,RunningBehaviour,MessageArgs>  *> handlers;
-
-        list<RunningBehaviour *>::iterator it;
-        list<Transform>::iterator itChildren;
-        for (it = attachedComponents.begin(); it != attachedComponents.end(); ++it)
-        {
-            pFunction = (*it)->GetHook();
-
-            if(pFunction)
-            {
-                EventHandling::EventHandler<GameObject,RunningBehaviour,MessageArgs> * handler = SendMessageLocal.Bind(*it, pFunction);
-
-                if(handler)
-                {
-                    handlers.push_back(handler);
-                }
+                UpdateMessageLink();
             }
 
-        }
-        for (itChildren = transform.children.begin(); itChildren != transform.children.begin(); ++itChildren)
-        {
-            for (it = itChildren->gameObject->attachedComponents.begin(); it != itChildren->gameObject->attachedComponents.end(); ++it)
-            {
-                pFunction = (*it)->GetHook();
+            GameObject::GameObject(string &name) {
+                (void) &hideFlagsLookupTable;
+                (void) &idInstanceDictionary;
 
-                if(pFunction)
-                {
-                    EventHandling::EventHandler<GameObject,RunningBehaviour,MessageArgs> * handler = SendMessageChildren.Bind(*it, pFunction);
+                this->name = name;
+                transform = Transform();
+                instancedGameObjects.push_back(this);
+                isActive = true;
+                isStatic = false;
+                activeInHierarchy = true;
+                layer = 0;
+                scene = 0;
+                sceneCullingMask = 0;
+                tag = nullptr;
 
-                    if(handler)
-                    {
-                        handlers.push_back(handler);
+                UpdateMessageLink();
+            }
+
+            GameObject::GameObject(string &name, Transform &transform) {
+                (void) &hideFlagsLookupTable;
+                (void) &idInstanceDictionary;
+
+                this->name = name;
+                hideFlags = HideFlags::VISIBLE;
+                this->transform = transform;
+                instancedGameObjects.push_back(this);
+                isActive = true;
+                isStatic = false;
+                activeInHierarchy = true;
+                layer = 0;
+                scene = 0;
+                sceneCullingMask = 0;
+                tag = nullptr;
+
+                UpdateMessageLink();
+            }
+
+            GameObject::GameObject(string &name, Transform &transform, const list<RunningBehaviour *> &components) {
+                (void) &hideFlagsLookupTable;
+                (void) &idInstanceDictionary;
+
+                this->name = name;
+                hideFlags = HideFlags::VISIBLE;
+                this->transform = transform;
+                attachedComponents = components;
+                instancedGameObjects.push_back(this);
+                isActive = true;
+                isStatic = false;
+                activeInHierarchy = true;
+                layer = 0;
+                scene = 0;
+                sceneCullingMask = 0;
+                tag = nullptr;
+
+                UpdateMessageLink();
+            }
+
+            GameObject::~GameObject() {
+                instancedGameObjects.remove(this);
+            }
+
+            list<EventHandling::EventHandler<GameObject, RunningBehaviour, MessageArgs> *>
+            GameObject::UpdateMessageLink() {
+                void (RunningBehaviour::*pFunction)(GameObject *, const MessageArgs *);
+
+                list<EventHandling::EventHandler<GameObject, RunningBehaviour, MessageArgs> *> handlers;
+
+                list<RunningBehaviour *>::iterator it;
+                list<Transform>::iterator itChildren;
+                for (it = attachedComponents.begin(); it != attachedComponents.end(); ++it) {
+                    pFunction = (*it)->GetHook();
+
+                    if (pFunction) {
+                        EventHandling::EventHandler<GameObject, RunningBehaviour, MessageArgs> *handler = SendMessageLocal.Bind(
+                                *it, pFunction);
+
+                        if (handler) {
+                            handlers.push_back(handler);
+                        }
+                    }
+
+                }
+                for (itChildren = transform.children.begin(); itChildren != transform.children.begin(); ++itChildren) {
+                    for (it = itChildren->gameObject->attachedComponents.begin();
+                         it != itChildren->gameObject->attachedComponents.end(); ++it) {
+                        pFunction = (*it)->GetHook();
+
+                        if (pFunction) {
+                            EventHandling::EventHandler<GameObject, RunningBehaviour, MessageArgs> *handler = SendMessageChildren.Bind(
+                                    *it, pFunction);
+
+                            if (handler) {
+                                handlers.push_back(handler);
+                            }
+                        }
                     }
                 }
+                for (it = transform.parent->gameObject->attachedComponents.begin();
+                     it != transform.parent->gameObject->attachedComponents.end(); ++it) {
+                    pFunction = (*it)->GetHook();
+
+                    if (pFunction) {
+                        EventHandling::EventHandler<GameObject, RunningBehaviour, MessageArgs> *handler = SendMessageParent.Bind(
+                                *it, pFunction);
+
+                        if (handler) {
+                            handlers.push_back(handler);
+                        }
+                    }
+                }
+
+                return handlers;
             }
-        }
-        for (it = transform.parent->gameObject->attachedComponents.begin(); it != transform.parent->gameObject->attachedComponents.end(); ++it)
-        {
-            pFunction = (*it)->GetHook();
 
-            if(pFunction)
-            {
-                EventHandling::EventHandler<GameObject,RunningBehaviour,MessageArgs> * handler = SendMessageParent.Bind(*it, pFunction);
-
-                if(handler)
-                {
-                    handlers.push_back(handler);
+            //Incomplete coding must finalize it
+            GameObject *GameObject::CreatePrimitive(PrimitiveType primitiveType) {
+                switch (primitiveType) {
+                    case PrimitiveType::SQUARE:
+                        return Instantiate(GameObject(), "Square");
+                    case PrimitiveType::CIRCLE:
+                        return Instantiate(GameObject(), "Circle");
+                    case PrimitiveType::TRIANGLE:
+                        return Instantiate(GameObject(), "Triangle");
+                    case PrimitiveType::HEXAGON:
+                        return Instantiate(GameObject(), "Hexagon");
+                    default:
+                        return nullptr;
                 }
             }
-        }
 
-        return handlers;
-    }
+            GameObject GameObject::Find(const string &name) {
+                return {};
+            }
 
-    //Incomplete coding must finalize it
-    GameObject * GameObject::CreatePrimitive(PrimitiveType primitiveType)
-    {
-        switch (primitiveType)
-        {
-            case PrimitiveType::SQUARE:
-                return Instantiate(GameObject(), "Square");
-            case PrimitiveType::CIRCLE:
-                return Instantiate(GameObject(), "Circle");
-            case PrimitiveType::TRIANGLE:
-                return Instantiate(GameObject(), "Triangle");
-            case PrimitiveType::HEXAGON:
-                return Instantiate(GameObject(), "Hexagon");
-            default:
+            GameObject *GameObject::FindGameObjectsWithTag(const string &tag) {
                 return nullptr;
+            }
+
+            GameObject GameObject::FindWithTag(const string &tag) {
+                return {};
+            }
         }
     }
-
-    GameObject GameObject::Find(const string& name) {
-        return {};
-    }
-
-    GameObject *GameObject::FindGameObjectsWithTag(const string& tag) {
-        return nullptr;
-    }
-
-    GameObject GameObject::FindWithTag(const string& tag) {
-        return {};
-    }
-} } }
+}

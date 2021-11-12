@@ -15,13 +15,14 @@
   **/
 #ifndef DIVISIONCORE_OBJECT_H
 #define DIVISIONCORE_OBJECT_H
+
 #include "HideFlags.h"
 #include "Dictionary.h"
 
 using DivisionCore::Containers::Dictionary;
-using DivisionCore::Containers::TemplateDictionary;
+using DivisionCore::Containers::TemplateValueDictionary;
 using DivisionCore::Containers::KeyValuePair;
-using DivisionCore::Containers::TemplateKeyValuePair;
+using DivisionCore::Containers::KeyTemplateValuePair;
 
 #include <algorithm>
 #include <iostream>
@@ -30,171 +31,161 @@ using DivisionCore::Containers::TemplateKeyValuePair;
 #include <list>
 #include <tuple>
 
-namespace DivisionCore { namespace Core
-{
-    using std::string;
-    using std::tie;
+namespace DivisionCore {
+    namespace Core {
+        using std::string;
+        using std::tie;
 
 
-    template <typename T> class Object
-    {
-    protected:
-        typedef uint_least8_t dynamic_byte;
-        static Dictionary<dynamic_byte, string> hideFlagsLookupTable;
+        template<typename T>
+        class Object {
+        protected:
+            typedef uint_least8_t dynamic_byte;
+            static Dictionary<dynamic_byte, string> hideFlagsLookupTable;
 
-        static TemplateDictionary<dynamic_byte, Object, T> idInstanceDictionary;
-    private:
-        dynamic_byte instanceID;
-    public:
-        HideFlags hideFlags;
-        string name;
+            static TemplateValueDictionary<dynamic_byte, Object, T> idInstanceDictionary;
+        private:
+            dynamic_byte instanceID;
+            static dynamic_byte lastInstanceId;
+        public:
+            HideFlags hideFlags;
+            string name;
 
-        Object()
-        {
-            if (hideFlagsLookupTable.Empty())
-            {
-                hideFlagsLookupTable.Add(KeyValuePair<dynamic_byte, string>::MakePair((dynamic_byte)HideFlags::HIDDEN, "Hidden"));
-                hideFlagsLookupTable.Add(KeyValuePair<dynamic_byte, string>::MakePair((dynamic_byte)HideFlags::VISIBLE, "Visible"));
+            Object() {
+                if (hideFlagsLookupTable.empty()) {
+                    hideFlagsLookupTable.Add(
+                            KeyValuePair<dynamic_byte, string>::MakePair((dynamic_byte) HideFlags::HIDDEN, "Hidden"));
+                    hideFlagsLookupTable.Add(
+                            KeyValuePair<dynamic_byte, string>::MakePair((dynamic_byte) HideFlags::VISIBLE, "Visible"));
+                }
+
+                if (idInstanceDictionary.empty()) {
+                    instanceID = 0;
+                    lastInstanceId = instanceID;
+
+                    name = "Object" + instanceID;
+                    hideFlags = HideFlags::VISIBLE;
+
+                    idInstanceDictionary.Add(
+                            KeyTemplateValuePair<dynamic_byte, Object, T>::MakePair(instanceID, *this));
+                } else {
+                    instanceID = lastInstanceId + 1;
+                    lastInstanceId = instanceID;
+
+                    name = "Object" + instanceID;
+                    hideFlags = HideFlags::VISIBLE;
+
+                    idInstanceDictionary.Add(
+                            KeyTemplateValuePair<dynamic_byte, Object, T>::MakePair(instanceID, *this));
+                }
             }
 
-            if (idInstanceDictionary.Empty())
-            {
-                instanceID = 0;
-
-                name = "Object" + instanceID;
-                hideFlags = HideFlags::VISIBLE;
-
-                idInstanceDictionary.Add(TemplateKeyValuePair<dynamic_byte, Object, T>::MakePair(instanceID, *this));
+            ~Object() {
+                idInstanceDictionary.Remove(instanceID);
             }
-            else
-            {
-                instanceID = idInstanceDictionary.Size();
 
-                name = "Object" + instanceID;
-                hideFlags = HideFlags::VISIBLE;
-
-                idInstanceDictionary.Add(TemplateKeyValuePair<dynamic_byte, Object, T>::MakePair(instanceID, *this));
+            inline bool operator-() const {
+                return this != nullptr;
             }
-        }
-        ~Object()
-        {
-            idInstanceDictionary.Remove(instanceID);
-        }
 
-        inline bool operator - () const
-        {
-            return this != nullptr;
-        }
-        inline bool operator ! () const
-        {
-            return this == nullptr;
-        }
-        inline bool operator == (const Object& other) const
-        {
-            return tie(instanceID, hideFlags, name) == tie(other.instanceID, other.hideFlags, other.name);
-        }
-        inline bool operator != (const Object& other) const
-        {
-            return tie(instanceID, hideFlags, name) != tie(other.instanceID, other.hideFlags, other.name);
-        }
-
-        inline int GetInstanceID() const
-        {
-            return instanceID;
-        }
-
-        virtual string ToString() const
-        {
-            return name;
-        }
-        virtual inline string ToJson() const
-        {
-            return R"({"instanceID": ")" + std::to_string(instanceID) + "\"" +
-                   R"("hideFlags": ")" + *hideFlagsLookupTable.FindValue((dynamic_byte)hideFlags) + "\"" +
-                   R"("name": ")" + name + "\"" + "}";
-        }
-
-        static T* Instantiate(const  T& object,const string& name)
-        {
-            if(&object != nullptr)
-            {
-                T* tempPtr = new T(object);
-                return tempPtr;
+            inline bool operator!() const {
+                return this == nullptr;
             }
-            else
-            {
+
+            inline bool operator==(const Object &other) const {
+                return tie(instanceID, hideFlags, name) == tie(other.instanceID, other.hideFlags, other.name);
+            }
+
+            inline bool operator!=(const Object &other) const {
+                return tie(instanceID, hideFlags, name) != tie(other.instanceID, other.hideFlags, other.name);
+            }
+
+            inline int GetInstanceID() const {
+                return instanceID;
+            }
+
+            virtual string ToString() const {
+                return name;
+            }
+
+            virtual inline string ToJson() const {
+                return R"({"instanceID": ")" + std::to_string(instanceID) + "\"" +
+                       R"("hideFlags": ")" + *hideFlagsLookupTable.FindValue((dynamic_byte) hideFlags) + "\"" +
+                       R"("name": ")" + name + "\"" + "}";
+            }
+
+            static T *Instantiate(const T &object, const string &name) {
+                if (&object != nullptr) {
+                    T *tempPtr = new T(object);
+                    return tempPtr;
+                } else {
+                    return nullptr;
+                }
+            }
+
+            static void Destroy(T *obj) {
+                delete obj;
+            }
+
+            static void Destroy(T *obj, const bool isArray) {
+                if (obj != nullptr) {
+                    if (isArray) {
+                        delete[] obj;
+                    } else {
+                        delete obj;
+                    }
+                }
+            }
+
+            template<typename Type>
+            static Type FindObjectOfType() {
+                typename TemplateValueDictionary<dynamic_byte, Object, T>::iterator it;
+                for (it = idInstanceDictionary.begin(); it != idInstanceDictionary.end(); ++it) {
+                    if (dynamic_cast<Type *>(it.operator*()->value) != nullptr) {
+                        return it.operator*()->value;
+                    }
+                }
                 return nullptr;
             }
-        }
-        static void Destroy(T* obj)
-        {
-            delete obj;
-        }
-        static void Destroy(T* obj, const bool isArray)
-        {
-            if(obj != nullptr)
-            {
-                if (isArray)
-                {
-                    delete[] obj;
-                } else
-                {
-                    delete obj;
+
+            template<typename Type>
+            static void ExpandAddArray(Type *original, const size_t size, const size_t newSize, const Type *add) {
+                // Dealloc
+                Type *temp = new Type[newSize];
+
+                if (original != nullptr) {
+                    std::copy(original, original + size - 1, temp);
+                    delete[] original;
                 }
-            }
-        }
 
-        template <typename Type> static Type FindObjectOfType()
-        {
-            typename TemplateDictionary<dynamic_byte ,Object, T>::iterator it;
-            for (it = idInstanceDictionary.begin(); it != idInstanceDictionary.end(); ++it)
-            {
-                if (dynamic_cast<Type*>(it.operator*()->value) != nullptr)
-                {
-                    return it.operator*()->value;
+                original = temp;
+                original[size] = add;
+            }
+
+            template<typename Type>
+            static Type *FindObjectsOfType() {
+                Type *tempArr = nullptr;
+                dynamic_byte counter = 0;
+
+                typename KeyTemplateValuePair<dynamic_byte, Object, T>::iterator it;
+                for (it = idInstanceDictionary.begin(); it != idInstanceDictionary.end(); ++it) {
+                    if (dynamic_cast<Type *>(it.operator*()->value) != nullptr) {
+                        ExpandAddArray(tempArr, counter, counter + 1, it.operator*()->value);
+                        counter++;
+                    }
                 }
-            }
-            return nullptr;
-        }
-        template <typename Type> static void ExpandAddArray(Type * original, const size_t size, const size_t newSize, const Type * add)
-        {
-            // Dealloc
-            Type* temp = new Type[newSize];
 
-            if (original != nullptr)
+                return tempArr;
+            }
+
+            /*static EmisorType* DontDestroyOnLoad()
             {
-                std::copy(original, original + size - 1, temp);
-                delete [] original;
-            }
-
-            original = temp;
-            original[size] = add;
-        }
-        template <typename Type> static Type* FindObjectsOfType()
-        {
-            Type* tempArr = nullptr;
-            dynamic_byte counter = 0;
-
-            typename TemplateKeyValuePair<dynamic_byte, Object, T>::iterator it;
-            for (it = idInstanceDictionary.begin(); it != idInstanceDictionary.end(); ++it)
-            {
-                if (dynamic_cast<Type*>(it.operator*()->value) != nullptr)
-                {
-                    ExpandAddArray(tempArr, counter, counter + 1, it.operator*()->value);
-                    counter++;
-                }
-            }
-
-            return tempArr;
-        }
-
-        /*static EmisorType* DontDestroyOnLoad()
-        {
-            EmisorType* instance = new EmisorType(This());
-            return instance;
-        }*/
-    };
-} }
+                EmisorType* instance = new EmisorType(This());
+                return instance;
+            }*/
+        };
+    }
+}
 #endif //DIVISIONCORE_OBJECT_H
 
 

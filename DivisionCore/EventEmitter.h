@@ -15,19 +15,22 @@
   **/
 #ifndef DIVISIONCORE_EVENTEMITTER_H
 #define DIVISIONCORE_EVENTEMITTER_H
+
 #include "EventHandler.h"
 #include "EventObserver.h"
 
 #include <memory>
 
-namespace DivisionCore { namespace Core { namespace EventHandling {
+namespace DivisionCore {
+    namespace Core {
+        namespace EventHandling {
 
-            template <typename EmisorType,typename ObserverType, typename Args>
-            class EventEmitter{
+            template<typename EmisorType, typename ObserverType, typename Args>
+            class EventEmitter {
             private:
                 bool emits;
-                EmisorType * input1;
-                Args * input2;
+                EmisorType *input1;
+                Args *input2;
             public:
 
                 EventEmitter() {
@@ -36,31 +39,35 @@ namespace DivisionCore { namespace Core { namespace EventHandling {
                     input2 = nullptr;
                 }
 
-                inline bool IsEmitting() const {return emits;}
+                inline bool IsEmitting() const { return emits; }
 
-                inline EmisorType * GetInput1() const {
+                inline EmisorType *GetInput1() const {
                     return input1;
                 }
-                inline Args * GetInput2() const {
+
+                inline Args *GetInput2() const {
                     return input2;
                 }
 
-                virtual void Emit(EmisorType * _input1, Args * _input2)
-                {
+                virtual void Emit(EmisorType *_input1, Args *_input2) {
                     emits = true;
                     input1 = _input1;
                     input2 = _input2;
                 }
-                virtual EventHandler<EmisorType,ObserverType,Args> * Bind(ObserverType * eventObserver, void (ObserverType::*pFunction) (EmisorType *, const Args *))
-                {
-                    auto * temp = reinterpret_cast<EventObserver<EmisorType,ObserverType,Args> *>(eventObserver);
+
+                virtual EventHandler<EmisorType, ObserverType, Args> *
+                Bind(ObserverType *eventObserver, void (ObserverType::*pFunction)(EmisorType *, const Args *)) {
+                    auto *temp = reinterpret_cast<EventObserver<EmisorType, ObserverType, Args> *>(eventObserver);
                     return temp->Bind(pFunction, this);
                 }
-                virtual void Unbind(EventObserver<EmisorType,ObserverType,Args> * eventObserver, EventHandler<EmisorType,ObserverType,Args>& handler)
-                {
+
+                virtual void Unbind(EventObserver<EmisorType, ObserverType, Args> *eventObserver,
+                                    EventHandler<EmisorType, ObserverType, Args> &handler) {
                     eventObserver->Unbind(handler);
                 }
             };
 
-        } } }
+        }
+    }
+}
 #endif //DIVISIONCORE_EVENTEMITTER_H

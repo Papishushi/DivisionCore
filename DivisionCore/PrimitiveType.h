@@ -15,15 +15,15 @@
   **/
 #ifndef DIVISIONCORE_PRIMITIVETYPE_H
 #define DIVISIONCORE_PRIMITIVETYPE_H
-namespace DivisionCore { namespace Core
-{
-    enum class PrimitiveType
-    {
-        SQUARE = 0,
-        CIRCLE = 1,
-        TRIANGLE = 2,
-        HEXAGON = 3
-    };
-} }
+namespace DivisionCore {
+    namespace Core {
+        enum class PrimitiveType {
+            SQUARE = 0,
+            CIRCLE = 1,
+            TRIANGLE = 2,
+            HEXAGON = 3
+        };
+    }
+}
 
 #endif //DIVISIONCORE_PRIMITIVETYPE_H

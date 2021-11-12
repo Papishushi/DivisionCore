@@ -15,32 +15,41 @@
   **/
 #ifndef DIVISIONCORE_TRANSFORM_H
 #define DIVISIONCORE_TRANSFORM_H
+
 #include "Component.h"
 #include "Vector.h"
 
-namespace DivisionCore { namespace Core { namespace BehaviourSystem { namespace Components
-{
-    class Transform : public Component{
-    public:
-        DivisionCore::Vectors::Vector2 position;
-        DivisionCore::Vectors::Vector3 rotation;
-        DivisionCore::Vectors::Vector2 scale;
+namespace DivisionCore {
+    namespace Core {
+        namespace BehaviourSystem {
+            namespace Components {
+                class Transform : public Component {
+                public:
+                    DivisionCore::Vectors::Vector2 position;
+                    DivisionCore::Vectors::Vector3 rotation;
+                    DivisionCore::Vectors::Vector2 scale;
 
-        Transform * parent;
-        std::list<Transform> children;
+                    Transform *parent;
+                    std::list<Transform> children;
 
-        Transform();
-        explicit Transform(Transform * parent);
-        ~Transform();
+                    Transform();
 
-        inline bool operator == (const Transform& other) const
-        {
-            return std::tie(position, rotation, scale) == std::tie(other.position, other.rotation, other.scale);
+                    explicit Transform(Transform *parent);
+
+                    ~Transform();
+
+                    inline bool operator==(const Transform &other) const {
+                        return std::tie(position, rotation, scale) ==
+                               std::tie(other.position, other.rotation, other.scale);
+                    }
+
+                    inline bool operator!=(const Transform &other) const {
+                        return std::tie(position, rotation, scale) !=
+                               std::tie(other.position, other.rotation, other.scale);
+                    }
+                };
+            }
         }
-        inline bool operator != (const Transform& other) const
-        {
-            return std::tie(position, rotation, scale) != std::tie(other.position, other.rotation, other.scale);
-        }
-    };
-} } } }
+    }
+}
 #endif //DIVISIONCORE_TRANSFORM_H

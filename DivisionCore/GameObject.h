@@ -15,6 +15,7 @@
   **/
 #ifndef DIVISIONCORE_GAMEOBJECT_H
 #define DIVISIONCORE_GAMEOBJECT_H
+
 #include "Transform.h"
 #include "MessageArgs.h"
 #include "PrimitiveType.h"
@@ -28,188 +29,202 @@
 
 using DivisionCore::Core::BehaviourSystem::Components::Transform;
 
-namespace DivisionCore { namespace Core { namespace  BehaviourSystem {
-    class RunningBehaviour;
-}}}
+namespace DivisionCore {
+    namespace Core {
+        namespace BehaviourSystem {
+            class RunningBehaviour;
+        }
+    }
+}
 
 using DivisionCore::Core::BehaviourSystem::RunningBehaviour;
 
 using std::list;
 
-namespace DivisionCore { namespace Core { namespace EntitySystem
-{
-    class GameObject : protected Object<GameObject>
-    {
-    private:
-        static std::list<GameObject *> instancedGameObjects;
-        std::list<RunningBehaviour *> attachedComponents;
-        bool isActive;
-    protected:
-        std::list<EventHandling::EventHandler<GameObject,RunningBehaviour,MessageArgs> *> UpdateMessageLink();
-    public:
-        bool activeInHierarchy;
-        inline bool activeSelf() const
-        {
-            return isActive;
-        }
-        bool isStatic;
-        uint_least8_t layer;
-        uint_least8_t scene;
-        unsigned long sceneCullingMask;
-        string tag;
-        Transform transform;
+namespace DivisionCore {
+    namespace Core {
+        namespace EntitySystem {
+            class GameObject : protected Object<GameObject> {
+            private:
+                static std::list<GameObject *> instancedGameObjects;
+                std::list<RunningBehaviour *> attachedComponents;
+                bool isActive;
+            protected:
+                std::list<EventHandling::EventHandler<GameObject, RunningBehaviour, MessageArgs> *> UpdateMessageLink();
 
-        EventHandling::EventEmitter<GameObject,RunningBehaviour,MessageArgs>  SendMessageLocal;
-        EventHandling::EventEmitter<GameObject,RunningBehaviour,MessageArgs>  SendMessageChildren;
-        EventHandling::EventEmitter<GameObject,RunningBehaviour,MessageArgs>  SendMessageParent;
+            public:
+                bool activeInHierarchy;
 
-        GameObject();
-        explicit GameObject(string& name);
-        explicit GameObject(string& name, Transform& transform);
-        explicit GameObject(string& name, Transform& transform, const std::list<RunningBehaviour *>& components);
-        ~GameObject();
-
-        inline void SetActive(const bool _isActive)
-        {
-            isActive = _isActive;
-        }
-        template <typename T> inline T * AddComponent()
-        {
-            T* temp = new T();
-            attachedComponents.push_back(temp);
-            return temp;
-        }
-        template <typename T> inline void DestroyComponent(T * _component)
-        {
-            if(_component != nullptr)
-            {
-                attachedComponents.remove(_component);
-                Destroy(_component);
-            }
-        }
-
-        inline bool CompareTag(const string& _tag) const
-        {
-            return tag == _tag;
-        }
-
-        template <typename T> bool TryGetComponent(T& outComponent)
-        {
-            list<RunningBehaviour *>::iterator it;
-
-            for (it = attachedComponents.begin(); it != attachedComponents.end(); ++it)
-            {
-                if (dynamic_cast<T*>(it) != nullptr)
-                {
-                    outComponent = it;
-                    return true;
+                inline bool activeSelf() const {
+                    return isActive;
                 }
-            }
-            return false;
-        }
 
-        template <typename T> T GetComponent()
-        {
-            list<RunningBehaviour *>::iterator it;
+                bool isStatic;
+                uint_least8_t layer;
+                uint_least8_t scene;
+                unsigned long sceneCullingMask;
+                string tag;
+                Transform transform;
 
-            for (it = attachedComponents.begin(); it != attachedComponents.end(); ++it)
-            {
-                if (dynamic_cast<T>(it) != nullptr)
-                {
-                    return it;
+                EventHandling::EventEmitter<GameObject, RunningBehaviour, MessageArgs> SendMessageLocal;
+                EventHandling::EventEmitter<GameObject, RunningBehaviour, MessageArgs> SendMessageChildren;
+                EventHandling::EventEmitter<GameObject, RunningBehaviour, MessageArgs> SendMessageParent;
+
+                GameObject();
+
+                explicit GameObject(string &name);
+
+                explicit GameObject(string &name, Transform &transform);
+
+                explicit GameObject(string &name, Transform &transform,
+                                    const std::list<RunningBehaviour *> &components);
+
+                ~GameObject();
+
+                inline void SetActive(const bool _isActive) {
+                    isActive = _isActive;
                 }
-            }
-            return nullptr;
-        }
-        template <typename T> T GetComponentInChildren()
-        {
-            list<RunningBehaviour *>::iterator it;
-            list<Transform>::iterator itChildren;
 
-            for (itChildren = transform.children.begin(); itChildren != transform.children.end(); ++itChildren)
-            {
-                for (it = itChildren->gameObject->attachedComponents.begin(); it != itChildren->gameObject->attachedComponents.end(); ++it) {
-                    if (dynamic_cast<T>(it) != nullptr) {
-                        return it;
+                template<typename T>
+                inline T *AddComponent() {
+                    T *temp = new T();
+                    attachedComponents.push_back(temp);
+                    return temp;
+                }
+
+                template<typename T>
+                inline void DestroyComponent(T *_component) {
+                    if (_component != nullptr) {
+                        attachedComponents.remove(_component);
+                        Destroy(_component);
                     }
                 }
-            }
 
-            return nullptr;
-        }
-        template <typename T> T GetComponentInParent()
-        {
-            list<RunningBehaviour *>::iterator it;
-            for (it = transform.parent->gameObject->attachedComponents.begin(); it != transform.parent->gameObject->attachedComponents.end(); ++it)
-            {
-                if (dynamic_cast<T>(it) != nullptr)
-                {
-                    return it;
+                inline bool CompareTag(const string &_tag) const {
+                    return tag == _tag;
                 }
-            }
 
-            return nullptr;
-        }
-        template <typename T> T* GetComponents()
-        {
-            T* tempArr = nullptr;
-            dynamic_byte counter = 0;
+                template<typename T>
+                bool TryGetComponent(T &outComponent) {
+                    list<RunningBehaviour *>::iterator it;
 
-            list<RunningBehaviour *>::iterator it;
-
-            for (it = attachedComponents.begin(); it != attachedComponents.end(); ++it)
-            {
-                if (dynamic_cast<T*>(it) != nullptr)
-                {
-                    ExpandAddArray(tempArr, counter, counter + 1, it);
-                    counter++;
-                }
-            }
-
-            return tempArr;
-        }
-        template <typename T> T* GetComponentsInChildren()
-        {
-            T* tempArr = nullptr;
-            dynamic_byte counter = 0;
-
-            list<RunningBehaviour *>::iterator it;
-            list<Transform>::iterator itChildren;
-            for (itChildren = transform.children.begin(); itChildren != transform.children.end(); ++itChildren) {
-                for (it = transform.parent->gameObject->attachedComponents.begin();
-                     it != transform.parent->gameObject->attachedComponents.end(); ++it) {
-                    if (dynamic_cast<T *>(it) != nullptr) {
-                        ExpandAddArray(tempArr, counter, counter + 1, it);
-                        counter++;
+                    for (it = attachedComponents.begin(); it != attachedComponents.end(); ++it) {
+                        if (dynamic_cast<T *>(it) != nullptr) {
+                            outComponent = it;
+                            return true;
+                        }
                     }
+                    return false;
                 }
-            }
 
-            return tempArr;
-        }
-        template <typename T> T* GetComponentsInParent()
-        {
-            T* tempArr = nullptr;
-            dynamic_byte counter = 0;
+                template<typename T>
+                T GetComponent() {
+                    list<RunningBehaviour *>::iterator it;
 
-            list<RunningBehaviour *>::iterator it;
-
-            for (it = transform.parent->gameObject->attachedComponents.begin(); it != transform.parent->gameObject->attachedComponents.end(); ++it)
-            {
-                if (dynamic_cast<T*>(it) != nullptr)
-                {
-                    ExpandAddArray(tempArr, counter, counter + 1, it);
-                    counter++;
+                    for (it = attachedComponents.begin(); it != attachedComponents.end(); ++it) {
+                        if (dynamic_cast<T>(it) != nullptr) {
+                            return it;
+                        }
+                    }
+                    return nullptr;
                 }
-            }
 
-            return tempArr;
+                template<typename T>
+                T GetComponentInChildren() {
+                    list<RunningBehaviour *>::iterator it;
+                    list<Transform>::iterator itChildren;
+
+                    for (itChildren = transform.children.begin();
+                         itChildren != transform.children.end(); ++itChildren) {
+                        for (it = itChildren->gameObject->attachedComponents.begin();
+                             it != itChildren->gameObject->attachedComponents.end(); ++it) {
+                            if (dynamic_cast<T>(it) != nullptr) {
+                                return it;
+                            }
+                        }
+                    }
+
+                    return nullptr;
+                }
+
+                template<typename T>
+                T GetComponentInParent() {
+                    list<RunningBehaviour *>::iterator it;
+                    for (it = transform.parent->gameObject->attachedComponents.begin();
+                         it != transform.parent->gameObject->attachedComponents.end(); ++it) {
+                        if (dynamic_cast<T>(it) != nullptr) {
+                            return it;
+                        }
+                    }
+
+                    return nullptr;
+                }
+
+                template<typename T>
+                T *GetComponents() {
+                    T *tempArr = nullptr;
+                    dynamic_byte counter = 0;
+
+                    list<RunningBehaviour *>::iterator it;
+
+                    for (it = attachedComponents.begin(); it != attachedComponents.end(); ++it) {
+                        if (dynamic_cast<T *>(it) != nullptr) {
+                            ExpandAddArray(tempArr, counter, counter + 1, it);
+                            counter++;
+                        }
+                    }
+
+                    return tempArr;
+                }
+
+                template<typename T>
+                T *GetComponentsInChildren() {
+                    T *tempArr = nullptr;
+                    dynamic_byte counter = 0;
+
+                    list<RunningBehaviour *>::iterator it;
+                    list<Transform>::iterator itChildren;
+                    for (itChildren = transform.children.begin();
+                         itChildren != transform.children.end(); ++itChildren) {
+                        for (it = transform.parent->gameObject->attachedComponents.begin();
+                             it != transform.parent->gameObject->attachedComponents.end(); ++it) {
+                            if (dynamic_cast<T *>(it) != nullptr) {
+                                ExpandAddArray(tempArr, counter, counter + 1, it);
+                                counter++;
+                            }
+                        }
+                    }
+
+                    return tempArr;
+                }
+
+                template<typename T>
+                T *GetComponentsInParent() {
+                    T *tempArr = nullptr;
+                    dynamic_byte counter = 0;
+
+                    list<RunningBehaviour *>::iterator it;
+
+                    for (it = transform.parent->gameObject->attachedComponents.begin();
+                         it != transform.parent->gameObject->attachedComponents.end(); ++it) {
+                        if (dynamic_cast<T *>(it) != nullptr) {
+                            ExpandAddArray(tempArr, counter, counter + 1, it);
+                            counter++;
+                        }
+                    }
+
+                    return tempArr;
+                }
+
+                static GameObject *CreatePrimitive(PrimitiveType primitiveType);
+
+                static GameObject Find(const string &name);
+
+                static GameObject *FindGameObjectsWithTag(const string &tag);
+
+                static GameObject FindWithTag(const string &tag);
+            };
         }
-
-        static GameObject * CreatePrimitive(PrimitiveType primitiveType);
-        static GameObject Find(const string& name);
-        static GameObject* FindGameObjectsWithTag(const string& tag);
-        static GameObject FindWithTag(const string& tag);
-    };
-}}}
+    }
+}
 #endif //DIVISIONCORE_GAMEOBJECT_H

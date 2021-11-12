@@ -15,43 +15,39 @@
   **/
 #ifndef DIVISIONCORE_ENTITY_H
 #define DIVISIONCORE_ENTITY_H
+
 #include "GameObject.h"
 
-namespace DivisionCore { namespace Core { namespace EntitySystem
-        {
-            template <typename T>
-            class Entity : public GameObject
-            {
+namespace DivisionCore {
+    namespace Core {
+        namespace EntitySystem {
+            template<typename T>
+            class Entity : public GameObject {
             public:
 
-                static Entity<T> * singleton;
+                static Entity<T> *singleton;
 
-                Entity()
-                {
-                    if(singleton == nullptr)
-                    {
+                Entity() {
+                    if (singleton == nullptr) {
                         singleton = this;
-                    }
-                    else
-                    {
-                        Destroy(this) ;
+                    } else {
+                        Destroy(this);
                     }
                 };
-                explicit Entity(bool rewrite)
-                {
-                    if(rewrite || singleton == nullptr)
-                    {
+
+                explicit Entity(bool rewrite) {
+                    if (rewrite || singleton == nullptr) {
                         singleton = this;
-                    }
-                    else
-                    {
-                        Destroy(this) ;
+                    } else {
+                        Destroy(this);
                     }
                 };
-                ~Entity()
-                {
+
+                ~Entity() {
                     singleton = nullptr;
                 }
             };
-        } } }
+        }
+    }
+}
 #endif //DIVISIONCORE_ENTITY_H

@@ -15,5 +15,7 @@
   **/
 
 #if DIVISIONCORE_SCENE_H == TRUE
+
 #include "Scene.h"
+
 #endif

@@ -15,5 +15,7 @@
   **/
 
 #if DIVISIONCORE_RANDOM_H == TRUE
+
 #include "Random.h"
+
 #endif

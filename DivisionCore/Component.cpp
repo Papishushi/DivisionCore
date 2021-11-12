@@ -20,76 +20,79 @@ using namespace DivisionCore::Core;
 using namespace DivisionCore::Core::EntitySystem;
 using namespace DivisionCore::Core::BehaviourSystem;
 
-using DivisionCore::Containers::TemplateDictionary;
+using DivisionCore::Containers::TemplateValueDictionary;
 using DivisionCore::Containers::Dictionary;
 
-template <typename T> TemplateDictionary<typename Object<T>::dynamic_byte,Object, T > Object<T>::idInstanceDictionary;
-template <typename T> Dictionary<typename Object<T>::dynamic_byte, string> Object<T>::hideFlagsLookupTable;
+template<typename T> TemplateValueDictionary<typename Object<T>::dynamic_byte, Object, T> Object<T>::idInstanceDictionary;
+template<typename T> Dictionary<typename Object<T>::dynamic_byte, string> Object<T>::hideFlagsLookupTable;
 
-namespace DivisionCore { namespace Core { namespace BehaviourSystem
-{
-    Component::Component() {
-        (void)&hideFlagsLookupTable;
-        (void)&idInstanceDictionary;
+namespace DivisionCore {
+    namespace Core {
+        namespace BehaviourSystem {
+            Component::Component() {
+                (void) &hideFlagsLookupTable;
+                (void) &idInstanceDictionary;
 
-        gameObject = new GameObject();
-        transform = &(gameObject->transform);
-        tag = nullptr;
-    }
-    Component::Component(GameObject * parent) {
-        (void)&hideFlagsLookupTable;
-        (void)&idInstanceDictionary;
+                gameObject = new GameObject();
+                transform = &(gameObject->transform);
+                tag = nullptr;
+            }
 
-        gameObject = parent;
-        transform = &(parent->transform);
-        tag = nullptr;
-    }
+            Component::Component(GameObject *parent) {
+                (void) &hideFlagsLookupTable;
+                (void) &idInstanceDictionary;
 
-    void Component::SendMessageLocal(GameObject * emisor, MessageArgs * args) const {
-        gameObject->SendMessageLocal.Emit(emisor,args);
-    }
+                gameObject = parent;
+                transform = &(parent->transform);
+                tag = nullptr;
+            }
 
-    void Component::SendMessageChildren(GameObject * emisor, MessageArgs * args) const {
-        gameObject->SendMessageChildren.Emit(emisor,args);
-    }
+            void Component::SendMessageLocal(GameObject *emisor, MessageArgs *args) const {
+                gameObject->SendMessageLocal.Emit(emisor, args);
+            }
 
-    void Component::SendMessageParent(GameObject * emisor, MessageArgs * args) const {
-        gameObject->SendMessageParent.Emit(emisor,args);
-    }
+            void Component::SendMessageChildren(GameObject *emisor, MessageArgs *args) const {
+                gameObject->SendMessageChildren.Emit(emisor, args);
+            }
 
-    template<typename T>
-    bool Component::TryGetComponent(T& outComponent) {
-        return gameObject->TryGetComponent(outComponent);
-    }
+            void Component::SendMessageParent(GameObject *emisor, MessageArgs *args) const {
+                gameObject->SendMessageParent.Emit(emisor, args);
+            }
 
-    template <typename T>
-    T Component::GetComponent()
-    {
-        return gameObject->GetComponent<T>();
+            template<typename T>
+            bool Component::TryGetComponent(T &outComponent) {
+                return gameObject->TryGetComponent(outComponent);
+            }
+
+            template<typename T>
+            T Component::GetComponent() {
+                return gameObject->GetComponent<T>();
+            }
+
+            template<typename T>
+            T Component::GetComponentInChildren() {
+                return gameObject->GetComponentInChildren<T>();
+            }
+
+            template<typename T>
+            T Component::GetComponentInParent() {
+                return gameObject->GetComponentInParent<T>();
+            }
+
+            template<typename T>
+            T *Component::GetComponents() {
+                return gameObject->GetComponents<T>();
+            }
+
+            template<typename T>
+            T *Component::GetComponentsInChildren() {
+                return gameObject->GetComponentsInChildren<T>();
+            }
+
+            template<typename T>
+            T *Component::GetComponentsInParent() {
+                return gameObject->GetComponentsInParent<T>();
+            }
+        }
     }
-    template <typename T>
-    T Component::GetComponentInChildren()
-    {
-        return gameObject->GetComponentInChildren<T>();
-    }
-    template <typename T>
-    T Component::GetComponentInParent()
-    {
-        return gameObject->GetComponentInParent<T>();
-    }
-    template <typename T>
-    T* Component::GetComponents()
-    {
-        return gameObject->GetComponents<T>();
-    }
-    template <typename T>
-    T* Component::GetComponentsInChildren()
-    {
-        return gameObject->GetComponentsInChildren<T>();
-    }
-    template <typename T>
-    T* Component::GetComponentsInParent()
-    {
-        return gameObject->GetComponentsInParent<T>();
-    }
-} } }
+}

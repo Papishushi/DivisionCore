@@ -16,7 +16,8 @@
 
 #include "Vector.h"
 
-namespace DivisionCore { namespace Vectors {
+namespace DivisionCore {
+    namespace Vectors {
 
         /// @brief This is a Vector of N dimensions and type T.
         /// @tparam N This is the number of dimensions, the default value is 2.
@@ -26,7 +27,7 @@ namespace DivisionCore { namespace Vectors {
 
         /// @brief Default constructor, initializes all axys to 0.
         template<size_t N, typename T>
-        Vector<N,T>::Vector();
+        Vector<N, T>::Vector();
 
         /// @brief Constructor for any kind of Vector, you can pass any number of parameters of type T.
         /// @param coord coordinate for the desired axys.
@@ -43,7 +44,7 @@ namespace DivisionCore { namespace Vectors {
         /// @param from  Vector from position.
         /// @param to Vector to position.
         template<size_t N, typename T>
-        Vector<N, T>::Vector( const Vector<N,T> &from, const Vector<N, T> &to);
+        Vector<N, T>::Vector(const Vector<N, T> &from, const Vector<N, T> &to);
 
         /// @brief Delete all the temporary memory of direct access to axys pointers.
         Vector::~Vector();
@@ -51,7 +52,7 @@ namespace DivisionCore { namespace Vectors {
         /// @brief Returns a unit Vector with all the axys set to 0.
         /// @return {0,...}
         template<size_t N, typename T>
-        Vector<N, T> Vector<N,T>::Zero();
+        Vector<N, T> Vector<N, T>::Zero();
 
         /// @brief Returns a unit Vector with all the axys set to 1.
         /// @return {1,...}
@@ -140,7 +141,7 @@ namespace DivisionCore { namespace Vectors {
         /// @param other This is the new value to assign.
         /// @return A reference to this vector.
         template<size_t N, typename T>
-        Vector<N, T> & Vector<N, T>::operator=(const Vector<N, T> &other);
+        Vector<N, T> &Vector<N, T>::operator=(const Vector<N, T> &other);
 
         /// @brief This is the squared length of this vector.
         /// @return The sum of the squared product of each vector component.
@@ -179,4 +180,5 @@ namespace DivisionCore { namespace Vectors {
         /// @return This vector as a unit vector.
         template<size_t N, typename T>
         Vector<N, T> Vector<N, T>::OverrideNormalized();
-    }}
+    }
+}

@@ -15,5 +15,7 @@
   **/
 
 #if DIVISIONCORE_ENTITY_H == TRUE
+
 #include "Entity.h"
+
 #endif

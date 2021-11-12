@@ -15,41 +15,41 @@
   **/
 #ifndef DIVISIONCORE_GAMECONTROLLER_H
 #define DIVISIONCORE_GAMECONTROLLER_H
+
 #include "RunningBehaviour.h"
 
-namespace DivisionCore { namespace Core { namespace BehaviourSystem { namespace Components {
+namespace DivisionCore {
+    namespace Core {
+        namespace BehaviourSystem {
+            namespace Components {
 
-    class GameController : protected DivisionCore::Core::BehaviourSystem::RunningBehaviour{
-        public:
+                class GameController : protected DivisionCore::Core::BehaviourSystem::RunningBehaviour {
+                public:
 
-            static GameController * singleton;
+                    static GameController *singleton;
 
-            GameController()
-            {
-                if(singleton == nullptr)
-                {
-                    singleton = this;
-                }
-                else
-                {
-                    Destroy(this) ;
-                }
+                    GameController() {
+                        if (singleton == nullptr) {
+                            singleton = this;
+                        } else {
+                            Destroy(this);
+                        }
+                    }
+
+                    explicit GameController(bool rewrite) {
+                        if (rewrite || singleton == nullptr) {
+                            singleton = this;
+                        } else {
+                            Destroy(this);
+                        }
+                    }
+
+                    ~GameController() {
+                        singleton = nullptr;
+                    }
+                };
             }
-            explicit GameController(bool rewrite)
-            {
-                if(rewrite || singleton == nullptr)
-                {
-                    singleton = this;
-                }
-                else
-                {
-                    Destroy(this) ;
-                }
-            }
-            ~GameController()
-            {
-                singleton = nullptr;
-            }
-        };
- } } } }
+        }
+    }
+}
 #endif //DIVISIONCORE_GAMECONTROLLER_H

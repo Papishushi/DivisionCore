@@ -15,5 +15,7 @@
   **/
 
 #if DIVISIONCORE_EVENTOBSERVER_H == TRUE
+
 #include "EventObserver.h"
+
 #endif

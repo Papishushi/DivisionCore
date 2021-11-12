@@ -15,5 +15,7 @@
   **/
 
 #if DIVISIONCORE_MESSAGEARGS_H == TRUE
+
 #include "MessageArgs.h"
+
 #endif

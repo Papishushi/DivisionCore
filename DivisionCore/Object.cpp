@@ -15,5 +15,7 @@
   **/
 
 #if DIVISIONCORE_OBJECT_H == TRUE
+
 #include "Object.h"
+
 #endif

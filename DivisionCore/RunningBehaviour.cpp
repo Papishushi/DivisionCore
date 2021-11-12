@@ -22,66 +22,58 @@ using namespace DivisionCore::Core;
 using namespace DivisionCore::Core::EntitySystem;
 using namespace DivisionCore::Core::BehaviourSystem;
 
-using DivisionCore::Containers::TemplateDictionary;
+using DivisionCore::Containers::TemplateValueDictionary;
 using DivisionCore::Containers::Dictionary;
 
-template <typename T> TemplateDictionary<typename Object<T>::dynamic_byte,Object, T > Object<T>::idInstanceDictionary;
-template <typename T> Dictionary<typename Object<T>::dynamic_byte, string> Object<T>::hideFlagsLookupTable;
+template<typename T> TemplateValueDictionary<typename Object<T>::dynamic_byte, Object, T> Object<T>::idInstanceDictionary;
+template<typename T> Dictionary<typename Object<T>::dynamic_byte, string> Object<T>::hideFlagsLookupTable;
 
-Dictionary<string, uint_least8_t > RunningBehaviour::methodsLookUpTable;
+Dictionary<string, uint_least8_t> RunningBehaviour::methodsLookUpTable;
 
-namespace  DivisionCore { namespace Core { namespace BehaviourSystem
-{
+namespace DivisionCore {
+    namespace Core {
+        namespace BehaviourSystem {
 
-    RunningBehaviour::RunningBehaviour()
-    {
-        (void) &Object<Component>::idInstanceDictionary;
-        (void) &hideFlagsLookupTable;
-        (void) &methodsLookUpTable;
-    }
+            RunningBehaviour::RunningBehaviour() {
+                (void) &Object<Component>::idInstanceDictionary;
+                (void) &hideFlagsLookupTable;
+                (void) &methodsLookUpTable;
+            }
 
-    void RunningBehaviour::SearchLookUpTable(RunningBehaviour::MethodsEnum &out, const string &search)
-    {
-        if (methodsLookUpTable.Empty())
-        {
-            InitializeLookUpTable();
-        }
-
-        out = (RunningBehaviour::MethodsEnum)*methodsLookUpTable.FindValue(search);
-    }
-
-    void RunningBehaviour::ProcessLookUpValue(GameObject * source, const MessageArgs * args, const MethodsEnum &value)
-    {
-        switch (value)
-        {
-            case MethodsEnum::Destroy:
-                if(reinterpret_cast<Component * >(args->getParams()[0]) != nullptr)
-                {
-                    Destroy(reinterpret_cast<Component * >(args->getParams()[0]));
+            void RunningBehaviour::SearchLookUpTable(RunningBehaviour::MethodsEnum &out, const string &search) {
+                if (methodsLookUpTable.empty()) {
+                    InitializeLookUpTable();
                 }
-                else
-                {
-                    Object<GameObject>::Destroy(reinterpret_cast<GameObject * >(args->getParams()[0]));
+
+                out = (RunningBehaviour::MethodsEnum) *methodsLookUpTable.FindValue(search);
+            }
+
+            void RunningBehaviour::ProcessLookUpValue(GameObject *source, const MessageArgs *args,
+                                                      const MethodsEnum &value) {
+                switch (value) {
+                    case MethodsEnum::Destroy:
+                        if (reinterpret_cast<Component * >(args->getParams()[0]) != nullptr) {
+                            Destroy(reinterpret_cast<Component * >(args->getParams()[0]));
+                        } else {
+                            Object<GameObject>::Destroy(reinterpret_cast<GameObject * >(args->getParams()[0]));
+                        }
+                    default:
+                        break;
                 }
-            default:
-                break;
+            }
+
+            void RunningBehaviour::HookMessage(GameObject *source, const MessageArgs *args) {
+                MethodsEnum lookUpValue;
+                SearchLookUpTable(lookUpValue, args->getMethodName());
+
+                if (!args->isSelfApply() && this->gameObject != source || args->isSelfApply()) {
+                    ProcessLookUpValue(source, args, lookUpValue);
+                    return;
+                } else {
+                    return;
+                }
+            }
+
         }
     }
-
-    void RunningBehaviour::HookMessage(GameObject *source, const MessageArgs *args)
-    {
-        MethodsEnum lookUpValue;
-        SearchLookUpTable(lookUpValue, args->getMethodName());
-
-        if(!args->isSelfApply() && this->gameObject != source || args->isSelfApply())
-        {
-            ProcessLookUpValue(source, args, lookUpValue);
-            return;
-        }
-        else
-        {
-            return;
-        }
-    }
-
-} } }
+}

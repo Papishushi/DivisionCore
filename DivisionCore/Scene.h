@@ -15,9 +15,15 @@
   **/
 #ifndef DIVISIONCORE_SCENE_H
 #define DIVISIONCORE_SCENE_H
+
 #include "Object.h"
-namespace DivisionCore { namespace Core { namespace SceneManager
-{
-    class Scene : Object<Scene>{};
-} } }
+
+namespace DivisionCore {
+    namespace Core {
+        namespace SceneManager {
+            class Scene : Object<Scene> {
+            };
+        }
+    }
+}
 #endif //DIVISIONCORE_SCENE_H

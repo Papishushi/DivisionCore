@@ -15,13 +15,16 @@
   **/
 #ifndef DIVISIONCORE_BEHAVIOUR_H
 #define DIVISIONCORE_BEHAVIOUR_H
+
 #include "Component.h"
 #include "EventEmitter.h"
 
 using DivisionCore::Core::EventHandling::EventEmitter;
 
 #ifdef _WIN32
+
 #include <windows.h>
+
 #else
 #include <unistd.h>
 #include <thread>
@@ -29,60 +32,64 @@ using DivisionCore::Core::EventHandling::EventEmitter;
 
 #include <chrono>
 
-namespace DivisionCore { namespace Core { namespace BehaviourSystem
-{
-    class RunningBehaviour;
-    class Behaviour : public Component
-    {
-    private:
-        static EventEmitter<Behaviour,RunningBehaviour, MessageArgs> UpdateTrigger;
-    public:
-        bool enabled;
-        bool isActiveAndEnabled;
+using std::chrono::system_clock;
+using std::chrono::duration;
+using std::chrono::time_point;
 
-        Behaviour(){
-            enabled = true;
-            isActiveAndEnabled = true;
-        };
+namespace DivisionCore {
+    namespace Core {
+        namespace BehaviourSystem {
+            class RunningBehaviour;
 
-        static std::chrono::duration<double> GetUpdateRate()
-        {
-            // Using time point and system_clock
-            std::chrono::time_point<std::chrono::system_clock> start, end;
+            class Behaviour : public Component {
+            private:
+                static EventEmitter<Behaviour, RunningBehaviour, MessageArgs> UpdateTrigger;
+            public:
+                bool enabled;
+                bool isActiveAndEnabled;
 
-            start = std::chrono::system_clock::now();
+                Behaviour() {
+                    enabled = true;
+                    isActiveAndEnabled = true;
+                };
+
+                static duration<double> GetUpdateRate() {
+                    // Using time point and system_clock
+                    time_point<system_clock> start, end;
+
+                    start = system_clock::now();
 #if _WIN32
-                Sleep(1000/60);
+                    Sleep(1000 / 60);
 #elif __linux__
-                using namespace std::literals;
-            std::this_thread::sleep_for(1000ms/60);
+                    using namespace std::literals;
+                std::this_thread::sleep_for(1000ms/60);
 #else __APPLE__
-            sleep(1000/60);
+                sleep(1000/60);
 #endif
-            end = std::chrono::system_clock::now();
+                    end = system_clock::now();
 
-            return end - start;
+                    return end - start;
+                }
+
+                static duration<double> GetAverageUpdateRate() {
+                    duration<double> temp[60];
+
+                    for (auto &i: temp) {
+                        i = GetUpdateRate();
+                    }
+
+                    duration<double> averageRate{};
+
+                    for (auto &i: temp) {
+                        averageRate += i;
+                    }
+
+                    return averageRate /= 60;
+
+                }
+            };
         }
-        static std::chrono::duration<double> GetAverageUpdateRate()
-        {
-            std::chrono::duration<double> temp[60];
-
-            for(auto & i : temp)
-            {
-                i = GetUpdateRate();
-            }
-
-            std::chrono::duration<double> averageRate{};
-
-            for(auto & i : temp)
-            {
-                averageRate += i;
-            }
-
-            return averageRate /= 60;
-
-        }
-    };
-} } }
+    }
+}
 #endif //DIVISIONCORE_BEHAVIOUR_H
 

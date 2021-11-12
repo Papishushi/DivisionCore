@@ -16,9 +16,11 @@
 
 #include "MessageArgs.h"
 
-namespace DivisionCore { namespace Core {
+namespace DivisionCore {
+    namespace Core {
 
-    /// @brief This is structure composed of the necessary information to call an event for a RunningBehaviour.
-    struct MessageArgs;
+        /// @brief This is structure composed of the necessary information to call an event for a RunningBehaviour.
+        struct MessageArgs;
 
-}}
+    }
+}
