@@ -37,7 +37,7 @@ using std::shared_ptr;
 namespace DivisionCore {
     namespace Core {
         namespace Tilemaps {
-            struct Tile : public Object<Tile>, public EventObserver<Tile, Tile, MessageArgs>{
+            struct Tile : public Object<Tile>{
             private:
                 unsigned state;
                 static float lenght;

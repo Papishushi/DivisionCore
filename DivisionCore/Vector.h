@@ -35,7 +35,7 @@ namespace DivisionCore { namespace Vectors {
 
             Vector()
             {
-                *this = Vector<N>::Zero();
+                *this = Vector<N,T>::Zero();
             }
             explicit Vector(const T coord ...) {
                 va_list list;

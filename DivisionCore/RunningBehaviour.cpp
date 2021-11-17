@@ -27,7 +27,7 @@ using DivisionCore::Containers::Dictionary;
 
 template<typename T> TemplateValueDictionary<typename Object<T>::dynamic_byte, Object, T> Object<T>::idInstanceDictionary;
 template<typename T> Dictionary<typename Object<T>::dynamic_byte, string> Object<T>::hideFlagsLookupTable;
-
+template<> unsigned char Object<Component>::lastInstanceId;
 Dictionary<string, uint_least8_t> RunningBehaviour::methodsLookUpTable;
 
 namespace DivisionCore {

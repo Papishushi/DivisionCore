@@ -31,6 +31,7 @@ using DivisionCore::Containers::Dictionary;
 
 template<typename T> TemplateValueDictionary<typename Object<T>::dynamic_byte, Object, T> Object<T>::idInstanceDictionary;
 template<typename T> Dictionary<typename Object<T>::dynamic_byte, string> Object<T>::hideFlagsLookupTable;
+template<> unsigned char Object<EntitySystem::GameObject>::lastInstanceId;
 list<GameObject *> EntitySystem::GameObject::instancedGameObjects; // NOLINT(cert-err58-cpp)
 
 namespace DivisionCore {
