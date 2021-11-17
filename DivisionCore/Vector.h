@@ -81,34 +81,34 @@ namespace DivisionCore { namespace Vectors {
                 delete w;
             }
 
-            static inline Vector<N,T> Zero()
+            static inline const Vector<N,T> Zero()
             {
                 return Vector<N,T>{0};
             }
-            static inline Vector<N,T> One()
+            static inline const Vector<N,T> One()
             {
                 return Vector<N,T>{1};
             }
-            static inline Vector<N,T> Up()
+            static inline const Vector<N,T> Up()
             {
                 return Vector<N,T>{0, 1};
             }
-            static inline Vector<N,T> Down()
+            static inline const Vector<N,T> Down()
             {
                 return Vector<N,T>{0, -1};
             }
-            static inline Vector<N,T> Left()
+            static inline const Vector<N,T> Left()
             {
                 return Vector<N,T>{-1, 0};
             }
-            static inline Vector<N,T> Right()
+            static inline const Vector<N,T> Right()
             {
                 return Vector<N,T>{1, 0};
             }
-            static inline Vector<N,T> Front() {
+            static inline const Vector<N,T> Front() {
                 return Vector<N,T>{0, 0, 1};
             }
-            static inline Vector<N,T> Back() {
+            static inline const Vector<N,T> Back() {
                 return Vector<N,T>{0, 0, -1};
             }
 
@@ -283,5 +283,8 @@ namespace DivisionCore { namespace Vectors {
         typedef Vector<3,float> Vector3;
         typedef Vector<4,float> Vector4;
         typedef Vector<5,float> Vector5;
+
+        typedef Vector<2,int> Vector2Int;
+        typedef Vector<3,int> Vector3Int;
     }}
 #endif //DIVISIONCORE_VECTOR_H

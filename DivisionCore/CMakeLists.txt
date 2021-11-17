@@ -42,4 +42,6 @@ add_executable(DivisionCore
         Vector.cpp
         Vector.h
         Random.cpp
-        Random.h Tile.cpp Tile.h)
+        Random.h
+        Tile.cpp
+        Tile.h)

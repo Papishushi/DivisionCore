@@ -52,42 +52,42 @@ namespace DivisionCore {
         /// @brief Returns a unit Vector with all the axys set to 0.
         /// @return {0,...}
         template<size_t N, typename T>
-        Vector<N, T> Vector<N, T>::Zero();
+        const Vector<N, T> Vector<N, T>::Zero();
 
         /// @brief Returns a unit Vector with all the axys set to 1.
         /// @return {1,...}
         template<size_t N, typename T>
-        Vector<N, T> Vector<N, T>::One();
+        const Vector<N, T> Vector<N, T>::One();
 
         /// @brief Returns a unit Vector pointing upwards globally.
         /// @return {0,1}
         template<size_t N, typename T>
-        Vector<N, T> Vector<N, T>::Up();
+        const Vector<N, T> Vector<N, T>::Up();
 
         /// @brief Returns a unit Vector pointing downwards globally.
         /// @return {0,-1}
         template<size_t N, typename T>
-        Vector<N, T> Vector<N, T>::Down();
+        const Vector<N, T> Vector<N, T>::Down();
 
         /// @brief Returns a unit Vector pointing left globally.
         /// @return {-1,0}
         template<size_t N, typename T>
-        Vector<N, T> Vector<N, T>::Left();
+        const Vector<N, T> Vector<N, T>::Left();
 
         /// @brief Returns a unit Vector pointing right globally.
         /// @return {1,0}
         template<size_t N, typename T>
-        Vector<N, T> Vector<N, T>::Right();
+        const Vector<N, T> Vector<N, T>::Right();
 
         /// @brief Returns a unit Vector pointing front globally.
         /// @return {0,0,1}
         template<size_t N, typename T>
-        Vector<N, T> Vector<N, T>::Front();
+        const Vector<N, T> Vector<N, T>::Front();
 
         /// @brief Returns a unit Vector pointing back globally.
         /// @return {0,0,-1}
         template<size_t N, typename T>
-        Vector<N, T> Vector<N, T>::Back();
+        const Vector<N, T> Vector<N, T>::Back();
 
         /// @brief Add two Vectors.
         /// @param other This is the Vector to add.
