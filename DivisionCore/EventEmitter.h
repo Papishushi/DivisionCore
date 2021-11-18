@@ -29,40 +29,51 @@ namespace DivisionCore {
             class EventEmitter {
             private:
                 bool emits;
-                EmisorType *input1;
-                Args *input2;
+                std::shared_ptr<EmisorType> input1;
+                std::shared_ptr<Args> input2;
             public:
 
                 EventEmitter() {
                     emits = false;
-                    input1 = nullptr;
-                    input2 = nullptr;
                 }
+
+                explicit EventEmitter(const EventEmitter * clone){
+                    if(this != clone)
+                    {
+                        this->emits = clone->emits;
+                        this->input1 = clone->input1;
+                        this->input2 = clone->input2;
+                    }
+
+                };
 
                 inline bool IsEmitting() const { return emits; }
 
-                inline EmisorType *GetInput1() const {
+                inline std::shared_ptr<EmisorType> GetInput1() const {
                     return input1;
                 }
 
-                inline Args *GetInput2() const {
+                inline std::shared_ptr<Args> GetInput2() const {
                     return input2;
                 }
 
-                virtual void Emit(EmisorType *_input1, Args *_input2) {
+                virtual void Emit(std::shared_ptr<EmisorType> _input1, std::shared_ptr<Args> _input2) {
                     emits = true;
+
                     input1 = _input1;
                     input2 = _input2;
                 }
 
-                virtual EventHandler<EmisorType, ObserverType, Args> *
-                Bind(ObserverType *eventObserver, void (ObserverType::*pFunction)(EmisorType *, const Args *)) {
-                    auto *temp = reinterpret_cast<EventObserver<EmisorType, ObserverType, Args> *>(eventObserver);
-                    return temp->Bind(pFunction, this);
+                virtual std::shared_ptr<EventHandler<EmisorType, ObserverType, Args>>
+                        Bind(std::shared_ptr<ObserverType> eventObserver, void (ObserverType::*pFunction)(std::shared_ptr<EmisorType>, const std::shared_ptr<Args>)) {
+
+                    auto temp = reinterpret_cast<EventObserver<EmisorType, ObserverType, Args> *>(eventObserver.get());
+                    return temp->Bind(pFunction, std::make_shared<EventEmitter<EmisorType,ObserverType,Args>>(this));
                 }
 
-                virtual void Unbind(EventObserver<EmisorType, ObserverType, Args> *eventObserver,
+                virtual void Unbind(std::shared_ptr<EventObserver<EmisorType, ObserverType, Args>> eventObserver,
                                     EventHandler<EmisorType, ObserverType, Args> &handler) {
+
                     eventObserver->Unbind(handler);
                 }
             };

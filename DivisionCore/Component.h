@@ -49,23 +49,23 @@ namespace DivisionCore {
 
             class Component : protected Object<Component> {
             public:
-                GameObject *gameObject;
-                Transform *transform;
+                std::shared_ptr<GameObject> gameObject;
+                std::shared_ptr<Transform> transform;
                 string tag;
 
                 Component();
 
-                explicit Component(EntitySystem::GameObject *parent);
+                explicit Component(std::weak_ptr<GameObject> parent);
 
                 inline bool CompareTag(const string &_tag) const {
                     return tag == _tag;
                 }
 
-                void SendMessageLocal(GameObject *emisor, MessageArgs *args) const;
+                void SendMessageLocal(std::shared_ptr<GameObject> emisor, std::shared_ptr<MessageArgs> args) const;
 
-                void SendMessageChildren(GameObject *emisor, MessageArgs *args) const;
+                void SendMessageChildren(std::shared_ptr<GameObject> emisor, std::shared_ptr<MessageArgs> args) const;
 
-                void SendMessageParent(GameObject *emisor, MessageArgs *args) const;
+                void SendMessageParent(std::shared_ptr<GameObject> emisor, std::shared_ptr<MessageArgs> args) const;
 
                 template<typename T>
                 bool TryGetComponent(T &outComponent);

@@ -37,11 +37,16 @@ namespace DivisionCore {
             template<typename EmisorType, typename ObserverType, typename Args>
             class EventObserver {
             public:
-                virtual EventHandler <EmisorType, ObserverType, Args> *
-                Bind(void (ObserverType::*pFunction)(EmisorType *, const Args *),
-                     EventEmitter<EmisorType, ObserverType, Args> *emitter) {
-                    auto *handler = new EventHandler<EmisorType, ObserverType, Args>(pFunction, emitter, this);
-                    return handler;
+                EventObserver() = default;
+                explicit EventObserver(const EventObserver<EmisorType,ObserverType,Args> *){};
+
+                virtual std::shared_ptr<EventHandler <EmisorType, ObserverType, Args>>
+                Bind(void (ObserverType::*pFunction)(std::shared_ptr<EmisorType>, const std::shared_ptr<Args>),
+                     std::shared_ptr<EventEmitter<EmisorType, ObserverType, Args>> emitter) {
+
+                    std::unique_ptr<EventHandler<EmisorType, ObserverType, Args>> ptr;
+                    ptr.reset(new EventHandler<EmisorType, ObserverType, Args>(pFunction, emitter, std::make_shared<EventObserver<EmisorType,ObserverType,Args>>(this)));
+                    return ptr;
                 }
 
                 virtual void Unbind(EventHandler <EmisorType, ObserverType, Args> &handler) {

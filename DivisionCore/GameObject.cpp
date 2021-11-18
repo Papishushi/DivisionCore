@@ -32,17 +32,13 @@ using DivisionCore::Containers::Dictionary;
 template<typename T> TemplateValueDictionary<typename Object<T>::dynamic_byte, Object, T> Object<T>::idInstanceDictionary;
 template<typename T> Dictionary<typename Object<T>::dynamic_byte, string> Object<T>::hideFlagsLookupTable;
 template<> unsigned char Object<EntitySystem::GameObject>::lastInstanceId;
-list<GameObject *> EntitySystem::GameObject::instancedGameObjects; // NOLINT(cert-err58-cpp)
+list<std::shared_ptr<GameObject>> EntitySystem::GameObject::instancedGameObjects; // NOLINT(cert-err58-cpp)
 
 namespace DivisionCore {
     namespace Core {
         namespace EntitySystem {
             GameObject::GameObject() {
-                (void) &hideFlagsLookupTable;
-                (void) &idInstanceDictionary;
-
                 transform = Transform();
-                instancedGameObjects.push_back(this);
                 isActive = true;
                 isStatic = false;
                 activeInHierarchy = true;
@@ -51,6 +47,91 @@ namespace DivisionCore {
                 sceneCullingMask = 0;
                 tag = nullptr;
 
+                AddInstance();
+                UpdateMessageLink();
+            }
+
+            GameObject::GameObject(const GameObject & clone) {
+                if(this != &clone)
+                {
+                    this->transform = clone.transform;
+                    this->isActive = clone.isActive;
+                    this->isStatic = clone.isStatic;
+                    this->activeInHierarchy = clone.activeInHierarchy;
+                    this->layer = clone.layer;
+                    this->scene = clone.scene;
+                    this->sceneCullingMask = clone.sceneCullingMask;
+                    this->tag = clone.tag;
+                }
+                else
+                {
+                    transform = Transform();
+                    isActive = true;
+                    isStatic = false;
+                    activeInHierarchy = true;
+                    layer = 0;
+                    scene = 0;
+                    sceneCullingMask = 0;
+                    tag = nullptr;
+                }
+
+                AddInstance();
+                UpdateMessageLink();
+            }
+
+            GameObject::GameObject(const unique_ptr<GameObject> clone) {
+                if(this != clone.get())
+                {
+                    this->transform = clone->transform;
+                    this->isActive = clone->isActive;
+                    this->isStatic = clone->isStatic;
+                    this->activeInHierarchy = clone->activeInHierarchy;
+                    this->layer = clone->layer;
+                    this->scene = clone->scene;
+                    this->sceneCullingMask = clone->sceneCullingMask;
+                    this->tag = clone->tag;
+                }
+                else
+                {
+                    transform = Transform();
+                    isActive = true;
+                    isStatic = false;
+                    activeInHierarchy = true;
+                    layer = 0;
+                    scene = 0;
+                    sceneCullingMask = 0;
+                    tag = nullptr;
+                }
+
+                UpdateMessageLink();
+                AddInstance();
+            }
+
+            GameObject::GameObject(const GameObject * clone) {
+                if(this != clone)
+                {
+                    this->transform = clone->transform;
+                    this->isActive = clone->isActive;
+                    this->isStatic = clone->isStatic;
+                    this->activeInHierarchy = clone->activeInHierarchy;
+                    this->layer = clone->layer;
+                    this->scene = clone->scene;
+                    this->sceneCullingMask = clone->sceneCullingMask;
+                    this->tag = clone->tag;
+                }
+                else
+                {
+                    transform = Transform();
+                    isActive = true;
+                    isStatic = false;
+                    activeInHierarchy = true;
+                    layer = 0;
+                    scene = 0;
+                    sceneCullingMask = 0;
+                    tag = nullptr;
+                }
+
+                AddInstance();
                 UpdateMessageLink();
             }
 
@@ -60,7 +141,6 @@ namespace DivisionCore {
 
                 this->name = name;
                 transform = Transform();
-                instancedGameObjects.push_back(this);
                 isActive = true;
                 isStatic = false;
                 activeInHierarchy = true;
@@ -69,6 +149,7 @@ namespace DivisionCore {
                 sceneCullingMask = 0;
                 tag = nullptr;
 
+                AddInstance();
                 UpdateMessageLink();
             }
 
@@ -79,7 +160,7 @@ namespace DivisionCore {
                 this->name = name;
                 hideFlags = HideFlags::VISIBLE;
                 this->transform = transform;
-                instancedGameObjects.push_back(this);
+
                 isActive = true;
                 isStatic = false;
                 activeInHierarchy = true;
@@ -88,10 +169,11 @@ namespace DivisionCore {
                 sceneCullingMask = 0;
                 tag = nullptr;
 
+                AddInstance();
                 UpdateMessageLink();
             }
 
-            GameObject::GameObject(string &name, Transform &transform, const list<RunningBehaviour *> &components) {
+            GameObject::GameObject(string &name, Transform &transform, const list<std::shared_ptr<RunningBehaviour>> &components) {
                 (void) &hideFlagsLookupTable;
                 (void) &idInstanceDictionary;
 
@@ -99,7 +181,6 @@ namespace DivisionCore {
                 hideFlags = HideFlags::VISIBLE;
                 this->transform = transform;
                 attachedComponents = components;
-                instancedGameObjects.push_back(this);
                 isActive = true;
                 isStatic = false;
                 activeInHierarchy = true;
@@ -108,26 +189,27 @@ namespace DivisionCore {
                 sceneCullingMask = 0;
                 tag = nullptr;
 
+                AddInstance();
                 UpdateMessageLink();
             }
 
             GameObject::~GameObject() {
-                instancedGameObjects.remove(this);
+                instancedGameObjects.remove(std::make_shared<GameObject>(this));
             }
 
-            list<EventHandling::EventHandler<GameObject, RunningBehaviour, MessageArgs> *>
+            list<shared_ptr<EventHandling::EventHandler<GameObject, RunningBehaviour, MessageArgs>>>
             GameObject::UpdateMessageLink() {
-                void (RunningBehaviour::*pFunction)(GameObject *, const MessageArgs *);
+                void (RunningBehaviour::*pFunction)(shared_ptr<GameObject>, const shared_ptr<MessageArgs>);
+                instancedGameObjects.push_back(std::make_shared<GameObject>(this));
+                list<shared_ptr<EventHandling::EventHandler<GameObject, RunningBehaviour, MessageArgs>>> handlers;
 
-                list<EventHandling::EventHandler<GameObject, RunningBehaviour, MessageArgs> *> handlers;
-
-                list<RunningBehaviour *>::iterator it;
+                list<shared_ptr<RunningBehaviour>>::iterator it;
                 list<Transform>::iterator itChildren;
                 for (it = attachedComponents.begin(); it != attachedComponents.end(); ++it) {
                     pFunction = (*it)->GetHook();
 
                     if (pFunction) {
-                        EventHandling::EventHandler<GameObject, RunningBehaviour, MessageArgs> *handler = SendMessageLocal.Bind(
+                        shared_ptr<EventHandling::EventHandler<GameObject, RunningBehaviour, MessageArgs>> handler = SendMessageLocal.Bind(
                                 *it, pFunction);
 
                         if (handler) {
@@ -142,7 +224,7 @@ namespace DivisionCore {
                         pFunction = (*it)->GetHook();
 
                         if (pFunction) {
-                            EventHandling::EventHandler<GameObject, RunningBehaviour, MessageArgs> *handler = SendMessageChildren.Bind(
+                            std::shared_ptr<EventHandling::EventHandler<GameObject, RunningBehaviour, MessageArgs>> handler = SendMessageChildren.Bind(
                                     *it, pFunction);
 
                             if (handler) {
@@ -156,7 +238,7 @@ namespace DivisionCore {
                     pFunction = (*it)->GetHook();
 
                     if (pFunction) {
-                        EventHandling::EventHandler<GameObject, RunningBehaviour, MessageArgs> *handler = SendMessageParent.Bind(
+                        std::shared_ptr<EventHandling::EventHandler<GameObject, RunningBehaviour, MessageArgs>> handler = SendMessageParent.Bind(
                                 *it, pFunction);
 
                         if (handler) {
@@ -195,6 +277,7 @@ namespace DivisionCore {
             GameObject GameObject::FindWithTag(const string &tag) {
                 return {};
             }
+
         }
     }
 }

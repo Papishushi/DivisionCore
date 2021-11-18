@@ -46,12 +46,14 @@ namespace DivisionCore {
         namespace EntitySystem {
             class GameObject : protected Object<GameObject> {
             private:
-                static std::list<GameObject *> instancedGameObjects;
-                std::list<RunningBehaviour *> attachedComponents;
+                static std::list<std::shared_ptr<GameObject>> instancedGameObjects;
+                std::list<std::shared_ptr<RunningBehaviour>> attachedComponents;
                 bool isActive;
             protected:
-                std::list<EventHandling::EventHandler<GameObject, RunningBehaviour, MessageArgs> *> UpdateMessageLink();
-
+                std::list<std::shared_ptr<EventHandling::EventHandler<GameObject, RunningBehaviour, MessageArgs>>> UpdateMessageLink();
+                inline void AddInstance(){
+                    instancedGameObjects.push_back(std::make_shared<GameObject>(this));
+                }
             public:
                 bool activeInHierarchy;
 
@@ -77,7 +79,11 @@ namespace DivisionCore {
                 explicit GameObject(string &name, Transform &transform);
 
                 explicit GameObject(string &name, Transform &transform,
-                                    const std::list<RunningBehaviour *> &components);
+                                    const std::list<std::shared_ptr<RunningBehaviour>> &components);
+
+                explicit GameObject(const GameObject& clone);
+                explicit GameObject(const std::unique_ptr<GameObject> clone);
+                explicit GameObject(const GameObject *clone);
 
                 ~GameObject();
 
@@ -106,7 +112,7 @@ namespace DivisionCore {
 
                 template<typename T>
                 bool TryGetComponent(T &outComponent) {
-                    list<RunningBehaviour *>::iterator it;
+                    list<std::shared_ptr<RunningBehaviour>>::iterator it;
 
                     for (it = attachedComponents.begin(); it != attachedComponents.end(); ++it) {
                         if (dynamic_cast<T *>(it) != nullptr) {
@@ -119,7 +125,7 @@ namespace DivisionCore {
 
                 template<typename T>
                 T GetComponent() {
-                    list<RunningBehaviour *>::iterator it;
+                    list<std::shared_ptr<RunningBehaviour>>::iterator it;
 
                     for (it = attachedComponents.begin(); it != attachedComponents.end(); ++it) {
                         if (dynamic_cast<T>(it) != nullptr) {
@@ -131,7 +137,7 @@ namespace DivisionCore {
 
                 template<typename T>
                 T GetComponentInChildren() {
-                    list<RunningBehaviour *>::iterator it;
+                    list<std::shared_ptr<RunningBehaviour>>::iterator it;
                     list<Transform>::iterator itChildren;
 
                     for (itChildren = transform.children.begin();
@@ -149,7 +155,7 @@ namespace DivisionCore {
 
                 template<typename T>
                 T GetComponentInParent() {
-                    list<RunningBehaviour *>::iterator it;
+                    list<std::shared_ptr<RunningBehaviour>>::iterator it;
                     for (it = transform.parent->gameObject->attachedComponents.begin();
                          it != transform.parent->gameObject->attachedComponents.end(); ++it) {
                         if (dynamic_cast<T>(it) != nullptr) {
@@ -162,13 +168,13 @@ namespace DivisionCore {
 
                 template<typename T>
                 T *GetComponents() {
-                    T *tempArr = nullptr;
+                    std::unique_ptr<T> tempArr = nullptr;
                     dynamic_byte counter = 0;
 
-                    list<RunningBehaviour *>::iterator it;
+                    list<std::shared_ptr<RunningBehaviour>>::iterator it;
 
                     for (it = attachedComponents.begin(); it != attachedComponents.end(); ++it) {
-                        if (dynamic_cast<T *>(it) != nullptr) {
+                        if (dynamic_cast<std::unique_ptr<T>>(it) != nullptr) {
                             ExpandAddArray(tempArr, counter, counter + 1, it);
                             counter++;
                         }
@@ -182,7 +188,7 @@ namespace DivisionCore {
                     T *tempArr = nullptr;
                     dynamic_byte counter = 0;
 
-                    list<RunningBehaviour *>::iterator it;
+                    list<std::shared_ptr<RunningBehaviour>>::iterator it;
                     list<Transform>::iterator itChildren;
                     for (itChildren = transform.children.begin();
                          itChildren != transform.children.end(); ++itChildren) {
@@ -203,7 +209,7 @@ namespace DivisionCore {
                     T *tempArr = nullptr;
                     dynamic_byte counter = 0;
 
-                    list<RunningBehaviour *>::iterator it;
+                    list<std::shared_ptr<RunningBehaviour>>::iterator it;
 
                     for (it = transform.parent->gameObject->attachedComponents.begin();
                          it != transform.parent->gameObject->attachedComponents.end(); ++it) {

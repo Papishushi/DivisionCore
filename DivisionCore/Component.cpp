@@ -33,29 +33,32 @@ namespace DivisionCore {
                 (void) &hideFlagsLookupTable;
                 (void) &idInstanceDictionary;
 
-                gameObject = new GameObject();
-                transform = &(gameObject->transform);
+                gameObject.reset(new GameObject());
+                transform.reset(&(gameObject->transform));
                 tag = nullptr;
             }
 
-            Component::Component(GameObject *parent) {
+            Component::Component(std::weak_ptr<GameObject> parent) {
                 (void) &hideFlagsLookupTable;
                 (void) &idInstanceDictionary;
 
-                gameObject = parent;
-                transform = &(parent->transform);
+                std::shared_ptr<GameObject> sharedPtr = parent.lock();
+
+                gameObject = sharedPtr;
+
+                transform = std::make_shared<Components::Transform>(&(gameObject->transform));
                 tag = nullptr;
             }
 
-            void Component::SendMessageLocal(GameObject *emisor, MessageArgs *args) const {
+            void Component::SendMessageLocal(std::shared_ptr<GameObject> emisor, std::shared_ptr<MessageArgs> args) const {
                 gameObject->SendMessageLocal.Emit(emisor, args);
             }
 
-            void Component::SendMessageChildren(GameObject *emisor, MessageArgs *args) const {
+            void Component::SendMessageChildren(std::shared_ptr<GameObject> emisor, std::shared_ptr<MessageArgs> args) const {
                 gameObject->SendMessageChildren.Emit(emisor, args);
             }
 
-            void Component::SendMessageParent(GameObject *emisor, MessageArgs *args) const {
+            void Component::SendMessageParent(std::shared_ptr<GameObject> emisor, std::shared_ptr<MessageArgs> args) const {
                 gameObject->SendMessageParent.Emit(emisor, args);
             }
 

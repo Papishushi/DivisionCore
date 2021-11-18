@@ -15,6 +15,7 @@
   **/
 #ifndef DIVISIONCORE_EVENTHANDLER_H
 #define DIVISIONCORE_EVENTHANDLER_H
+#include <memory>
 
 #ifdef _WIN32
 
@@ -38,25 +39,25 @@ namespace DivisionCore {
             template<typename EmisorType, typename ObserverType, typename Args>
             struct EventHandler {
             public:
-                ObserverType *associattedBehaviour;
+                std::shared_ptr<ObserverType> associattedBehaviour;
                 bool unbind;
                 bool isObserving;
 
-                void (ObserverType::* pFunction)(EmisorType *, const Args *);
+                void (ObserverType::* pFunction)(std::shared_ptr<EmisorType>, const std::shared_ptr<Args>);
 
-                EventEmitter<EmisorType, ObserverType, Args> *emitter;
-                EventObserver<EmisorType, ObserverType, Args> *observer;
+                std::shared_ptr<EventEmitter<EmisorType, ObserverType, Args>> emitter;
+                std::shared_ptr<EventObserver<EmisorType, ObserverType, Args>> observer;
 
                 EventHandler() = delete;
 
-                EventHandler(void (ObserverType::*_pFunction)(EmisorType *, const Args *),
-                             EventEmitter<EmisorType, ObserverType, Args> *_emitter,
-                             EventObserver<EmisorType, ObserverType, Args> *_observer) {
+                EventHandler(void (ObserverType::*_pFunction)(std::shared_ptr<EmisorType>, const std::shared_ptr<Args>),
+                             std::shared_ptr<EventEmitter<EmisorType, ObserverType, Args>> _emitter,
+                             std::shared_ptr<EventObserver<EmisorType, ObserverType, Args>> _observer) {
                     pFunction = _pFunction;
                     emitter = _emitter;
                     observer = _observer;
 
-                    associattedBehaviour = reinterpret_cast<ObserverType *>(observer);
+                    associattedBehaviour.reset(reinterpret_cast<ObserverType *>(observer.get()));
 
                     while (true) {
                         isObserving = true;
@@ -71,7 +72,7 @@ namespace DivisionCore {
 #endif
                         if (emitter->IsEmitting()) {
                             //Member hook pointer call
-                            (associattedBehaviour->*pFunction)(emitter->GetInput1(), emitter->GetInput2());
+                            (associattedBehaviour.get()->*pFunction)(emitter->GetInput1(), emitter->GetInput2());
                         }
 
                         if (unbind) {

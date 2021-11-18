@@ -46,11 +46,11 @@ namespace DivisionCore {
                                                                                          (uint_least8_t) MethodsEnum::HookMessage));
                 }
 
-                void HookMessage(GameObject *source, const MessageArgs *args);
+                void HookMessage(std::shared_ptr<GameObject> source, const std::shared_ptr<MessageArgs> args);
 
                 virtual void SearchLookUpTable(MethodsEnum &out, const string &search);
 
-                virtual void ProcessLookUpValue(GameObject *source, const MessageArgs *args, const MethodsEnum &value);
+                virtual void ProcessLookUpValue(std::shared_ptr<GameObject> source, const std::shared_ptr<MessageArgs> args, const MethodsEnum &value);
 
                 virtual void Awake() = 0;
 
@@ -62,12 +62,12 @@ namespace DivisionCore {
 
                 virtual void LateUpdate() = 0;
 
-                void (RunningBehaviour::*pHook)(GameObject *, const MessageArgs *) = &RunningBehaviour::HookMessage;
+                void (RunningBehaviour::*pHook)(std::shared_ptr<GameObject>, const std::shared_ptr<MessageArgs>) = &RunningBehaviour::HookMessage;
 
             public:
-                RunningBehaviour();
+                RunningBehaviour() = default;
 
-                template<typename T = void (RunningBehaviour::*)(GameObject *, const MessageArgs *)>
+                template<typename T = void (RunningBehaviour::*)(std::shared_ptr<GameObject>, const std::shared_ptr<MessageArgs>)>
                 inline T GetHook() {
                     return pHook;
                 }
