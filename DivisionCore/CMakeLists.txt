@@ -44,4 +44,4 @@ add_executable(DivisionCore
         Random.cpp
         Random.h
         Tile.cpp
-        Tile.h Tilemap.cpp Tilemap.h)
+        Tile.h Tilemap.cpp Tilemap.h NeighbourTemplate.cpp NeighbourTemplate.h)

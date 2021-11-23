@@ -21,6 +21,7 @@
 #include "EventObserver.h"
 #include "MessageArgs.h"
 #include "Dictionary.h"
+#include "NeighbourTemplate.h"
 
 #include <memory>
 
@@ -40,67 +41,44 @@ using std::initializer_list;
 namespace DivisionCore {
     namespace Core {
         namespace Tilemaps {
+
             struct Tile : public Object<Tile> {
             private:
                 unsigned state;
-                weak_ptr<Tile> neighbours[3][3];
+                NeighbourTemplate<Tile> neighbours;
 
                 static float lenght;
                 static Containers::VectorKeyDictionary<Vector, Tile *, 2, int> tileGrid;
 
-                struct TileNeighboursGrid {
-                    weak_ptr<Tile> grid[3][3];
-
-                    TileNeighboursGrid() = default;
-
-                    explicit TileNeighboursGrid(const weak_ptr<Tile> clone[3][3]) {
-                        if (clone != grid) {
-                            for (unsigned x = 0; x < 3; x++) {
-                                for (unsigned y = 0; y < 3; y++) {
-                                    grid[x][y] = clone[x][y];
-                                }
-                            }
-                        }
-                    }
-
-                    ~TileNeighboursGrid() {
-                        for (unsigned x = 0; x < 3; x++) {
-                            for (unsigned y = 0; y < 3; y++) {
-                                delete grid[x][y].lock().get();
-                            }
-                        }
-                    }
-                };
-
                 //region States
                 virtual inline const bool IsCenter() const {
-                    return neighbours[1][2].lock() != nullptr && neighbours[1][0].lock() != nullptr &&
-                           neighbours[0][1].lock() != nullptr && neighbours[2][1].lock() != nullptr;
+                    return neighbours.GetTop() && neighbours.GetDown() &&
+                           neighbours.GetLeft() && neighbours.GetRight();
                 }
 
                 virtual inline const bool IsIsolated() const {
-                    return neighbours[1][2].lock() == nullptr && neighbours[1][0].lock() == nullptr &&
-                           neighbours[0][1].lock() == nullptr && neighbours[2][1].lock() == nullptr;
+                    return !neighbours.GetTop() && !neighbours.GetDown() &&
+                           !neighbours.GetLeft() && !neighbours.GetRight();
                 }
 
                 virtual inline const bool IsDownEnd() const {
-                    return neighbours[1][2].lock() != nullptr && neighbours[1][0].lock() == nullptr &&
-                           neighbours[0][1].lock() == nullptr && neighbours[2][1].lock() == nullptr;
+                    return neighbours.GetTop() && !neighbours.GetDown() &&
+                           !neighbours.GetLeft() && !neighbours.GetRight();
                 }
 
                 virtual inline const bool IsUpEnd() const {
-                    return neighbours[1][2].lock() == nullptr && neighbours[1][0].lock() != nullptr &&
-                           neighbours[0][1].lock() == nullptr && neighbours[2][1].lock() == nullptr;
+                    return !neighbours.GetTop() && neighbours.GetDown() &&
+                           !neighbours.GetLeft() && !neighbours.GetRight();
                 }
 
                 virtual inline const bool IsRightEnd() const {
-                    return neighbours[1][2].lock() == nullptr && neighbours[1][0].lock() == nullptr &&
-                           neighbours[0][1].lock() != nullptr && neighbours[2][1].lock() == nullptr;
+                    return !neighbours.GetTop() && !neighbours.GetDown() &&
+                           neighbours.GetLeft() && !neighbours.GetRight();
                 }
 
                 virtual inline const bool IsLeftEnd() const {
-                    return neighbours[1][2].lock() == nullptr && neighbours[1][0].lock() == nullptr &&
-                           neighbours[0][1].lock() == nullptr && neighbours[2][1].lock() != nullptr;
+                    return !neighbours.GetTop() && !neighbours.GetDown() &&
+                           !neighbours.GetLeft() && neighbours.GetRight();
                 }
                 //endregion
 
@@ -109,28 +87,25 @@ namespace DivisionCore {
                 inline bool GetNeighbours() {
                     if (!tileGrid.empty()) {
                         //Up-Midle
-                        neighbours[1][2].lock().reset(*tileGrid.FindValue(position + Vector2Int::Up()));
+                        neighbours.GetTop().reset(*tileGrid.FindValue(position + Vector2Int::Up()));
                         //Down-Midle
-                        neighbours[1][0].lock().reset(*tileGrid.FindValue(position + Vector2Int::Down()));
+                        neighbours.GetDown().reset(*tileGrid.FindValue(position + Vector2Int::Down()));
                         //Left-Midle
-                        neighbours[0][1].lock().reset(*tileGrid.FindValue(position + Vector2Int::Left()));
+                        neighbours.GetLeft().reset(*tileGrid.FindValue(position + Vector2Int::Left()));
                         //Right-Midle
-                        neighbours[2][1].lock().reset(*tileGrid.FindValue(position + Vector2Int::Right()));
+                        neighbours.GetRight().reset(*tileGrid.FindValue(position + Vector2Int::Right()));
 
                         //Right-up
-                        neighbours[2][2].lock().reset(
-                                *tileGrid.FindValue(position + Vector2Int::Up() + Vector2Int::Right()));
+                        neighbours.GetRightTopCorner().reset(*tileGrid.FindValue(position + Vector2Int::Up() + Vector2Int::Right()));
                         //Left-Up
-                        neighbours[0][2].lock().reset(
-                                *tileGrid.FindValue(position + Vector2Int::Up() + Vector2Int::Left()));
+                        neighbours.GetLeftTopCorner().reset(*tileGrid.FindValue(position + Vector2Int::Up() + Vector2Int::Left()));
                         //Right-Down
-                        neighbours[2][0].lock().reset(
-                                *tileGrid.FindValue(position + Vector2Int::Down() + Vector2Int::Right()));
+                        neighbours.GetRightDownCorner().reset(*tileGrid.FindValue(position + Vector2Int::Down() + Vector2Int::Right()));
                         //Left-Down
-                        neighbours[0][0].lock().reset(*tileGrid.FindValue(position + Vector2Int::Left()));
+                        neighbours.GetLeftDownCorner().reset(*tileGrid.FindValue(position + Vector2Int::Left()));
 
                         //Center
-                        neighbours[1][1].lock().reset(std::make_shared<Tile>(this).get());
+                        neighbours.GetCenter().reset(std::make_shared<Tile>(this).get());
                         return true;
                     } else {
                         return false;
@@ -141,7 +116,7 @@ namespace DivisionCore {
                       6 7 8*/
                 }
 
-                bool UpdateNeighbours(weak_ptr<Tile> filteredNeighbours[3][3]) {
+                bool UpdateNeighbours(const NeighbourTemplate<Tile>& filteredNeighbours) {
                     /*1 2 3
                       4 0 5
                       6 7 8*/
@@ -149,84 +124,72 @@ namespace DivisionCore {
                     bool returnValue = true;
 
                     //Up-Midle
-                    if (filteredNeighbours[1][2].lock() != nullptr) {
-                        if (!filteredNeighbours[1][2].lock()->UpdateCycle(neighbours)) {
+                    if (filteredNeighbours.GetTop()) {
+                        if (!filteredNeighbours.GetTop()->UpdateCycle(neighbours)) {
                             returnValue = false;
                         }
                     }
 
                     //Down-Midle
-                    if (filteredNeighbours[1][0].lock() != nullptr) {
-                        if (!filteredNeighbours[1][0].lock()->UpdateCycle(neighbours)) {
+                    if (filteredNeighbours.GetDown()) {
+                        if (!filteredNeighbours.GetDown()->UpdateCycle(neighbours)) {
                             returnValue = false;
                         }
                     }
+
                     //Left-Midle
-                    if (filteredNeighbours[1][2].lock() == nullptr ||
-                        !filteredNeighbours[0][1].lock()->UpdateCycle(neighbours)) {
+                    if (!filteredNeighbours.GetLeft() ||
+                        !filteredNeighbours.GetLeft()->UpdateCycle(neighbours)) {
                         returnValue = false;
-                    } else {
-                        returnValue = returnValue;
                     }
+
                     //Right-Midle
-                    if (filteredNeighbours[1][2].lock() == nullptr ||
-                        !filteredNeighbours[2][1].lock()->UpdateCycle(neighbours)) {
+                    if (!filteredNeighbours.GetRight() ||
+                        !filteredNeighbours.GetRight()->UpdateCycle(neighbours)) {
                         returnValue = false;
-                    } else {
-                        returnValue = returnValue;
                     }
 
                     //Right-up
-                    if (filteredNeighbours[1][2].lock() == nullptr ||
-                        !filteredNeighbours[2][2].lock()->UpdateCycle(neighbours)) {
+                    if (!filteredNeighbours.GetRightTopCorner() ||
+                        !filteredNeighbours.GetRightTopCorner()->UpdateCycle(neighbours)) {
                         returnValue = false;
-                    } else {
-                        returnValue = returnValue;
                     }
+
                     //Left-Up
-                    if (filteredNeighbours[1][2].lock() == nullptr ||
-                        !filteredNeighbours[0][2].lock()->UpdateCycle(neighbours)) {
+                    if (!filteredNeighbours.GetLeftTopCorner() ||
+                        !filteredNeighbours.GetLeftTopCorner()->UpdateCycle(neighbours)) {
                         returnValue = false;
-                    } else {
-                        returnValue = returnValue;
                     }
 
                     //Right-Down
-                    if (filteredNeighbours[1][2].lock() == nullptr ||
-                        !filteredNeighbours[2][0].lock()->UpdateCycle(neighbours)) {
+                    if (!filteredNeighbours.GetRightDownCorner() ||
+                        !filteredNeighbours.GetRightDownCorner()->UpdateCycle(neighbours)) {
                         returnValue = false;
-                    } else {
-                        returnValue = returnValue;
                     }
 
                     //Left-Down
-                    if (filteredNeighbours[1][2].lock() == nullptr ||
-                        !filteredNeighbours[0][0].lock()->UpdateCycle(neighbours)) {
+                    if (!filteredNeighbours.GetLeftDownCorner() ||
+                        !filteredNeighbours.GetLeftDownCorner()->UpdateCycle(neighbours)) {
                         returnValue = false;
-                    } else {
-                        returnValue = returnValue;
                     }
 
                     return returnValue;
                 }
 
-                unique_ptr<TileNeighboursGrid>
-                FilterNeighboursToUpdate(weak_ptr<Tile> other[3][3]) const {
+                NeighbourTemplate<Tile>
+                FilterNeighboursToUpdate(const NeighbourTemplate<Tile>& other) const {
 
-                    weak_ptr<TileNeighboursGrid> filteredNeighbours;
+                    NeighbourTemplate<Tile> filteredNeighbours;
 
                     for (unsigned x = 0; x < 3; x++) {
                         for (unsigned y = 0; y < 3; y++) {
-                            auto temp = neighbours[x][y].lock() == other[x][y].lock() ? std::make_shared<Tile>(nullptr)
-                                                                                      : neighbours[x][y];
-                            filteredNeighbours.lock()->grid[x][y] = temp;
+                            auto temp = neighbours(x,y).lock() == other(x,y).lock() ? std::make_shared<Tile>(nullptr)
+                                                                                      : neighbours(x,y);
+                            filteredNeighbours(x,y) = temp;
                         }
                     }
 
-                    unique_ptr<TileNeighboursGrid> returnPtr;
-                    returnPtr.reset(filteredNeighbours.lock().get());
-                    returnPtr = std::make_unique<TileNeighboursGrid>(returnPtr.get()->grid);
-                    return returnPtr;
+                    return filteredNeighbours;
                 }
 
                 unsigned FindTileState() const {
@@ -252,7 +215,7 @@ namespace DivisionCore {
 
                         for (unsigned x = 0; x < 3; x++) {
                             for (unsigned y = 0; y < 3; y++) {
-                                this->neighbours[x][y] = clone.neighbours[x][y];
+                                this->neighbours(x,y) = clone.neighbours(x,y);
                             }
                         }
 
@@ -286,7 +249,7 @@ namespace DivisionCore {
 
                         for (unsigned x = 0; x < 3; x++) {
                             for (unsigned y = 0; y < 3; y++) {
-                                this->neighbours[x][y] = clone->neighbours[x][y];
+                                this->neighbours(x,y) = clone->neighbours(x,y);
                             }
                         }
 
@@ -356,7 +319,7 @@ namespace DivisionCore {
                         counter++;
                     }
 
-                    worldPosition = Vector2(position.coords[0] * lenght, position.coords[0] * lenght);
+                    worldPosition = Vector2(position.coords[0] * lenght, position.coords[1] * lenght);
 
                     state = 0;
 
@@ -387,12 +350,12 @@ namespace DivisionCore {
                     }
                 }
 
-                bool UpdateCycle(weak_ptr<Tile> _neighbours[3][3]) {
+                bool UpdateCycle(const NeighbourTemplate<Tile>& _neighbours) {
                     /*1 2 3
                       4 0 5
                       6 7 8*/
                     if (GetNeighbours()) {
-                        if (UpdateNeighbours(FilterNeighboursToUpdate(_neighbours)->grid)) {
+                        if (UpdateNeighbours(FilterNeighboursToUpdate(_neighbours))) {
                             state = FindTileState();
                             return true;
                         } else {
