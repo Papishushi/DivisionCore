@@ -18,17 +18,7 @@
 #include "RunningBehaviour.h"
 #include <string>
 
-using namespace DivisionCore::Core;
-using namespace DivisionCore::Core::EntitySystem;
-using namespace DivisionCore::Core::BehaviourSystem;
-
-using DivisionCore::Containers::TemplateValueDictionary;
-using DivisionCore::Containers::Dictionary;
-
-template<typename T> TemplateValueDictionary<typename Object<T>::dynamic_byte, Object, T> Object<T>::idInstanceDictionary;
-template<typename T> Dictionary<typename Object<T>::dynamic_byte, string> Object<T>::hideFlagsLookupTable;
-template<> unsigned char Object<Component>::lastInstanceId;
-Dictionary<string, uint_least8_t> RunningBehaviour::methodsLookUpTable;
+Dictionary<std::string, uint_least8_t> RunningBehaviour::methodsLookUpTable;
 
 namespace DivisionCore {
     namespace Core {
@@ -42,7 +32,8 @@ namespace DivisionCore {
                 out = (RunningBehaviour::MethodsEnum) *methodsLookUpTable.FindValue(search);
             }
 
-            void RunningBehaviour::ProcessLookUpValue(std::shared_ptr<GameObject> source, const std::shared_ptr<MessageArgs> args,
+            void RunningBehaviour::ProcessLookUpValue(std::shared_ptr<GameObject> source,
+                                                      const std::shared_ptr<MessageArgs> args,
                                                       const MethodsEnum &value) {
                 switch (value) {
                     case MethodsEnum::Destroy:
@@ -56,7 +47,8 @@ namespace DivisionCore {
                 }
             }
 
-            void RunningBehaviour::HookMessage(std::shared_ptr<GameObject> source, const std::shared_ptr<MessageArgs> args) {
+            void
+            RunningBehaviour::HookMessage(std::shared_ptr<GameObject> source, const std::shared_ptr<MessageArgs> args) {
                 MethodsEnum lookUpValue;
                 SearchLookUpTable(lookUpValue, args->getMethodName());
 

@@ -14,34 +14,25 @@
   * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   **/
 
+#include "ObjectMacros.h"
 #include "GameObject.h"
 
 using namespace DivisionCore::Core;
 using namespace DivisionCore::Core::EntitySystem;
 using namespace DivisionCore::Core::BehaviourSystem;
 
-using DivisionCore::Containers::TemplateValueDictionary;
-using DivisionCore::Containers::Dictionary;
-
-template<typename T> TemplateValueDictionary<typename Object<T>::dynamic_byte, Object, T> Object<T>::idInstanceDictionary;
-template<typename T> Dictionary<typename Object<T>::dynamic_byte, string> Object<T>::hideFlagsLookupTable;
+INCLUDE_OBJECT_STATIC
 
 namespace DivisionCore {
     namespace Core {
         namespace BehaviourSystem {
             Component::Component() {
-                (void) &hideFlagsLookupTable;
-                (void) &idInstanceDictionary;
-
                 gameObject.reset(new GameObject());
                 transform.reset(&(gameObject->transform));
                 tag = nullptr;
             }
 
             Component::Component(std::weak_ptr<GameObject> parent) {
-                (void) &hideFlagsLookupTable;
-                (void) &idInstanceDictionary;
-
                 std::shared_ptr<GameObject> sharedPtr = parent.lock();
 
                 gameObject = sharedPtr;

@@ -24,15 +24,36 @@
 #include <memory>
 
 using DivisionCore::Vectors::Vector;
+using DivisionCore::Vectors::Vector2Int;
 using DivisionCore::Containers::VectorKeyDictionary;
+
+using std::shared_ptr;
 
 namespace DivisionCore {
     namespace Core {
         namespace Tilemaps {
-            class Tilemap : RunningBehaviour
-            {
+            class Tilemap : public RunningBehaviour {
             public:
                 VectorKeyDictionary<Vector, Tile *, 2, int> grid;
+                float lenght;
+
+                template<typename T = Tile>
+                T GetTileAs(const shared_ptr<Tile> &tile) {
+                    return dynamic_cast<T>(tile.get());
+                }
+
+                template<typename T = Tile>
+                T *GetTileAs(const Vector2Int &key) {
+                    return dynamic_cast<T *>(*grid.FindValue(key));
+                }
+
+                inline Tile &operator()(const int row, const int col) {
+                    return *(*grid.FindValue(Vectors::Vector2Int(row, col)));
+                }
+
+                inline Tile *operator()(const int row, const int col) const {
+                    return *grid.FindValue(Vectors::Vector2Int(row, col));
+                }
             };
         }
     }

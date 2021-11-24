@@ -16,6 +16,9 @@
 
 #if DIVISIONCORE_SCENE_H == TRUE
 
+#include "ObjectMacros.h"
 #include "Scene.h"
+
+INCLUDE_OBJECT_STATIC
 
 #endif

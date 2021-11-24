@@ -80,7 +80,7 @@ namespace DivisionCore {
                 }
             }
 
-            ~Object() {
+            virtual ~Object() {
                 idInstanceDictionary.Remove(instanceID);
             }
 

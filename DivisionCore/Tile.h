@@ -42,13 +42,12 @@ namespace DivisionCore {
     namespace Core {
         namespace Tilemaps {
 
+            class Tilemap;
+
             struct Tile : public Object<Tile> {
             private:
                 unsigned state;
                 NeighbourTemplate<Tile> neighbours;
-
-                static float lenght;
-                static Containers::VectorKeyDictionary<Vector, Tile *, 2, int> tileGrid;
 
                 //region States
                 virtual inline const bool IsCenter() const {
@@ -81,295 +80,50 @@ namespace DivisionCore {
                            !neighbours.GetLeft() && neighbours.GetRight();
                 }
                 //endregion
-
             protected:
                 //region Neighbours exploration tools
-                inline bool GetNeighbours() {
-                    if (!tileGrid.empty()) {
-                        //Up-Midle
-                        neighbours.GetTop().reset(*tileGrid.FindValue(position + Vector2Int::Up()));
-                        //Down-Midle
-                        neighbours.GetDown().reset(*tileGrid.FindValue(position + Vector2Int::Down()));
-                        //Left-Midle
-                        neighbours.GetLeft().reset(*tileGrid.FindValue(position + Vector2Int::Left()));
-                        //Right-Midle
-                        neighbours.GetRight().reset(*tileGrid.FindValue(position + Vector2Int::Right()));
+                bool GetNeighbours();
 
-                        //Right-up
-                        neighbours.GetRightTopCorner().reset(*tileGrid.FindValue(position + Vector2Int::Up() + Vector2Int::Right()));
-                        //Left-Up
-                        neighbours.GetLeftTopCorner().reset(*tileGrid.FindValue(position + Vector2Int::Up() + Vector2Int::Left()));
-                        //Right-Down
-                        neighbours.GetRightDownCorner().reset(*tileGrid.FindValue(position + Vector2Int::Down() + Vector2Int::Right()));
-                        //Left-Down
-                        neighbours.GetLeftDownCorner().reset(*tileGrid.FindValue(position + Vector2Int::Left()));
-
-                        //Center
-                        neighbours.GetCenter().reset(std::make_shared<Tile>(this).get());
-                        return true;
-                    } else {
-                        return false;
-                    }
-
-                    /*1 2 3
-                      4 0 5
-                      6 7 8*/
-                }
-
-                bool UpdateNeighbours(const NeighbourTemplate<Tile>& filteredNeighbours) {
-                    /*1 2 3
-                      4 0 5
-                      6 7 8*/
-
-                    bool returnValue = true;
-
-                    //Up-Midle
-                    if (filteredNeighbours.GetTop()) {
-                        if (!filteredNeighbours.GetTop()->UpdateCycle(neighbours)) {
-                            returnValue = false;
-                        }
-                    }
-
-                    //Down-Midle
-                    if (filteredNeighbours.GetDown()) {
-                        if (!filteredNeighbours.GetDown()->UpdateCycle(neighbours)) {
-                            returnValue = false;
-                        }
-                    }
-
-                    //Left-Midle
-                    if (!filteredNeighbours.GetLeft() ||
-                        !filteredNeighbours.GetLeft()->UpdateCycle(neighbours)) {
-                        returnValue = false;
-                    }
-
-                    //Right-Midle
-                    if (!filteredNeighbours.GetRight() ||
-                        !filteredNeighbours.GetRight()->UpdateCycle(neighbours)) {
-                        returnValue = false;
-                    }
-
-                    //Right-up
-                    if (!filteredNeighbours.GetRightTopCorner() ||
-                        !filteredNeighbours.GetRightTopCorner()->UpdateCycle(neighbours)) {
-                        returnValue = false;
-                    }
-
-                    //Left-Up
-                    if (!filteredNeighbours.GetLeftTopCorner() ||
-                        !filteredNeighbours.GetLeftTopCorner()->UpdateCycle(neighbours)) {
-                        returnValue = false;
-                    }
-
-                    //Right-Down
-                    if (!filteredNeighbours.GetRightDownCorner() ||
-                        !filteredNeighbours.GetRightDownCorner()->UpdateCycle(neighbours)) {
-                        returnValue = false;
-                    }
-
-                    //Left-Down
-                    if (!filteredNeighbours.GetLeftDownCorner() ||
-                        !filteredNeighbours.GetLeftDownCorner()->UpdateCycle(neighbours)) {
-                        returnValue = false;
-                    }
-
-                    return returnValue;
-                }
+                bool UpdateNeighbours(const NeighbourTemplate<Tile> &filteredNeighbours);
 
                 NeighbourTemplate<Tile>
-                FilterNeighboursToUpdate(const NeighbourTemplate<Tile>& other) const {
+                FilterNeighboursToUpdate(const NeighbourTemplate<Tile> &other) const;
 
-                    NeighbourTemplate<Tile> filteredNeighbours;
-
-                    for (unsigned x = 0; x < 3; x++) {
-                        for (unsigned y = 0; y < 3; y++) {
-                            auto temp = neighbours(x,y).lock() == other(x,y).lock() ? std::make_shared<Tile>(nullptr)
-                                                                                      : neighbours(x,y);
-                            filteredNeighbours(x,y) = temp;
-                        }
-                    }
-
-                    return filteredNeighbours;
-                }
-
-                unsigned FindTileState() const {
-                    return 0;
-                }
+                unsigned FindTileState() const;
                 //endregion
             public:
                 Vector2Int position;
                 Vector2 worldPosition;
+                shared_ptr<Tilemap> tilemap;
 
                 //region Constructors & Destructor
                 Tile() = delete;
 
-                explicit Tile(const Tile &clone) {
-                    if (&clone != this) {
-                        this->state = clone.state;
-                        if (clone.lenght == 0) {
-                            this->lenght = 1.;
-                        } else {
-                            this->lenght = clone.lenght;
-                        }
-                        this->tileGrid = clone.tileGrid;
+                explicit Tile(const Tile &clone);
 
-                        for (unsigned x = 0; x < 3; x++) {
-                            for (unsigned y = 0; y < 3; y++) {
-                                this->neighbours(x,y) = clone.neighbours(x,y);
-                            }
-                        }
+                explicit Tile(const Tile *clone);
 
-                        this->position = clone.position;
-                        this->worldPosition = clone.worldPosition;
-                    } else {
-                        if (lenght == 0) {
-                            lenght = 1.;
-                        }
+                explicit Tile(const Vector2Int &_position, Tilemap & _tilemap);
 
-                        position = Vectors::Vector2Int::Zero();
-                        worldPosition = Vector2(position.coords[0] * lenght, position.coords[0] * lenght);
+                explicit Tile(const unique_ptr<Vector2Int> _position, Tilemap & _tilemap);
 
-                        state = 0;
+                explicit Tile(initializer_list<int> list, Tilemap & _tilemap);
 
-                        tileGrid.Add(VectorKeyValuePair<Vector, Tile *, 2, int>(position, this));
-                    }
-
-                    UpdateCycle();
-                }
-
-                explicit Tile(const Tile *clone) {
-                    if (clone != this) {
-                        this->state = clone->state;
-                        if (clone->lenght == 0) {
-                            this->lenght = 1.;
-                        } else {
-                            this->lenght = clone->lenght;
-                        }
-                        this->tileGrid = clone->tileGrid;
-
-                        for (unsigned x = 0; x < 3; x++) {
-                            for (unsigned y = 0; y < 3; y++) {
-                                this->neighbours(x,y) = clone->neighbours(x,y);
-                            }
-                        }
-
-                        this->position = clone->position;
-                        this->worldPosition = clone->worldPosition;
-                    } else {
-                        if (lenght == 0) {
-                            lenght = 1.;
-                        }
-
-                        position = Vectors::Vector2Int::Zero();
-                        worldPosition = Vector2(position.coords[0] * lenght, position.coords[0] * lenght);
-
-                        state = 0;
-
-                        tileGrid.Add(VectorKeyValuePair<Vector, Tile *, 2, int>(position, this));
-                    }
-
-                    UpdateCycle();
-                }
-
-                explicit Tile(const Vector2Int &_position) {
-                    if (lenght == 0) {
-                        lenght = 1.;
-                    }
-
-                    position = _position;
-                    worldPosition = Vector2(_position.coords[0] * lenght, _position.coords[0] * lenght);
-
-                    state = 0;
-
-                    tileGrid.Add(VectorKeyValuePair<Vector, Tile *, 2, int>(position, this));
-
-                    UpdateCycle();
-                }
-
-                explicit Tile(const unique_ptr<Vector2Int> _position) {
-                    if (lenght == 0) {
-                        lenght = 1.;
-                    }
-
-#pragma warning (disable : 4068 ) /* Disable unknown pragma warnings */
-#pragma clang diagnostic push /* Disable CLANG ide LocalValueEscapesScope warning */
-#pragma ide diagnostic ignored "LocalValueEscapesScope"
-                    position = *_position;
-#pragma clang diagnostic pop
-
-                    worldPosition = Vector2(_position->coords[0] * lenght, _position->coords[0] * lenght);
-
-                    state = 0;
-
-                    tileGrid.Add(VectorKeyValuePair<Vector, Tile *, 2, int>(position, this));
-
-                    UpdateCycle();
-                }
-
-                explicit Tile(initializer_list<int> list) {
-                    if (lenght == 0) {
-                        lenght = 1.;
-                    }
-
-                    initializer_list<int>::iterator it;
-                    unsigned counter = 0;
-
-                    for (it = list.begin(); it < list.end(); ++it) {
-                        position.coords[counter] = *it;
-                        counter++;
-                    }
-
-                    worldPosition = Vector2(position.coords[0] * lenght, position.coords[1] * lenght);
-
-                    state = 0;
-
-                    tileGrid.Add(VectorKeyValuePair<Vector, Tile *, 2, int>(position, this));
-
-                    UpdateCycle();
-                }
-
-                virtual ~Tile() {
-                    tileGrid.Remove(position);
-                    UpdateNeighbours(neighbours);
-                }
+                virtual ~Tile();
                 //endregion
 
-                bool UpdateCycle() {
-                    /*1 2 3
-                      4 0 5
-                      6 7 8*/
-                    if (GetNeighbours()) {
-                        if (UpdateNeighbours(neighbours)) {
-                            state = FindTileState();
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    } else {
-                        return false;
-                    }
-                }
-
-                bool UpdateCycle(const NeighbourTemplate<Tile>& _neighbours) {
-                    /*1 2 3
-                      4 0 5
-                      6 7 8*/
-                    if (GetNeighbours()) {
-                        if (UpdateNeighbours(FilterNeighboursToUpdate(_neighbours))) {
-                            state = FindTileState();
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    } else {
-                        return false;
-                    }
-
-                }
+                //region Operators
+                inline Tile &operator()(const int row, const int column);
+                inline Tile *operator()(const int row, const int column) const;
+                //endregion
 
                 inline const unsigned &getState() const {
                     return state;
                 }
+
+                bool UpdateCycle();
+
+                bool UpdateCycle(const NeighbourTemplate<Tile> &_neighbours);
             };
         }
     }

@@ -14,11 +14,12 @@
   * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   **/
 
-
+#include "ObjectMacros.h"
 #include "Transform.h"
 #include "PrimitiveType.h"
 #include "GameObject.h"
 #include "RunningBehaviour.h"
+
 #include <list>
 
 using namespace std;
@@ -26,13 +27,9 @@ using namespace DivisionCore::Core;
 using namespace DivisionCore::Core::BehaviourSystem;
 using namespace DivisionCore::Core::BehaviourSystem::Components;
 
-using DivisionCore::Containers::TemplateValueDictionary;
-using DivisionCore::Containers::Dictionary;
+INCLUDE_OBJECT_STATIC
 
-template<typename T> TemplateValueDictionary<typename Object<T>::dynamic_byte, Object, T> Object<T>::idInstanceDictionary;
-template<typename T> Dictionary<typename Object<T>::dynamic_byte, string> Object<T>::hideFlagsLookupTable;
-template<> unsigned char Object<EntitySystem::GameObject>::lastInstanceId;
-list<std::shared_ptr<GameObject>> EntitySystem::GameObject::instancedGameObjects; // NOLINT(cert-err58-cpp)
+list<std::shared_ptr<GameObject>> EntitySystem::GameObject::instancedGameObjects;
 
 namespace DivisionCore {
     namespace Core {
